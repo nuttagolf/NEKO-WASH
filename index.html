@@ -138,6 +138,90 @@
         .start-button:hover, .restart-button:hover {
             background-color: darkred;
         }
+
+        /* ปรับการแสดงผลสำหรับหน้าจอมือถือ */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+
+            .alert-box {
+                width: 80%;
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            .question {
+                font-size: 18px;
+            }
+
+            .option-button {
+                padding: 12px 24px;
+                font-size: 16px;
+                width: 80%;
+            }
+
+            .score-board {
+                font-size: 16px;
+                width: 150px;
+                top: 10px;
+                left: 10px;
+            }
+
+            #timer {
+                font-size: 16px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .start-button, .restart-button {
+                font-size: 18px;
+                padding: 12px 24px;
+            }
+        }
+
+        /* ปรับการแสดงผลสำหรับหน้าจอขนาดเล็กมาก */
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 30px;
+                margin-bottom: 15px;
+            }
+
+            .alert-box {
+                width: 90%;
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .question {
+                font-size: 16px;
+            }
+
+            .option-button {
+                padding: 10px 20px;
+                font-size: 14px;
+                width: 90%;
+            }
+
+            .score-board {
+                font-size: 14px;
+                width: 120px;
+                top: 10px;
+                left: 10px;
+            }
+
+            #timer {
+                font-size: 14px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .start-button, .restart-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -167,12 +251,13 @@
         let answered = false; // ใช้เช็คว่าได้เลือกคำตอบแล้วหรือไม่
 
         const questions = [
-            { question: "ใครเป็นพระมหากษัตริย์พระองค์แรกของราชวงศ์จักรี?", options: ["พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก", "พระบาทสมเด็จพระเจ้าอยู่หัวภูมิพลอดุลยเดช", "พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว", "พระบาทสมเด็จพระอานันทมหิดล"], answer: "พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก" },
-            { question: "พระบรมรูปทรงม้า อยู่ที่พระบรมมหาราชวังในกรุงเทพฯ ถูกสร้างขึ้นในสมัยใด?", options: ["รัชกาลที่ 4", "รัชกาลที่ 5", "รัชกาลที่ 6", "รัชกาลที่ 7"], answer: "รัชกาลที่ 5" },
-            { question: "เหตุการณ์ 14 ตุลาคม 2516 เกิดขึ้นที่ไหน?", options: ["ที่มหาวิทยาลัยธรรมศาสตร์", "ที่ราชดำเนิน", "ที่โรงพยาบาลศิริราช", "ที่สนามหลวง"], answer: "ที่มหาวิทยาลัยธรรมศาสตร์" },
-            { question: "รัชกาลที่ 9 ขึ้นครองราชย์ในปีพ.ศ. ใด?", options: ["พ.ศ. 2489", "พ.ศ. 2491", "พ.ศ. 2500", "พ.ศ. 2513"], answer: "พ.ศ. 2491" },
-            { question: "เหตุการณ์สวรรคตของพระบาทสมเด็จพระเจ้าอยู่หัวอานันทมหิดล เกิดขึ้นในปี?", options: ["พ.ศ. 2470", "พ.ศ. 2499", "พ.ศ. 2513", "พ.ศ. 2523"], answer: "พ.ศ. 2470" },
-            // Add more questions here
+            { question: "โลกมีทวีปทั้งหมดกี่ทวีป?", options: ["5", "6", "7", "8"], answer: "7" },
+            { question: "ดวงจันทร์โคจรรอบโลกทุกกี่วัน?", options: ["28 วัน", "30 วัน", "32 วัน", "35 วัน"], answer: "28 วัน" },
+            { question: "ประเทศที่ใหญ่ที่สุดในโลกตามพื้นที่คือประเทศใด?", options: ["รัสเซีย", "แคนาดา", "จีน", "สหรัฐอเมริกา"], answer: "รัสเซีย" },
+            { question: "น้ำในมหาสมุทรมีสัดส่วนประมาณเท่าไหร่ของน้ำทั้งหมดบนโลก?", options: ["70%", "60%", "50%", "40%"], answer: "70%" },
+            { question: "ศูนย์กลางของระบบสุริยะคืออะไร?", options: ["โลก", "ดวงอาทิตย์", "ดาวพุธ", "ดาวเสาร์"], answer: "ดวงอาทิตย์" },
+            { question: "มนุษย์มีโครโมโซมทั้งหมดกี่คู่?", options: ["22 คู่", "23 คู่", "24 คู่", "25 คู่"], answer: "23 คู่" },
+            { question: "ไดโนเสาร์สูญพันธุ์เมื่อประมาณกี่ล้านปีที่แล้ว?", options: ["65 ล้านปี", "100 ล้านปี", "150 ล้านปี", "200 ล้านปี"], answer: "65 ล้านปี" }
         ];
 
         function startGame() {
@@ -183,40 +268,44 @@
         }
 
         function showQuestion() {
-            const currentQuestion = questions[currentQuestionIndex];
-            document.getElementById('question').textContent = currentQuestion.question;
-            const optionsList = document.getElementById('options');
-            optionsList.innerHTML = '';
-            currentQuestion.options.forEach(option => {
-                const li = document.createElement('li');
-                li.innerHTML = `<button class="option-button" onclick="checkAnswer('${option}')">${option}</button>`;
-                optionsList.appendChild(li);
-            });
-            answered = false; // รีเซ็ตการตอบคำถามเมื่อไปที่คำถามใหม่
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                document.getElementById('question').textContent = currentQuestion.question;
+                const optionsList = document.getElementById('options');
+                optionsList.innerHTML = '';
+
+                currentQuestion.options.forEach(option => {
+                    const li = document.createElement('li');
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.className = 'option-button';
+                    button.onclick = () => checkAnswer(option);
+                    li.appendChild(button);
+                    optionsList.appendChild(li);
+                });
+            } else {
+                endGame();
+            }
         }
 
-        function checkAnswer(selectedOption) {
-            if (answered) return; // ถ้าได้ตอบแล้วไม่ให้ตอบซ้ำ
-            answered = true; // ตั้งค่าให้ตอบแล้ว
+        function checkAnswer(selectedAnswer) {
+            if (answered) return; // หลีกเลี่ยงการตอบซ้ำ
+            answered = true;
+            const correctAnswer = questions[currentQuestionIndex].answer;
 
-            const currentQuestion = questions[currentQuestionIndex];
-            if (selectedOption === currentQuestion.answer) {
-                score += 500;
+            if (selectedAnswer === correctAnswer) {
+                score++;
                 showAlert("คำตอบถูกต้อง", "alert-success", "✔️");
             } else {
-                score -= 200;
                 showAlert("คำตอบผิด", "alert-error", "❌");
             }
+
             currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                setTimeout(() => {
-                    showQuestion();
-                    resetTimer();
-                }, 2000);
-            } else {
-                setTimeout(endGame, 2000); // เลื่อนการจบเกมหลังจากแสดงผลคำตอบ
-            }
-            document.getElementById('score').textContent = score;
+            setTimeout(() => {
+                answered = false; // รีเซ็ตเพื่อให้ตอบคำถามถัดไปได้
+                showQuestion();
+                resetTimer();
+            }, 1500);
         }
 
         function showAlert(message, className, icon) {
@@ -249,7 +338,7 @@
 
         function endGame() {
             showAlert("เกมจบแล้ว", "alert-error", "❌");
-            document.getElementById('score').textContent = ` ${score}`;
+            document.getElementById('score').textContent = `คะแนนสะสม: ${score}`;
             setTimeout(() => {
                 document.getElementById('restartButton').style.display = 'block';
             }, 1500);
