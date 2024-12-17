@@ -15,34 +15,32 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
-        }
-
-        .alert-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            border: 2px solid black;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            display: none;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .alert-success {
-            color: green;
-        }
-
-        .alert-error {
-            color: red;
+            position: relative; /* ใช้ position relative สำหรับตำแหน่งของกล่องคะแนนและนาฬิกา */
         }
 
         #quiz-container {
             display: none;
             text-align: center;
+        }
+
+        .score-board {
+            font-size: 20px;
+            position: absolute;
+            top: 20px; /* กำหนดให้กล่องคะแนนอยู่ที่ 20px จากด้านบน */
+            left: 20px; /* กำหนดให้กล่องคะแนนอยู่ที่ 20px จากด้านซ้าย */
+            background-color: rgba(255, 255, 255, 0.8); /* ทำให้กล่องคะแนนมีพื้นหลังที่โปร่งแสง */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #timer {
+            font-size: 20px;
+            position: absolute;
+            top: 20px; /* กำหนดให้กล่องเวลานับเวลาอยู่ที่ 20px จากด้านบน */
+            right: 20px; /* กำหนดให้กล่องเวลานับเวลาอยู่ที่ 20px จากด้านขวา */
+            background-color: rgba(255, 255, 255, 0.8); /* ทำให้กล่องเวลามีพื้นหลังโปร่งแสง */
+            padding: 10px;
+            border-radius: 10px;
         }
 
         .question {
@@ -54,12 +52,12 @@
             list-style-type: none;
             padding: 0;
             display: flex;
-            flex-direction: column; /* ทำให้ปุ่มตัวเลือกเรียงลงมา */
-            align-items: center; /* จัดกึ่งกลางปุ่ม */
+            flex-direction: column;
+            align-items: center;
         }
 
         .options li {
-            margin: 10px 0; /* ระยะห่างระหว่างปุ่ม */
+            margin: 10px 0;
         }
 
         .option-button {
@@ -69,21 +67,13 @@
             border: 2px solid #000;
             background-color: lightblue;
             transition: background-color 0.3s;
-            display: block; /* ปรับปุ่มให้แสดงแบบ block */
-            width: 200px; /* ขยายขนาดปุ่ม */
-            text-align: center; /* จัดข้อความให้อยู่กลาง */
+            display: block;
+            width: 200px;
+            text-align: center;
         }
 
         .option-button:hover {
             background-color: deepskyblue;
-        }
-
-        .score-board {
-            font-size: 20px;
-            margin-top: 20px;
-            border: 2px solid black;
-            padding: 10px;
-            width: 200px;
         }
 
         .start-button {
@@ -102,22 +92,17 @@
     </style>
 </head>
 <body>
-    <!-- Alert box -->
-    <div id="alertBox" class="alert-box">
-        <p id="alertMessage"></p>
-    </div>
 
-    <!-- Start Button -->
     <button class="start-button" id="startButton" onclick="startGame()">เริ่มเกม</button>
 
-    <!-- Quiz Container -->
     <div id="quiz-container">
         <div id="question" class="question"></div>
         <ul id="options" class="options"></ul>
-        <div class="score-board">
-            <span>คะแนน: <span id="score">0</span></span>
-        </div>
-        <div id="timer">เวลาคงเหลือ: 15 วินาที</div>
+    </div>
+
+    <div id="timer">เวลาคงเหลือ: 15 วินาที</div>
+    <div class="score-board">
+        <span>คะแนน: <span id="score">0</span></span>
     </div>
 
     <script>
@@ -129,10 +114,7 @@
         const questions = [
             { question: "ใครเป็นพระมหากษัตริย์พระองค์แรกของราชวงศ์จักรี?", options: ["พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก", "พระบาทสมเด็จพระเจ้าอยู่หัวภูมิพลอดุลยเดช", "พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว", "พระบาทสมเด็จพระอานันทมหิดล"], answer: "พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก" },
             { question: "พระบรมรูปทรงม้า อยู่ที่พระบรมมหาราชวังในกรุงเทพฯ ถูกสร้างขึ้นในสมัยใด?", options: ["รัชกาลที่ 4", "รัชกาลที่ 5", "รัชกาลที่ 6", "รัชกาลที่ 7"], answer: "รัชกาลที่ 5" },
-            { question: "เหตุการณ์ 14 ตุลาคม 2516 เกิดขึ้นที่ไหน?", options: ["ที่มหาวิทยาลัยธรรมศาสตร์", "ที่ราชดำเนิน", "ที่โรงพยาบาลศิริราช", "ที่สนามหลวง"], answer: "ที่มหาวิทยาลัยธรรมศาสตร์" },
-            { question: "รัชกาลที่ 9 ขึ้นครองราชย์ในปีพ.ศ. ใด?", options: ["พ.ศ. 2489", "พ.ศ. 2491", "พ.ศ. 2500", "พ.ศ. 2513"], answer: "พ.ศ. 2491" },
-            { question: "เหตุการณ์สวรรคตของพระบาทสมเด็จพระเจ้าอยู่หัวอานันทมหิดล เกิดขึ้นในปี?", options: ["พ.ศ. 2470", "พ.ศ. 2499", "พ.ศ. 2513", "พ.ศ. 2523"], answer: "พ.ศ. 2470" },
-            // Add more questions here
+            // เพิ่มคำถามอื่นๆ ที่นี่
         ];
 
         function startGame() {
@@ -158,7 +140,6 @@
             const currentQuestion = questions[currentQuestionIndex];
             if (selectedOption === currentQuestion.answer) {
                 score += 500;
-                showAlert("ถูกต้องค้าบบ", "alert-success");
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
                     setTimeout(showQuestion, 1000);
@@ -168,21 +149,9 @@
                 }
             } else {
                 score -= 250;
-                showAlert("ผิดจ้าาาาาา", "alert-error");
                 resetTimer();
             }
             updateScore();
-        }
-
-        function showAlert(message, className) {
-            const alertBox = document.getElementById('alertBox');
-            const alertMessage = document.getElementById('alertMessage');
-            alertMessage.textContent = message;
-            alertBox.className = `alert-box ${className}`;
-            alertBox.style.display = 'block';
-            setTimeout(() => {
-                alertBox.style.display = 'none';
-            }, 1500);
         }
 
         function startTimer() {
@@ -193,7 +162,6 @@
                 updateTimer();
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    showAlert("หมดเวลา", "alert-error");
                     resetTimer();
                 }
             }, 1000);
