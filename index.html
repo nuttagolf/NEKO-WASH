@@ -199,13 +199,32 @@
     }
 ];
 
+// ฟังก์ชันสุ่มคำถาม
+function shuffleQuestions(questions) {
+    for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]]; // สลับคำถาม
+    }
+}
 
-        function startGame() {
-            document.getElementById('startButton').style.display = 'none';
-            document.getElementById('quiz-container').style.display = 'block';
-            showQuestion();
-            startTimer();
+// ฟังก์ชันสุ่มตัวเลือกในแต่ละคำถาม
+function shuffleOptions(questions) {
+    questions.forEach(question => {
+        for (let i = question.options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [question.options[i], question.options[j]] = [question.options[j], question.options[i]]; // สลับตัวเลือก
         }
+    });
+}
+
+// เริ่มเกม
+function startGame() {
+    shuffleQuestions(questions); // สุ่มคำถาม
+    shuffleOptions(questions);   // สุ่มตัวเลือก
+
+    currentQuestionIndex = 0;
+    showQuestion();
+}
 
         function showQuestion() {
             const currentQuestion = questions[currentQuestionIndex];
