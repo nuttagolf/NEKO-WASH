@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game - ประวัติศาสตร์ชาติไทยสมัยธนบุรี</title>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .start-screen, .quiz-screen {
+            display: none;
+        }
+        .start-screen.active, .quiz-screen.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+        h1 {
+            font-size: 24px;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .choices button {
+            background-color: #007bff;
+            border: 2px solid black;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .choices button.correct {
+            background-color: green !important;
+            color: white !important;
+        }
+        .choices button.wrong {
+            background-color: red !important;
+            color: white !important;
+        }
+        .score-box {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f4f4f4;
+            border: 2px solid black;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: black;
+        }
+        .timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- หน้าจอเริ่มเกม -->
+    <div class="start-screen active">
+        <button onclick="startGame()">เริ่มเกม</button>
+    </div>
+
+    <!-- หน้าจอเกม -->
+    <div class="quiz-screen">
+        <div class="score-box">คะแนน: <span id="score">0</span></div>
+        <div class="timer">เวลา: <span id="timer">15</span> วินาที</div>
+        <h1 id="question">คำถาม: ผลบวกของ 2 + 2 คืออะไร?</h1>
+        <div class="choices">
+            <button onclick="checkAnswer(this, false)">1</button>
+            <button onclick="checkAnswer(this, false)">3</button>
+            <button onclick="checkAnswer(this, true)">4</button>
+            <button onclick="checkAnswer(this, false)">5</button>
+        </div>
+    </div>
+
+    <script>
+        // คำถามทั้งหมดเกี่ยวกับประวัติศาสตร์ชาติไทยสมัยธนบุรี
+        const questions = [
+            {
+                question: "ใครเป็นผู้ก่อตั้งราชวงศ์ธนบุรี?",
+                choices: ["สมเด็จพระเจ้าตากสิน", "สมเด็จพระนารายณ์", "สมเด็จพระเจ้าปราสาททอง", "พระยาตากสิน"],
+                correct: 0
+            },
+            {
+                question: "สมเด็จพระเจ้าตากสินยกทัพไปที่ไหนเพื่อต่อสู้กับพม่าหลังจากกรุงศรีอยุธยาตก?",
+                choices: ["เมืองเชียงใหม่", "เมืองสงขลา", "เมืองขอนแก่น", "เมืองนครศรีธรรมราช"],
+                correct: 0
+            },
+            {
+                question: "การปกครองในสมัยธนบุรีใช้ระบบอะไร?",
+                choices: ["ราชาธิปไตย", "ระบอบประชาธิปไตย", "ระบอบคอมมิวนิสต์", "ราชาธิปไตยภายใต้รัฐธรรมนูญ"],
+                correct: 0
+            },
+            {
+                question: "พระเจ้าตากสินทรงพระราชทานคำขวัญว่าอะไรแก่ประชาชน?",
+                choices: ["รักษาศักดิ์ศรี", "ทำดีได้ดี", "ชาติศาสนาพระมหากษัตริย์", "จงรักภักดีต่อชาติ"],
+                correct: 2
+            },
+            {
+                question: "การสร้างกรุงธนบุรีเกิดขึ้นในปีใด?",
+                choices: ["พ.ศ. 2310", "พ.ศ. 2300", "พ.ศ. 2314", "พ.ศ. 2325"],
+                correct: 0
+            },
+            {
+                question: "กรุงธนบุรีถูกย้ายไปที่ไหนหลังจากราชวงศ์ธนบุรีล่มสลาย?",
+                choices: ["กรุงเทพฯ", "พระนคร", "เชียงใหม่", "ราชบุรี"],
+                correct: 0
+            },
+            {
+                question: "พระเจ้าตากสินทรงปฏิรูปอะไรบ้างในสมัยธนบุรี?",
+                choices: ["การศึกษา", "การทหาร", "การค้าขาย", "ทั้งการศึกษาและการทหาร"],
+                correct: 3
+            },
+            {
+                question: "กรุงธนบุรีมีระยะเวลาการปกครองเท่าไร?",
+                choices: ["15 ปี", "25 ปี", "10 ปี", "5 ปี"],
+                correct: 0
+            },
+            {
+                question: "การสร้างพระบรมมหาราชวังในสมัยพระเจ้าตากสินมีวัตถุประสงค์เพื่ออะไร?",
+                choices: ["เพื่อแสดงอำนาจ", "เพื่อเป็นที่อยู่อาศัยสำหรับพระราชา", "เพื่อเป็นสัญลักษณ์แห่งชัยชนะ", "เพื่อสร้างสถานที่ท่องเที่ยว"],
+                correct: 1
+            },
+            {
+                question: "สมเด็จพระเจ้าตากสินทรงทำการฟื้นฟูประเทศหลังจากที่กรุงศรีอยุธยาตกด้วยวิธีใด?",
+                choices: ["สร้างความสัมพันธ์กับต่างประเทศ", "ใช้กำลังทหารปกครอง", "รวมประเทศเป็นหนึ่งเดียว", "ใช้ระบบการปกครองแบบใหม่"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerInterval;
+        let timeLeft = 15;
+
+        // เริ่มเกม
+        function startGame() {
+            document.querySelector(".start-screen").classList.remove("active");
+            document.querySelector(".quiz-screen").classList.add("active");
+            displayQuestion();
+            startTimer();
+        }
+
+        // แสดงคำถาม
+        function displayQuestion() {
+            const questionElement = document.getElementById("question");
+            const choiceButtons = document.querySelectorAll(".choices button");
+
+            // ตั้งค่าคำถามใหม่
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = `คำถาม: ${currentQuestion.question}`;
+
+            // ตั้งค่าตัวเลือกใหม่
+            choiceButtons.forEach((button, index) => {
+                button.textContent = currentQuestion.choices[index];
+                button.className = ""; // รีเซ็ตคลาสสีปุ่ม
+                button.disabled = false; // เปิดการกดปุ่มอีกครั้ง
+                button.onclick = () => checkAnswer(button, index === currentQuestion.correct);
+            });
+        }
+
+        // ตรวจคำตอบ
+        function checkAnswer(button, isCorrect) {
+            if (isCorrect) {
+                button.classList.add("correct");
+                clearInterval(timerInterval); // หยุดเวลา
+                updateScore(500); // เพิ่มคะแนน
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        timeLeft = 15; // รีเซ็ตเวลา
+                        displayQuestion();
+                        startTimer();
+                    } else {
+                        alert(`เกมจบแล้ว! คะแนนรวมของคุณคือ ${score}`);
+                        location.reload();
+                    }
+                }, 1000);
+            } else {
+                button.classList.add("wrong");
+                updateScore(-250); // ลดคะแนน
+            }
+        }
+
+        // อัปเดตคะแนน
+        function updateScore(points) {
+            score += points;
+            document.getElementById("score").textContent = score;
+        }
+
+        // เริ่มตัวจับเวลา
+        function startTimer() {
+            const timerElement = document.getElementById("timer");
+            timerElement.textContent = time
+            
