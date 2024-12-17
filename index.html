@@ -184,11 +184,11 @@
             if (selectedAnswer === correctAnswer) {
                 score += 500;
                 playSound('correctSound');
-                showAlert("ถูกต้อง! +500 คะแนน", "alert-success");
+                showAlert("ถูกต้องค้าบ! +500 คะแนน", "alert-success");
             } else {
                 score -= 200;
                 playSound('wrongSound');
-                showAlert("ผิด! -200 คะแนน", "alert-error");
+                showAlert("ผิดจ้า! -200 คะแนน", "alert-error");
             }
 
             updateScore();
