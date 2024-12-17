@@ -53,10 +53,13 @@
         .options {
             list-style-type: none;
             padding: 0;
+            display: flex;
+            flex-direction: column; /* ทำให้ปุ่มตัวเลือกเรียงลงมา */
+            align-items: center; /* จัดกึ่งกลางปุ่ม */
         }
 
         .options li {
-            margin: 10px;
+            margin: 10px 0; /* ระยะห่างระหว่างปุ่ม */
         }
 
         .option-button {
@@ -66,6 +69,9 @@
             border: 2px solid #000;
             background-color: lightblue;
             transition: background-color 0.3s;
+            display: block; /* ปรับปุ่มให้แสดงแบบ block */
+            width: 200px; /* ขยายขนาดปุ่ม */
+            text-align: center; /* จัดข้อความให้อยู่กลาง */
         }
 
         .option-button:hover {
