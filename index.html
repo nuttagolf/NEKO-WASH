@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #fff;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,66 +16,195 @@
             height: 100vh;
             flex-direction: column;
         }
-        h1 {
-            color: #000;
+
+        .alert-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 2px solid black;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            display: none;
+            font-size: 20px;
+            font-weight: bold;
         }
-        #start-btn {
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+
+        .alert-success {
+            color: green;
         }
+
+        .alert-error {
+            color: red;
+        }
+
         #quiz-container {
             display: none;
             text-align: center;
         }
-        .option {
-            background-color: #007BFF;
-            color: white;
-            border: 2px solid black;
+
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .options li {
             margin: 10px;
-            padding: 10px;
+        }
+
+        .option-button {
+            padding: 10px 20px;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 18px;
-            border-radius: 5px;
+            border: 2px solid #000;
+            background-color: lightblue;
+            transition: background-color 0.3s;
         }
-        #timer {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #000;
+
+        .option-button:hover {
+            background-color: deepskyblue;
         }
-        #score {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #000;
+
+        .score-board {
+            font-size: 20px;
+            margin-top: 20px;
+            border: 2px solid black;
+            padding: 10px;
+            width: 200px;
+        }
+
+        .start-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .start-button:hover {
+            background-color: darkred;
         }
     </style>
 </head>
 <body>
-    <!-- หน้าเริ่มเกม -->
-    <div id="start-container">
-        <button id="start-btn" onclick="startGame()">เริ่มเกม</button>
+    <!-- Alert box -->
+    <div id="alertBox" class="alert-box">
+        <p id="alertMessage"></p>
     </div>
 
-    <!-- หน้าเล่นเกม -->
+    <!-- Start Button -->
+    <button class="start-button" id="startButton" onclick="startGame()">เริ่มเกม</button>
+
+    <!-- Quiz Container -->
     <div id="quiz-container">
-        <div id="timer">เวลา: 15</div>
-        <div id="score">คะแนน: 0</div>
-        <h1 id="question">คำถาม</h1>
-        <div id="options">
-            <!-- ตัวเลือกจะแสดงที่นี่ -->
+        <div id="question" class="question"></div>
+        <ul id="options" class="options"></ul>
+        <div class="score-board">
+            <span>คะแนน: <span id="score">0</span></span>
         </div>
+        <div id="timer">เวลาคงเหลือ: 15 วินาที</div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let timer;
+        let timeLeft = 15;
+
+        const questions = [
+            { question: "ใครเป็นพระมหากษัตริย์พระองค์แรกของราชวงศ์จักรี?", options: ["พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก", "พระบาทสมเด็จพระเจ้าอยู่หัวภูมิพลอดุลยเดช", "พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว", "พระบาทสมเด็จพระอานันทมหิดล"], answer: "พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลก" },
+            { question: "พระบรมรูปทรงม้า อยู่ที่พระบรมมหาราชวังในกรุงเทพฯ ถูกสร้างขึ้นในสมัยใด?", options: ["รัชกาลที่ 4", "รัชกาลที่ 5", "รัชกาลที่ 6", "รัชกาลที่ 7"], answer: "รัชกาลที่ 5" },
+            { question: "เหตุการณ์ 14 ตุลาคม 2516 เกิดขึ้นที่ไหน?", options: ["ที่มหาวิทยาลัยธรรมศาสตร์", "ที่ราชดำเนิน", "ที่โรงพยาบาลศิริราช", "ที่สนามหลวง"], answer: "ที่มหาวิทยาลัยธรรมศาสตร์" },
+            { question: "รัชกาลที่ 9 ขึ้นครองราชย์ในปีพ.ศ. ใด?", options: ["พ.ศ. 2489", "พ.ศ. 2491", "พ.ศ. 2500", "พ.ศ. 2513"], answer: "พ.ศ. 2491" },
+            { question: "เหตุการณ์สวรรคตของพระบาทสมเด็จพระเจ้าอยู่หัวอานันทมหิดล เกิดขึ้นในปี?", options: ["พ.ศ. 2470", "พ.ศ. 2499", "พ.ศ. 2513", "พ.ศ. 2523"], answer: "พ.ศ. 2470" },
+            // Add more questions here
+        ];
+
+        function startGame() {
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            showQuestion();
+            startTimer();
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = currentQuestion.question;
+            const optionsList = document.getElementById('options');
+            optionsList.innerHTML = '';
+            currentQuestion.options.forEach(option => {
+                const li = document.createElement('li');
+                li.innerHTML = `<button class="option-button" onclick="checkAnswer('${option}')">${option}</button>`;
+                optionsList.appendChild(li);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedOption === currentQuestion.answer) {
+                score += 500;
+                showAlert("ถูกต้องค้าบบ", "alert-success");
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    setTimeout(showQuestion, 1000);
+                    resetTimer();
+                } else {
+                    setTimeout(() => alert("คุณทำคะแนนได้: " + score), 1000);
+                }
+            } else {
+                score -= 250;
+                showAlert("ผิดจ้าาาาาา", "alert-error");
+                resetTimer();
+            }
+            updateScore();
+        }
+
+        function showAlert(message, className) {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            alertMessage.textContent = message;
+            alertBox.className = `alert-box ${className}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 1500);
+        }
+
+        function startTimer() {
+            timeLeft = 15;
+            updateTimer();
+            timer = setInterval(function() {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    showAlert("หมดเวลา", "alert-error");
+                    resetTimer();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            startTimer();
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = `เวลาคงเหลือ: ${timeLeft} วินาที`;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+    </script>
 </body>
 </html>
