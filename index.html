@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            color: #000;
+        }
+        #start-btn {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #quiz-container {
+            display: none;
+            text-align: center;
+        }
+        .option {
+            background-color: #007BFF;
+            color: white;
+            border: 2px solid black;
+            margin: 10px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        #timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <!-- หน้าเริ่มเกม -->
+    <div id="start-container">
+        <button id="start-btn" onclick="startGame()">เริ่มเกม</button>
+    </div>
+
+    <!-- หน้าเล่นเกม -->
+    <div id="quiz-container">
+        <div id="timer">เวลา: 15</div>
+        <div id="score">คะแนน: 0</div>
+        <h1 id="question">คำถาม</h1>
+        <div id="options">
+            <!-- ตัวเลือกจะแสดงที่นี่ -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
