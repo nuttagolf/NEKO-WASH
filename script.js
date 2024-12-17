@@ -73,7 +73,7 @@ function checkAnswer(selected) {
         }
     } else {
         alert("ผิดจ้าาาาาา");
-        score -= 250; // หักคะแนน
+        score -= 200; // หักคะแนน
         document.getElementById("score").innerText = "คะแนน: " + score;
     }
 }
