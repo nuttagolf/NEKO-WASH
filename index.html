@@ -119,37 +119,58 @@
         let timer;
         let timeLeft = 15;
         let answered = false;
+        let shuffledQuestions = [];
 
         const questions = [
-            { question: "เมืองหลวงของประเทศไทยคืออะไร?", options: ["กรุงเทพฯ", "เชียงใหม่", "ภูเก็ต", "ขอนแก่น"], answer: "กรุงเทพฯ" },
-            { question: "2 + 2 เท่ากับเท่าไหร่?", options: ["3", "4", "5", "6"], answer: "4" },
-            { question: "สีใดคือสีของท้องฟ้าในตอนกลางวัน?", options: ["แดง", "น้ำเงิน", "เขียว", "เหลือง"], answer: "น้ำเงิน" }
-        ];
+    { question: "จักรวรรดิโรมันตะวันตกล่มสลายเมื่อปีใด?", options: ["ค.ศ. 476", "ค.ศ. 410", "ค.ศ. 1453", "ค.ศ. 800"], answer: "ค.ศ. 476" },
+    { question: "การปฏิวัติฝรั่งเศสเริ่มต้นขึ้นในปีใด?", options: ["ค.ศ. 1776", "ค.ศ. 1789", "ค.ศ. 1804", "ค.ศ. 1815"], answer: "ค.ศ. 1789" },
+    { question: "ยุคฟื้นฟูศิลปวิทยา (Renaissance) มีจุดเริ่มต้นในประเทศใด?", options: ["ฝรั่งเศส", "เยอรมนี", "อิตาลี", "อังกฤษ"], answer: "อิตาลี" },
+    { question: "ใครคือผู้นำกองทัพฝรั่งเศสในสงครามนโปเลียน?", options: ["จูเลียส ซีซาร์", "นโปเลียน โบนาปาร์ต", "หลุยส์ที่ 14", "ชาร์ลมาญ"], answer: "นโปเลียน โบนาปาร์ต" },
+    { question: "เหตุการณ์ใดนำไปสู่การสิ้นสุดยุคกลางในยุโรป?", options: ["การล่มสลายของโรมัน", "สงครามร้อยปี", "การค้นพบทวีปอเมริกา", "การล่มสลายของคอนสแตนติโนเปิล"], answer: "การล่มสลายของคอนสแตนติโนเปิล" },
+    { question: "ใครเป็นนักสำรวจที่ค้นพบทวีปอเมริกาในปี ค.ศ. 1492?", options: ["เฟอร์ดินานด์ มาเจลลัน", "เจมส์ คุก", "คริสโตเฟอร์ โคลัมบัส", "มาร์โค โปโล"], answer: "คริสโตเฟอร์ โคลัมบัส" },
+    { question: "สงครามเย็นเป็นความขัดแย้งระหว่างฝ่ายใด?", options: ["อังกฤษกับฝรั่งเศส", "สหรัฐฯ กับสหภาพโซเวียต", "เยอรมนีกับอิตาลี", "จีนกับญี่ปุ่น"], answer: "สหรัฐฯ กับสหภาพโซเวียต" },
+    { question: "สนธิสัญญาแวร์ซายส์หลังสงครามโลกครั้งที่ 1 ส่งผลกระทบต่อประเทศใดมากที่สุด?", options: ["อังกฤษ", "รัสเซีย", "เยอรมนี", "สหรัฐฯ"], answer: "เยอรมนี" },
+    { question: "การปฏิวัติอุตสาหกรรมเริ่มต้นขึ้นครั้งแรกในประเทศใด?", options: ["ฝรั่งเศส", "อังกฤษ", "สเปน", "อิตาลี"], answer: "อังกฤษ" },
+    { question: "มหาสงครามครั้งใหญ่ (สงครามโลกครั้งที่ 1) เริ่มขึ้นในปีใด?", options: ["ค.ศ. 1914", "ค.ศ. 1920", "ค.ศ. 1939", "ค.ศ. 1945"], answer: "ค.ศ. 1914" }
+];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
 
         function startGame() {
             document.getElementById('startButton').style.display = 'none';
+            document.getElementById('restartButton').style.display = 'none';
             document.getElementById('quiz-container').style.display = 'block';
             score = 0;
             currentQuestionIndex = 0;
             answered = false;
+            shuffledQuestions = [...questions];
+            shuffleArray(shuffledQuestions);
             showQuestion();
-            startTimer();
+            updateScore();
         }
 
         function showQuestion() {
-            if (currentQuestionIndex < questions.length) {
+            if (currentQuestionIndex < shuffledQuestions.length) {
                 answered = false;
-                const currentQuestion = questions[currentQuestionIndex];
+                const currentQuestion = shuffledQuestions[currentQuestionIndex];
                 document.getElementById('question').textContent = currentQuestion.question;
                 const optionsDiv = document.getElementById('options');
                 optionsDiv.innerHTML = '';
-                currentQuestion.options.forEach(option => {
+                const shuffledOptions = [...currentQuestion.options];
+                shuffleArray(shuffledOptions);
+                shuffledOptions.forEach(option => {
                     const button = document.createElement('button');
                     button.textContent = option;
                     button.className = 'option-button';
                     button.onclick = () => checkAnswer(option);
                     optionsDiv.appendChild(button);
                 });
+                startTimer();
             } else {
                 endGame();
             }
@@ -158,7 +179,7 @@
         function checkAnswer(selectedAnswer) {
             if (answered) return;
             answered = true;
-            const correctAnswer = questions[currentQuestionIndex].answer;
+            const correctAnswer = shuffledQuestions[currentQuestionIndex].answer;
 
             if (selectedAnswer === correctAnswer) {
                 score += 500;
@@ -196,10 +217,7 @@
         function moveToNextQuestion() {
             clearInterval(timer);
             currentQuestionIndex++;
-            setTimeout(() => {
-                showQuestion();
-                startTimer();
-            }, 1500);
+            setTimeout(showQuestion, 1500);
         }
 
         function updateScore() {
@@ -221,17 +239,11 @@
         }
 
         function restartGame() {
-            score = 0;
-            currentQuestionIndex = 0;
-            document.getElementById('score').textContent = "คะแนนสะสม: 0";
-            document.getElementById('restartButton').style.display = 'none';
             startGame();
         }
 
         function playSound(soundId) {
-            const sound = document.getElementById(soundId);
-            sound.currentTime = 0;
-            sound.play();
+            document.getElementById(soundId).play();
         }
     </script>
 </body>
