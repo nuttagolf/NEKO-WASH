@@ -179,8 +179,8 @@
     },
     {
         question: "ชาติที่ไม่ให้สยามอ้างอำนาจเหนือดินแดนลาว คือชาติใด?",
-        options: ["จริง", "เท็จ"],
-        answer: "เท็จ"
+        options: ["อังกฤษ", "ฝรั่งเศส", "สเปน", "โปรตุเกส"],
+        answer: "ฝรั่งเศส"
     },
     {
         question: "ประเทศใด ไม่ได้อยู่ในอาณานิคมของฝรั่งเศส?",
@@ -262,7 +262,7 @@
         }
 
         function startTimer() {
-            timeLeft = 15;
+            timeLeft = 20;
             document.getElementById('timer').textContent = `เวลาคงเหลือ: ${timeLeft} วินาที`;
             timer = setInterval(() => {
                 timeLeft--;
