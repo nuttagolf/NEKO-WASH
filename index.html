@@ -96,7 +96,7 @@
     </style>
 </head>
 <body>
-    <h1>เกมตอบคำถาม</h1>
+    <h1>เกมตอบคำถาม By Kru Ning</h1>
     <div class="container">
         <button id="startButton" onclick="startGame()">เริ่มเกม</button>
         <div id="quiz-container">
@@ -287,7 +287,7 @@
         }
 
         function updateScore() {
-            document.getElementById('score').textContent = `คะแนนสะสม: ${score}`;
+            document.getElementById('score').textContent = `คะแนนสะสมของคุณคือ: ${score}`;
         }
 
         function showAlert(message, className) {
@@ -300,8 +300,9 @@
 
         function endGame() {
             clearInterval(timer);
-            showAlert(`จบเกม! คะแนนรวม: ${score}`, "alert-success");
+            document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('restartButton').style.display = 'block';
+            showAlert(`จบเกม! คะแนนรวมของคุณคือ ${score}`, 'alert-success');
         }
 
         function restartGame() {
