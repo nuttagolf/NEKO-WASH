@@ -3,315 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Game</title>
+    <title>แจ้งผลคะแนนสอบกลางภาค</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            flex-direction: column;
+            background-color: #f4f4f4;
         }
-
-        h1 {
-            font-size: 1.5rem;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
         .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: #fff;
             padding: 20px;
-            width: 90%;
-            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-        }
-
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 1rem;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
+            max-width: 400px;
             width: 100%;
         }
-
+        h1 {
+            font-size: 20px;
+            color: #333;
+        }
+        h2 {
+            font-size: 18px;
+            color: #333;
+        }
+        h3 {
+            font-size: 18px;
+            color: #666;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
         button:hover {
             background-color: #0056b3;
         }
-
-        .alert-box {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        #quiz-container {
-            display: none;
-        }
-
-        #timer {
-            margin: 15px 0;
-            font-size: 1rem;
-            color: #FF0000;
-        }
-
-        .option-button {
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 5px;
-        }
-
-        .option-button:hover {
-            background-color: #218838;
-        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    <h1>เกมตอบคำถาม By Kru Ning</h1>
     <div class="container">
-        <button id="startButton" onclick="startGame()">เริ่มเกม</button>
-        <div id="quiz-container">
-            <p id="question">คำถามจะแสดงที่นี่</p>
-            <div id="options"></div>
-            <p id="timer">เวลาคงเหลือ: 15 วินาที</p>
-            <div id="alertBox" class="alert-box"></div>
-        </div>
-        <p id="score">คะแนนสะสม: 0</p>
-        <button id="restartButton" style="display:none;" onclick="restartGame()">เริ่มเกมใหม่</button>
+        <h1>แจ้งผลคะแนนสอบกลางภาค ภาคเรียนที่ 2</h1>
+        <h2>รายวิชาประวัติศาสตร์ไทย</h2>
+        <h3>น.ส.ประอรนันท์ กองแก้ว ครูผู้สอน</h3>
+        <form id="studentForm">
+            <input type="text" id="studentId" placeholder="กรุณาใส่รหัสประจำตัวนักเรียน" required>
+            <button type="submit">ค้นหา</button>
+        </form>
+        <div id="result" style="margin-top: 20px;"></div>
     </div>
 
-    <audio id="correctSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-    <audio id="wrongSound" src="https://www.soundjay.com/button/beep-10.wav"></audio>
-    <audio id="timeoutSound" src="https://www.soundjay.com/button/beep-09.wav"></audio>
-
     <script>
-        let score = 0;
-        let currentQuestionIndex = 0;
-        let timer;
-        let timeLeft = 20;
-        let answered = false;
-        let shuffledQuestions = [];
+        let studentData = {};
 
-        const questions = [
-    {
-        question: "จากลักษณะทางภูมิศาสตร์ บริเวณใดมีการตั้งถิ่นฐานมากที่สุดในภูมิภาค?",
-        options: ["เขตเทือกเขาสูง", "เขตที่ราบลุ่มแม่น้ำ", "เขตที่ราบระหว่างหุบเขา", "เขตที่ราบสูง"],
-        answer: "เขตที่ราบลุ่มแม่น้ำ"
-    },
-    {
-        question: "พื้นฐานทางเศรษฐกิจของภูมิภาคเอเชียตะวันออกเฉียงใต้ ขึ้นอยู่กับอะไร?",
-        options: ["การเกษตร", "การทำอุตสาหกรรม", "งานฝีมือ", "แรงงานในโรงงาน"],
-        answer: "การเกษตร"
-    },
-    {
-        question: "ข้อใดไม่ใช่อิทธิพลของอารยธรรมอินเดียและจีน?",
-        options: ["แนวคิดผู้ปกครองเป็นสมมติเทพ", "การค้าผ้าไหม", "การขยายพื้นที่ปลูกข้าว อ้อย", "การสร้างพระพุทธรูป"],
-        answer: "การขยายพื้นที่ปลูกข้าว อ้อย"
-    },
-    {
-        question: "เมืองท่าสำคัญของอาณาจักรฟูนัน คือเมืองอะไร?",
-        options: ["อ๊อกแอว", "ออกแอ๊ว", "อ๋อแล้ว", "อ่อกแอ่ว"],
-        answer: "อ๊อกแอว"
-    },
-    {
-        question: "ข้อใดไม่ใช่สาเหตุของการสำรวจทางทะเล?",
-        options: ["ความเจริญก้าวหน้าทางวิทยาการ", "ต้องการขยายตลาดการค้า", "การเผยแผ่คริสต์ศาสนา", "อารยธรรมตะวันตกเผยแพร่ไปยังดินแดนต่าง ๆ"],
-        answer: "อารยธรรมตะวันตกเผยแพร่ไปยังดินแดนต่าง ๆ"
-    },
-    {
-        question: "วัตถุประสงค์แรกที่ชาติตะวันตกเดินทางเข้ามาในภูมิภาค คือ?",
-        options: ["เผยแผ่ศาสนา", "ยึดครองดินแดน", "แข่งขันทางการค้า", "ซื้อเครื่องเทศ"],
-        answer: "ซื้อเครื่องเทศ"
-    },
-    {
-        question: "ชาติตะวันตกชาติแรก ที่เดินทางเข้ามายึดครองรัฐโบราณในภูมิภาค คือ?",
-        options: ["โปรตุเกส", "สเปน", "ฝรั่งเศส", "ฮอลันดา"],
-        answer: "โปรตุเกส"
-    },
-    {
-        question: "นักเดินเรือที่เดินทางเข้ายึดครองหมู่เกาะมะละกา มีชื่อว่า?",
-        options: ["คริสโตเฟอร์ โคลัมบัส", "วาสโก ดา กามา", "เฟอร์ดินาน แมกเจลแลน", "อริสโตเติล"],
-        answer: "วาสโก ดา กามา"
-    },
-    {
-        question: "เฟอร์ดินาน แมกเจลแลน ได้รับการสนับสนุนจากราชสำนักใดในการเดินเรือ?",
-        options: ["โปรตุเกส", "ฮอลันดา", "สเปน", "อังกฤษ"],
-        answer: "สเปน"
-    },
-    {
-        question: "ข้อใด ไม่ใช่พืชที่ฮอลันดาบังคับให้ชาวพื้นเมืองปลูก?",
-        options: ["ข้าว อ้อย", "กาแฟ ชา", "เครื่องเทศ", "สตรอเบอร์รี่มรกต"],
-        answer: "สตรอเบอร์รี่มรกต"
-    },
-    {
-        question: "อังกฤษใช้เมืองใดเป็นศูนย์กลางการค้าสำคัญในเอเชียตะวันออกเฉียงใต้?",
-        options: ["มาเลเซีย", "สิงคโปร์", "เวียดนาม", "เมียนมาร์"],
-        answer: "สิงคโปร์"
-    },
-    {
-        question: "ชาติที่ไม่ให้สยามอ้างอำนาจเหนือดินแดนลาว คือชาติใด?",
-        options: ["อังกฤษ", "ฝรั่งเศส", "สเปน", "โปรตุเกส"],
-        answer: "ฝรั่งเศส"
-    },
-    {
-        question: "ประเทศใด ไม่ได้อยู่ในอาณานิคมของฝรั่งเศส?",
-        options: ["บรูไน ฟิลิปปินส์", "ลาว เวียดนาม", "กัมพูชา ลาว", "เวียดนาม กัมพูชา"],
-        answer: "บรูไน ฟิลิปปินส์"
-    },
-    {
-        question: "ประเทศใดไม่ได้เป็นอาณานิคมของอังกฤษ?",
-        options: ["เมียนมาร์ มาเลเซีย", "สิงคโปร์ บรูไน", "ลาว ฟิลิปปินส์", "อินเดีย ศรีลังกา"],
-        answer: "ลาว ฟิลิปปินส์"
-    },
-    {
-        question: "เพราะเหตุใดประเทศเวียดนามจึงได้รับอิทธิพลจากจีนมากกว่าประเทศอื่น ๆ?",
-        options: ["เพราะชาวจีนอพยพมาตั้งถิ่นฐาน", "ถูกปกครองโดยจีนเป็นระยะ", "ในจีนเกิดโรคระบาด จักรพรรดิจึงขยายอำนาจมาที่เวียดนาม", "ถูกทุกข้อ"],
-        answer: "ถูกปกครองโดยจีนเป็นระยะ"
-    }
-];
-
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
+        // Load Excel file
+        function loadExcel() {
+            const filePath = 'ข้อมูลนักเรียน.xlsx'; // ชื่อไฟล์ Excel
+            fetch(filePath)
+                .then(response => response.arrayBuffer())
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    studentData = XLSX.utils.sheet_to_json(firstSheet);
+                })
+                .catch(error => console.error('Error loading Excel:', error));
         }
 
-        function startGame() {
-            document.getElementById('startButton').style.display = 'none';
-            document.getElementById('restartButton').style.display = 'none';
-            document.getElementById('quiz-container').style.display = 'block';
-            score = 0;
-            currentQuestionIndex = 0;
-            answered = false;
-            shuffledQuestions = [...questions];
-            shuffleArray(shuffledQuestions);
-            showQuestion();
-            updateScore();
-        }
+        // Search for student score
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
 
-        function showQuestion() {
-            if (currentQuestionIndex < shuffledQuestions.length) {
-                answered = false;
-                const currentQuestion = shuffledQuestions[currentQuestionIndex];
-                document.getElementById('question').textContent = currentQuestion.question;
-                const optionsDiv = document.getElementById('options');
-                optionsDiv.innerHTML = '';
-                const shuffledOptions = [...currentQuestion.options];
-                shuffleArray(shuffledOptions);
-                shuffledOptions.forEach(option => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.className = 'option-button';
-                    button.onclick = () => checkAnswer(option);
-                    optionsDiv.appendChild(button);
-                });
-                startTimer();
-            } else {
-                endGame();
-            }
-        }
-
-        function checkAnswer(selectedAnswer) {
-            if (answered) return;
-            answered = true;
-            const correctAnswer = shuffledQuestions[currentQuestionIndex].answer;
-
-            if (selectedAnswer === correctAnswer) {
-                score += 10;
-                playSound('correctSound');
-                showAlert("ถูกต้องค้าบ! +10 คะแนน", "alert-success");
-            } else {
-                score -= 10;
-                playSound('wrongSound');
-                showAlert("ผิดจ้า! -10 คะแนน", "alert-error");
-            }
-
-            updateScore();
-            moveToNextQuestion();
-        }
-
-        function startTimer() {
-            timeLeft = 20;
-            document.getElementById('timer').textContent = `เวลาคงเหลือ: ${timeLeft} วินาที`;
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').textContent = `เวลาคงเหลือ: ${timeLeft} วินาที`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    if (!answered) {
-                        score -= 5;
-                        playSound('timeoutSound');
-                        showAlert("หมดเวลา! -5 คะแนน", "alert-error");
-                        updateScore();
-                        moveToNextQuestion();
-                    }
+            if (studentId) {
+                const student = studentData.find(s => s['รหัสประจำตัวนักเรียน'] === studentId);
+                if (student) {
+                    resultDiv.innerHTML = `<p>ชื่อ-สกุล: ${student['ชื่อ-สกุล']}</p><p>คะแนนที่ได้: ${student['คะแนนที่ได้']}</p>`;
+                } else {
+                    resultDiv.innerHTML = '<p>ไม่พบข้อมูล</p>';
                 }
-            }, 1000);
-        }
+            } else {
+                alert('กรุณาใส่รหัสประจำตัวนักเรียน');
+            }
+        });
 
-        function moveToNextQuestion() {
-            clearInterval(timer);
-            currentQuestionIndex++;
-            setTimeout(showQuestion, 1500);
-        }
-
-        function updateScore() {
-            document.getElementById('score').textContent = `คะแนนสะสมของคุณคือ: ${score}`;
-        }
-
-        function showAlert(message, className) {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.textContent = message;
-            alertBox.className = `alert-box ${className}`;
-            alertBox.style.display = 'block';
-            setTimeout(() => alertBox.style.display = 'none', 1500);
-        }
-
-        function endGame() {
-            clearInterval(timer);
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('restartButton').style.display = 'block';
-            showAlert(`จบเกม! คะแนนรวมของคุณคือ ${score}`, 'alert-success');
-        }
-
-        function restartGame() {
-            startGame();
-        }
-
-        function playSound(soundId) {
-            document.getElementById(soundId).play();
-        }
+        // Load the Excel data on page load
+        loadExcel();
     </script>
 </body>
 </html>
