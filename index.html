@@ -57,8 +57,20 @@
         button:hover {
             background-color: #0056b3;
         }
+        .contact-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .contact-btn:hover {
+            background-color: #cc0000;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -70,35 +82,33 @@
             <button type="submit">ค้นหา</button>
         </form>
         <div id="result" style="margin-top: 20px;"></div>
+        <button class="contact-btn" id="contactTeacher" style="display: none;">ติดต่อครูผู้สอน</button>
     </div>
 
     <script>
-        let studentData = {};
+        // ข้อมูลนักเรียนในรูปแบบ JSON
+        const studentData = [
+            { "รหัสประจำตัวนักเรียน": "12345", "ชื่อ-สกุล": "สมชาย ใจดี", "คะแนนที่ได้": 80 },
+            { "รหัสประจำตัวนักเรียน": "67890", "ชื่อ-สกุล": "สมหญิง ใจงาม", "คะแนนที่ได้": 75 },
+            { "รหัสประจำตัวนักเรียน": "11223", "ชื่อ-สกุล": "สายรุ้ง แสงสว่าง", "คะแนนที่ได้": 90 },
+        ];
 
-        // Load Excel file
-        function loadExcel() {
-            const filePath = 'ข้อมูลนักเรียน.xlsx'; // ชื่อไฟล์ Excel
-            fetch(filePath)
-                .then(response => response.arrayBuffer())
-                .then(data => {
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    studentData = XLSX.utils.sheet_to_json(firstSheet);
-                })
-                .catch(error => console.error('Error loading Excel:', error));
-        }
-
-        // Search for student score
         document.getElementById('studentForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const studentId = document.getElementById('studentId').value;
+            const studentId = document.getElementById('studentId').value.trim();
             const resultDiv = document.getElementById('result');
+            const contactButton = document.getElementById('contactTeacher');
             resultDiv.innerHTML = '';
+            contactButton.style.display = 'none';
 
             if (studentId) {
-                const student = studentData.find(s => s['รหัสประจำตัวนักเรียน'] === studentId);
+                const student = studentData.find(s => String(s['รหัสประจำตัวนักเรียน']).trim() === studentId);
                 if (student) {
                     resultDiv.innerHTML = `<p>ชื่อ-สกุล: ${student['ชื่อ-สกุล']}</p><p>คะแนนที่ได้: ${student['คะแนนที่ได้']}</p>`;
+                    setTimeout(() => {
+                        alert('หากมีปัญหาติดขัดส่วนใด โปรดติดต่อครู');
+                        contactButton.style.display = 'inline-block';
+                    }, 3000);
                 } else {
                     resultDiv.innerHTML = '<p>ไม่พบข้อมูล</p>';
                 }
@@ -107,8 +117,10 @@
             }
         });
 
-        // Load the Excel data on page load
-        loadExcel();
+        document.getElementById('contactTeacher').addEventListener('click', function() {
+            window.location.href = "https://www.youtube.com/watch?v=aeO-gmr-tUQ";
+            alert('ฟังก์ชันการติดต่อยังไม่ถูกตั้งค่า');
+        });
     </script>
 </body>
 </html>
