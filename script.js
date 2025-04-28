@@ -1,106 +1,148 @@
-body {
-  font-family: 'Kanit', sans-serif;
-  background-color: #f7f7f7;
-  text-align: center;
-  margin: 0;
-  padding: 0;
+let caseData = JSON.parse(localStorage.getItem('caseData')) || [];
+let editingIndex = null;
+
+function showForm() {
+  hideAll();
+  document.getElementById('caseFormSection').style.display = 'block';
 }
 
-.logo {
-  margin-top: 20px;
+function showSearch() {
+  hideAll();
+  document.getElementById('searchSection').style.display = 'block';
+  searchCase();
 }
 
-h1, h2 {
-  color: #800000;
+function backToMenu() {
+  hideAll();
+  document.getElementById('mainMenu').style.display = 'flex';
+  document.getElementById('caseForm').reset();
+  editingIndex = null;
 }
 
-#mainMenu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 30px;
-  gap: 20px;
+function hideAll() {
+  document.getElementById('mainMenu').style.display = 'none';
+  document.getElementById('caseFormSection').style.display = 'none';
+  document.getElementById('searchSection').style.display = 'none';
 }
 
-button {
-  background-color: #800000;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: background-color 0.3s;
+document.getElementById('caseForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const newCase = {
+    caseNumber: document.getElementById('caseNumber').value,
+    suspectName: document.getElementById('suspectName').value,
+    blackCase: document.getElementById('blackCase').value,
+    redCase: document.getElementById('redCase').value,
+    court: document.getElementById('court').value,
+    decisionDate: document.getElementById('decisionDate').value,
+    judge: document.getElementById('judge').value,
+    charge: document.getElementById('charge').value,
+    verdict: document.getElementById('verdict').value
+  };
+
+  if (editingIndex !== null) {
+    caseData[editingIndex] = newCase;
+    alert('แก้ไขข้อมูลเรียบร้อย');
+  } else {
+    caseData.push(newCase);
+    alert('บันทึกข้อมูลเรียบร้อย');
+  }
+
+  localStorage.setItem('caseData', JSON.stringify(caseData));
+  this.reset();
+  editingIndex = null;
+  backToMenu();
+});
+
+function searchCase() {
+  const keyword = document.getElementById('searchInput').value.toLowerCase();
+  const tbody = document.getElementById('caseBody');
+  tbody.innerHTML = '';
+  caseData.forEach((c, index) => {
+    if (Object.values(c).some(val => val.toLowerCase().includes(keyword))) {
+      const shortVerdict = c.verdict.length > 50 ? c.verdict.substring(0, 50) + "..." : c.verdict;
+      const row = `<tr>
+        <td>${c.caseNumber}</td>
+        <td>${c.suspectName}</td>
+        <td>${c.blackCase}</td>
+        <td>${c.redCase}</td>
+        <td>${c.court}</td>
+        <td>${c.decisionDate}</td>
+        <td>${c.judge}</td>
+        <td>${c.charge}</td>
+        <td>
+          ${shortVerdict}
+          ${c.verdict.length > 50 ? `<br><button class="view-btn" onclick="viewFullVerdict('${c.verdict.replace(/'/g, "\\'")}')">ดูรายละเอียด</button>` : ''}
+        </td>
+        <td><button class="edit-btn" onclick="editCase(${index})">แก้ไข</button></td>
+        <td><button class="delete-btn" onclick="deleteCase(${index})">ลบ</button></td>
+      </tr>`;
+      tbody.innerHTML += row;
+    }
+  });
 }
 
-button:hover {
-  background-color: #660000;
+function viewFullVerdict(fullText) {
+  alert("คำพิพากษาฉบับเต็ม:\n\n" + fullText);
 }
 
-input, textarea {
-  display: block;
-  width: 80%;
-  margin: 10px auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+function editCase(index) {
+  const id = prompt("กรุณากรอก ID:");
+  const password = prompt("กรุณากรอก Password:");
+  if (id === "42A604" && password === "12345678") {
+    const c = caseData[index];
+    document.getElementById('caseNumber').value = c.caseNumber;
+    document.getElementById('suspectName').value = c.suspectName;
+    document.getElementById('blackCase').value = c.blackCase;
+    document.getElementById('redCase').value = c.redCase;
+    document.getElementById('court').value = c.court;
+    document.getElementById('decisionDate').value = c.decisionDate;
+    document.getElementById('judge').value = c.judge;
+    document.getElementById('charge').value = c.charge;
+    document.getElementById('verdict').value = c.verdict;
+    editingIndex = index;
+    showForm();
+  } else {
+    alert("ID หรือ Password ไม่ถูกต้อง!");
+  }
 }
 
-textarea {
-  height: 100px;
+function deleteCase(index) {
+  const id = prompt("กรุณากรอก ID:");
+  const password = prompt("กรุณากรอก Password:");
+  if (id === "42A604" && password === "12345678") {
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลคดีนี้?')) {
+      caseData.splice(index, 1);
+      localStorage.setItem('caseData', JSON.stringify(caseData));
+      alert('ลบข้อมูลสำเร็จ');
+      searchCase();
+    } else {
+      alert('ยกเลิกการลบข้อมูล');
+    }
+  } else {
+    alert("ID หรือ Password ไม่ถูกต้อง!");
+  }
 }
 
-table {
-  width: 90%;
-  margin: 20px auto;
-  border-collapse: collapse;
-}
+function downloadExcel() {
+  if (caseData.length === 0) {
+    alert('ยังไม่มีข้อมูล');
+    return;
+  }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ccc;
-}
+  let csvContent = "\uFEFF"; // เพิ่ม BOM
+  csvContent += "หมายเลขคดี,ชื่อผู้ต้องหา,เลขคดีดำ,เลขคดีแดง,ศาล,วันตัดสิน,ผู้พิพากษา,ข้อหา,คำพิพากษา\n";
 
-th {
-  background-color: #800000;
-  color: white;
-}
+  caseData.forEach(c => {
+    csvContent += `="${c.caseNumber}",${c.suspectName},${c.blackCase},${c.redCase},${c.court},${c.decisionDate},${c.judge},${c.charge},"${c.verdict.replace(/"/g, '""')}"\n`;
+  });
 
-.button-group {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.edit-btn, .delete-btn, .view-btn {
-  background-color: #0066cc;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.3s;
-}
-
-.edit-btn:hover {
-  background-color: #004d00;
-}
-
-.delete-btn {
-  background-color: #cc0000;
-}
-
-.delete-btn:hover {
-  background-color: #990000;
-}
-
-.view-btn {
-  background-color: #0066cc;
-  margin-top: 5px;
-}
-
-.view-btn:hover {
-  background-color: #004d99;
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'case_data.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
