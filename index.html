@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดเก็บผลคดี โรงพัก</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดเก็บผลคดี โรงพัก</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>ระบบจัดเก็บและค้นหาผลคดี สภ.หว้านใหญ่</h1>
+  <h1>ระบบจัดเก็บและค้นหาผลคดี สภ.หว้านใหญ่</h1>
 
-    <div id="mainMenu">
-        <button onclick="showForm()">บันทึกผลคดี</button>
-        <button onclick="showSearch()">ค้นหาผลคดี</button>
-        <button onclick="downloadExcel()">ส่งออกข้อมูล Excel</button>
+  <div id="mainMenu">
+    <button onclick="showForm()">บันทึกผลคดี</button>
+    <button onclick="showSearch()">ค้นหาผลคดี</button>
+    <button onclick="downloadExcel()">ส่งออกข้อมูล Excel</button>
+  </div>
+
+  <section id="caseFormSection" style="display:none;">
+    <h2>บันทึก/แก้ไขผลคดี</h2>
+    <form id="caseForm">
+      <input type="text" id="caseNumber" placeholder="หมายเลขคดี" required>
+      <input type="text" id="suspectName" placeholder="ชื่อผู้ต้องหา" required>
+      <input type="text" id="blackCase" placeholder="เลขคดีดำ" required>
+      <input type="text" id="redCase" placeholder="เลขคดีแดง" required>
+      <input type="text" id="court" placeholder="ศาลที่ตัดสิน" required>
+      <input type="date" id="decisionDate" required>
+      <input type="text" id="judge" placeholder="ผู้พิพากษา" required>
+      <input type="text" id="charge" placeholder="ข้อหา" required>
+      <textarea id="verdict" placeholder="คำพิพากษา" required></textarea>
+
+      <div class="button-group">
+        <button type="submit">บันทึกข้อมูล</button>
+        <button type="button" onclick="backToMenu()">ยกเลิก</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="searchSection" style="display:none;">
+    <h2>ค้นหาผลคดี</h2>
+    <input type="text" id="searchInput" placeholder="ค้นหาข้อมูล..." oninput="searchCase()">
+
+    <div class="button-group">
+      <button onclick="backToMenu()">ย้อนกลับ</button>
     </div>
 
-    <section id="caseFormSection" style="display:none;">
-        <h2>บันทึก/แก้ไขผลคดี</h2>
-        <form id="caseForm">
-            <input type="text" id="caseNumber" placeholder="หมายเลขคดี" required>
-            <input type="text" id="suspectName" placeholder="ชื่อผู้ต้องหา" required>
-            <input type="text" id="blackCase" placeholder="เลขคดีดำ" required>
-            <input type="text" id="redCase" placeholder="เลขคดีแดง" required>
-            <input type="text" id="court" placeholder="ศาลที่ตัดสิน" required>
-            <input type="date" id="decisionDate" required>
-            <input type="text" id="judge" placeholder="ผู้พิพากษา" required>
-            <input type="text" id="charge" placeholder="ข้อหา" required>
-            <textarea id="verdict" placeholder="คำพิพากษา" required></textarea>
+    <table>
+      <thead>
+        <tr>
+          <th>หมายเลขคดี</th>
+          <th>ชื่อผู้ต้องหา</th>
+          <th>เลขคดีดำ</th>
+          <th>เลขคดีแดง</th>
+          <th>ศาล</th>
+          <th>วันตัดสิน</th>
+          <th>ผู้พิพากษา</th>
+          <th>ข้อหา</th>
+          <th>คำพิพากษา</th>
+          <th>แก้ไข</th>
+          <th>ลบ</th>
+        </tr>
+      </thead>
+      <tbody id="caseBody"></tbody>
+    </table>
+  </section>
 
-            <div class="button-group">
-                <button type="submit">บันทึกข้อมูล</button>
-                <button type="button" onclick="backToMenu()">ยกเลิก</button>
-            </div>
-        </form>
-    </section>
-
-    <section id="searchSection" style="display:none;">
-        <h2>ค้นหาผลคดี</h2>
-        <input type="text" id="searchInput" placeholder="ค้นหาข้อมูล..." oninput="searchCase()">
-
-        <div class="button-group">
-            <button onclick="backToMenu()">ย้อนกลับ</button>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>หมายเลขคดี</th>
-                    <th>ชื่อผู้ต้องหา</th>
-                    <th>เลขคดีดำ</th>
-                    <th>เลขคดีแดง</th>
-                    <th>ศาล</th>
-                    <th>วันตัดสิน</th>
-                    <th>ผู้พิพากษา</th>
-                    <th>ข้อหา</th>
-                    <th>คำพิพากษา</th>
-                    <th>แก้ไข</th>
-                    <th>ลบ</th>
-                </tr>
-            </thead>
-            <tbody id="caseBody"></tbody>
-        </table>
-    </section>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
