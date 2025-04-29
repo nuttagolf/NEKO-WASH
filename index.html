@@ -2,322 +2,919 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ระบบจัดเก็บผลคดี</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดเก็บผลคดี | สภ.หว้านใหญ่ จว.มุกดาหาร</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <style>
+    :root {
+      --primary-color: #1a5f7a;
+      --secondary-color: #57c5b6;
+      --accent-color: #159895;
+      --light-color: #f9f9f9;
+      --dark-color: #333;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --success-color: #28a745;
+    }
+    
+    * {
+      box-sizing: border-box;
+      font-family: 'Sarabun', sans-serif;
+    }
+    
     body {
-      font-family: 'Kanit', sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f4f4f4;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
     }
-    h1 {
-      text-align: center;
-      color: #800000;
-    }
+    
     .container {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
     }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background: #800000;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      margin: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #a00000;
-    }
-    .center {
+    
+    .header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 20px 0;
       text-align: center;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
     }
-    .case {
-      background: #eee;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
+    
+    .header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
     }
-    .attachments img {
-      max-width: 100px;
-      margin: 5px;
+    
+    .header .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    
+    .card-title {
+      color: var(--primary-color);
+      font-size: 1.4rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(87, 197, 182, 0.2);
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      text-decoration: none;
     }
-    .hidden {
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #124b63;
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #45b5a8;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .nav-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .nav-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .nav-tab.active {
+      border-bottom-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .nav-tab:hover:not(.active) {
+      border-bottom-color: #ddd;
+    }
+    
+    .tab-content {
       display: none;
     }
-    .button-group {
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .case-item {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--secondary-color);
+      transition: transform 0.2s;
+    }
+    
+    .case-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .case-header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .case-title {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    
+    .case-meta {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .case-charge {
+      margin: 5px 0;
+      font-weight: 500;
+    }
+    
+    .attachments {
+      display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .attachment-item {
+      width: 100px;
+      height: 100px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .attachment-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 25px;
+      position: relative;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--dark-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.success {
+      background-color: var(--success-color);
+    }
+    
+    .toast.error {
+      background-color: var(--danger-color);
+    }
+    
+    .toast.warning {
+      background-color: var(--warning-color);
+      color: var(--dark-color);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .nav-tabs {
+        flex-wrap: wrap;
+      }
+      
+      .nav-tab {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <h1>ระบบจัดเก็บผลคดี สภ.หว้านใหญ่ จว.มุกดาหาร</h1>
-
-  <div class="button-group">
-    <button onclick="showSection('add')">บันทึกผลคดี</button>
-    <button onclick="showSection('search')">ค้นหาผลคดี</button>
-    <button onclick="exportExcel()">ส่งออก Excel</button>
-  </div>
-
-  <div id="addSection" class="hidden">
-    <h2>บันทึกผลคดี</h2>
-
-    <input type="text" id="accusedName" placeholder="ชื่อผู้ต้องหา">
-    <input type="text" id="caseNumber" placeholder="หมายเลขคดี (เช่น 1/2568)">
-    <input type="text" id="court" placeholder="ศาลที่ตัดสิน">
-    <input type="text" id="charge" placeholder="ข้อหา">
-    <input type="text" id="judge" placeholder="ผู้พิพากษา">
-    <textarea id="judgment" placeholder="คำพิพากษา"></textarea>
-    <input type="date" id="decisionDate">
-    <input type="text" id="blackCaseNumber" placeholder="เลขคดีดำ">
-    <input type="text" id="redCaseNumber" placeholder="เลขคดีแดง">
-
-    <h3>แนบไฟล์หลักฐาน</h3>
-    <input type="file" id="attachments" multiple accept="image/*">
-
-    <h3>ถอดข้อความจากภาพ (OCR)</h3>
-    <input type="file" id="ocrImage" accept="image/*">
-    <button onclick="extractTextFromUpload()">ถอดข้อความ</button>
-    <textarea id="ocrResult" placeholder="ข้อความที่ถอดได้จากภาพ" rows="5"></textarea>
-
-    <div class="center">
-      <button onclick="saveCase()">บันทึก</button>
+  <div class="header">
+    <div class="container">
+      <h1>ระบบจัดเก็บผลคดี</h1>
+      <div class="subtitle">สถานีตำรวจภูธรหว้านใหญ่ จังหวัดมุกดาหาร</div>
     </div>
   </div>
-
-  <div id="searchSection" class="hidden">
-    <h2>ค้นหาผลคดี</h2>
-    <input type="text" id="searchKeyword" placeholder="ค้นหาด้วยชื่อผู้ต้องหา, หมายเลขคดี, ข้อหา..." oninput="searchCases()">
-    <div id="caseList"></div>
-    <div class="center">
-      <button onclick="showSection('main')">ย้อนกลับ</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal สำหรับดูรายละเอียด -->
-<div id="detailModal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);overflow:auto;">
-  <div style="background:white;margin:5% auto;padding:20px;width:90%;max-width:800px;border-radius:10px;position:relative;">
-    <span onclick="closeDetail()" style="position:absolute;top:10px;right:20px;cursor:pointer;font-size:24px;">&times;</span>
-    <div id="detailContent"></div>
-  </div>
-</div>
-
-<script>
-let editingIndex = null;
-
-function showSection(section) {
-  document.getElementById('addSection').classList.add('hidden');
-  document.getElementById('searchSection').classList.add('hidden');
-  if (section === 'add') document.getElementById('addSection').classList.remove('hidden');
-  if (section === 'search') {
-    document.getElementById('searchSection').classList.remove('hidden');
-    searchCases();
-  }
-}
-
-function saveCase() {
-  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-  const attachments = document.getElementById('attachments').files;
-  let files = [];
-  for (let file of attachments) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      files.push({ name: file.name, data: e.target.result });
-      if (files.length === attachments.length) {
-        let newCase = collectCaseData(files);
-        cases.push(newCase);
-        localStorage.setItem('cases', JSON.stringify(cases));
-        alert('บันทึกสำเร็จ');
-        resetForm();
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-  if (attachments.length === 0) {
-    let newCase = collectCaseData([]);
-    cases.push(newCase);
-    localStorage.setItem('cases', JSON.stringify(cases));
-    alert('บันทึกสำเร็จ');
-    resetForm();
-  }
-}
-
-function collectCaseData(attachments) {
-  return {
-    accusedName: document.getElementById('accusedName').value,
-    caseNumber: document.getElementById('caseNumber').value,
-    court: document.getElementById('court').value,
-    charge: document.getElementById('charge').value,
-    judge: document.getElementById('judge').value,
-    judgment: document.getElementById('judgment').value,
-    decisionDate: document.getElementById('decisionDate').value,
-    blackCaseNumber: document.getElementById('blackCaseNumber').value,
-    redCaseNumber: document.getElementById('redCaseNumber').value,
-    attachments: attachments
-  };
-}
-
-function resetForm() {
-  document.getElementById('addSection').querySelectorAll('input,textarea').forEach(e => e.value = '');
-  document.getElementById('attachments').value = '';
-}
-
-function searchCases() {
-  let keyword = document.getElementById('searchKeyword').value.toLowerCase();
-  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-  let list = document.getElementById('caseList');
-  list.innerHTML = '';
-  cases.forEach((c, index) => {
-    if (c.accusedName.toLowerCase().includes(keyword) || c.caseNumber.toLowerCase().includes(keyword) || c.charge.toLowerCase().includes(keyword)) {
-      let div = document.createElement('div');
-      div.className = 'case';
-      div.innerHTML = `
-        <strong>${c.accusedName}</strong> | หมายเลขคดี: ${c.caseNumber}<br>
-        ${c.charge}<br>
-        <button onclick="viewDetail(${index})">ดูรายละเอียด</button>
-        <button onclick="editCase(${index})">แก้ไข</button>
-        <button onclick="deleteCase(${index})">ลบ</button>
-      `;
-      list.appendChild(div);
-    }
-  });
-}
-
-function viewDetail(index) {
-  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-  let c = cases[index];
-  let detail = `
-    <h2>รายละเอียดผลคดี</h2>
-    <p><strong>ชื่อผู้ต้องหา:</strong> ${c.accusedName}</p>
-    <p><strong>หมายเลขคดี:</strong> ${c.caseNumber}</p>
-    <p><strong>ศาล:</strong> ${c.court}</p>
-    <p><strong>ข้อหา:</strong> ${c.charge}</p>
-    <p><strong>ผู้พิพากษา:</strong> ${c.judge}</p>
-    <p><strong>คำพิพากษา:</strong> ${c.judgment}</p>
-    <p><strong>วันที่ตัดสิน:</strong> ${c.decisionDate}</p>
-    <p><strong>เลขคดีดำ:</strong> ${c.blackCaseNumber}</p>
-    <p><strong>เลขคดีแดง:</strong> ${c.redCaseNumber}</p>
-    <div class="attachments">
-      <h3>ไฟล์แนบ:</h3>
-      ${c.attachments.map(att => `
-        <div>
-          <img src="${att.data}" onclick="extractText('${att.data}')">
-          <p>${att.name}</p>
+  
+  <div class="container">
+    <div class="card">
+      <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showTab('add')">
+          <i class="fas fa-plus-circle"></i> บันทึกผลคดี
         </div>
-      `).join('')}
+        <div class="nav-tab" onclick="showTab('search')">
+          <i class="fas fa-search"></i> ค้นหาผลคดี
+        </div>
+        <div class="nav-tab" onclick="exportExcel()">
+          <i class="fas fa-file-excel"></i> ส่งออก Excel
+        </div>
+      </div>
+      
+      <div id="addTab" class="tab-content active">
+        <h2 class="card-title">บันทึกผลคดีใหม่</h2>
+        
+        <div class="form-group">
+          <label class="form-label">ชื่อผู้ต้องหา</label>
+          <input type="text" id="accusedName" class="form-control" placeholder="กรอกชื่อผู้ต้องหา">
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">หมายเลขคดี</label>
+              <input type="text" id="caseNumber" class="form-control" placeholder="เช่น 1/2568">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">ศาลที่ตัดสิน</label>
+              <input type="text" id="court" class="form-control" placeholder="ศาลจังหวัด...">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">ข้อหา</label>
+          <input type="text" id="charge" class="form-control" placeholder="กรอกข้อหา">
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">ผู้พิพากษา</label>
+              <input type="text" id="judge" class="form-control" placeholder="ชื่อผู้พิพากษา">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">วันที่ตัดสิน</label>
+              <input type="date" id="decisionDate" class="form-control">
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">เลขคดีดำ</label>
+              <input type="text" id="blackCaseNumber" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">เลขคดีแดง</label>
+              <input type="text" id="redCaseNumber" class="form-control">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">คำพิพากษา</label>
+          <textarea id="judgment" class="form-control" rows="4" placeholder="รายละเอียดคำพิพากษา"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">แนบไฟล์หลักฐาน</label>
+          <input type="file" id="attachments" class="form-control" multiple accept="image/*, .pdf">
+          <small class="text-muted">สามารถอัพโหลดได้หลายไฟล์ (รูปภาพหรือ PDF)</small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">ถอดข้อความจากภาพ (OCR)</label>
+          <div class="input-group">
+            <input type="file" id="ocrImage" class="form-control" accept="image/*">
+            <button class="btn btn-secondary" onclick="extractTextFromUpload()">
+              <i class="fas fa-text"></i> ถอดข้อความ
+            </button>
+          </div>
+          <textarea id="ocrResult" class="form-control mt-2" rows="3" placeholder="ข้อความที่ถอดได้จากภาพ"></textarea>
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="saveCase()">
+            <i class="fas fa-save"></i> บันทึกข้อมูล
+          </button>
+          <button class="btn btn-danger" onclick="resetForm()">
+            <i class="fas fa-undo"></i> ล้างแบบฟอร์ม
+          </button>
+        </div>
+      </div>
+      
+      <div id="searchTab" class="tab-content">
+        <h2 class="card-title">ค้นหาผลคดี</h2>
+        
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" id="searchKeyword" class="form-control" placeholder="ค้นหาด้วยชื่อผู้ต้องหา, หมายเลขคดี, ข้อหา..." oninput="searchCases()">
+            <button class="btn btn-secondary">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div id="caseList"></div>
+      </div>
     </div>
-  `;
-  document.getElementById('detailContent').innerHTML = detail;
-  document.getElementById('detailModal').classList.remove('hidden');
-}
-
-function closeDetail() {
-  document.getElementById('detailModal').classList.add('hidden');
-}
-
-function extractText(dataUrl) {
-  Tesseract.recognize(
-    dataUrl,
-    'tha+eng', 
-    {
-      logger: m => console.log(m),
-      tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK
-    }
-  ).then(({ data: { text } }) => {
-    alert('ข้อความจากภาพ:\n' + text.trim());
-  });
-}
-
-function extractTextFromUpload() {
-  const file = document.getElementById('ocrImage').files[0];
-  if (!file) {
-    alert('กรุณาเลือกรูปภาพก่อน');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    Tesseract.recognize(
-      e.target.result,
-      'tha+eng',
-      {
-        logger: m => console.log(m),
-        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK
+  </div>
+  
+  <!-- Modal แสดงรายละเอียด -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeDetail()">&times;</span>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  
+  <script>
+    // ตัวแปร global
+    let editingIndex = null;
+    const PASSWORD = "12345678"; // ควรเก็บใน backend จริงๆ
+    
+    // ฟังก์ชันแสดง Tab
+    function showTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      document.querySelector(`.nav-tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(`${tabId}Tab`).classList.add('active');
+      
+      if (tabId === 'search') {
+        searchCases();
       }
-    ).then(({ data: { text } }) => {
-      document.getElementById('ocrResult').value = text.trim();
-    }).catch(err => {
-      console.error(err);
-      alert('เกิดข้อผิดพลาดในการถอดข้อความ');
+    }
+    
+    // ฟังก์ชันแสดง Toast
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast show ${type}`;
+      
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+    
+    // ฟังก์ชันบันทึกคดี
+    async function saveCase() {
+      // ตรวจสอบข้อมูลที่จำเป็น
+      if (!validateForm()) {
+        return;
+      }
+      
+      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      const attachments = document.getElementById('attachments').files;
+      let files = [];
+      
+      try {
+        if (attachments.length > 0) {
+          for (let file of attachments) {
+            const fileData = await readFileAsDataURL(file);
+            files.push({ name: file.name, data: fileData });
+          }
+        }
+        
+        let newCase = collectCaseData(files);
+        
+        if (editingIndex !== null) {
+          cases[editingIndex] = newCase;
+          showToast('แก้ไขข้อมูลคดีเรียบร้อยแล้ว', 'success');
+        } else {
+          cases.push(newCase);
+          showToast('บันทึกข้อมูลคดีใหม่เรียบร้อย', 'success');
+        }
+        
+        localStorage.setItem('cases', JSON.stringify(cases));
+        resetForm();
+        editingIndex = null;
+        
+      } catch (error) {
+        console.error('Error saving case:', error);
+        showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+      }
+    }
+    
+    // ฟังก์ชันอ่านไฟล์เป็น Data URL
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    // ฟังก์ชันตรวจสอบฟอร์ม
+    function validateForm() {
+      const requiredFields = [
+        'accusedName', 'caseNumber', 'court', 'charge', 
+        'judge', 'judgment', 'decisionDate'
+      ];
+      
+      for (let fieldId of requiredFields) {
+        const value = document.getElementById(fieldId).value.trim();
+        if (!value) {
+          showToast(`กรุณากรอกข้อมูลในช่อง ${document.querySelector(`label[for="${fieldId}"]`).textContent}`, 'warning');
+          document.getElementById(fieldId).focus();
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    // ฟังก์ชันรวบรวมข้อมูลคดี
+    function collectCaseData(attachments) {
+      return {
+        accusedName: document.getElementById('accusedName').value.trim(),
+        caseNumber: document.getElementById('caseNumber').value.trim(),
+        court: document.getElementById('court').value.trim(),
+        charge: document.getElementById('charge').value.trim(),
+        judge: document.getElementById('judge').value.trim(),
+        judgment: document.getElementById('judgment').value.trim(),
+        decisionDate: document.getElementById('decisionDate').value,
+        blackCaseNumber: document.getElementById('blackCaseNumber').value.trim(),
+        redCaseNumber: document.getElementById('redCaseNumber').value.trim(),
+        attachments: attachments,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+    
+    // ฟังก์ชันรีเซ็ตฟอร์ม
+    function resetForm() {
+      document.querySelectorAll('#addTab input, #addTab textarea').forEach(el => {
+        el.value = '';
+      });
+      document.getElementById('attachments').value = '';
+      document.getElementById('ocrImage').value = '';
+    }
+    
+    // ฟังก์ชันค้นหาคดี
+    function searchCases() {
+      const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      const list = document.getElementById('caseList');
+      
+      list.innerHTML = '';
+      
+      if (cases.length === 0) {
+        list.innerHTML = '<div class="text-center py-4">ไม่พบข้อมูลคดี</div>';
+        return;
+      }
+      
+      const filteredCases = keyword 
+        ? cases.filter(c => 
+            c.accusedName.toLowerCase().includes(keyword) || 
+            c.caseNumber.toLowerCase().includes(keyword) || 
+            c.charge.toLowerCase().includes(keyword) ||
+            c.blackCaseNumber.toLowerCase().includes(keyword) ||
+            c.redCaseNumber.toLowerCase().includes(keyword)
+          )
+        : cases;
+      
+      if (filteredCases.length === 0) {
+        list.innerHTML = '<div class="text-center py-4">ไม่พบผลลัพธ์ที่ตรงกับการค้นหา</div>';
+        return;
+      }
+      
+      filteredCases.forEach((c, index) => {
+        const caseItem = document.createElement('div');
+        caseItem.className = 'case-item';
+        
+        caseItem.innerHTML = `
+          <div class="case-header">
+            <h3 class="case-title">${c.accusedName}</h3>
+            <div class="case-meta">${formatDate(c.decisionDate)}</div>
+          </div>
+          <div class="case-charge">${c.charge}</div>
+          <div class="case-meta">หมายเลขคดี: ${c.caseNumber}</div>
+          <div class="btn-group mt-2">
+            <button class="btn btn-sm btn-primary" onclick="viewDetail(${index})">
+              <i class="fas fa-eye"></i> ดูรายละเอียด
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="editCase(${index})">
+              <i class="fas fa-edit"></i> แก้ไข
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCase(${index})">
+              <i class="fas fa-trash"></i> ลบ
+            </button>
+          </div>
+        `;
+        
+        list.appendChild(caseItem);
+      });
+    }
+    
+    // ฟังก์ชันดูรายละเอียดคดี
+    function viewDetail(index) {
+      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      const c = cases[index];
+      
+      let detailHTML = `
+        <h2>รายละเอียดผลคดี</h2>
+        <div class="detail-section">
+          <h3>ข้อมูลพื้นฐาน</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>ชื่อผู้ต้องหา:</label>
+              <p>${c.accusedName}</p>
+            </div>
+            <div class="detail-item">
+              <label>หมายเลขคดี:</label>
+              <p>${c.caseNumber}</p>
+            </div>
+            <div class="detail-item">
+              <label>ศาลที่ตัดสิน:</label>
+              <p>${c.court}</p>
+            </div>
+            <div class="detail-item">
+              <label>วันที่ตัดสิน:</label>
+              <p>${formatDate(c.decisionDate)}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3>ข้อมูลคดี</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>ข้อหา:</label>
+              <p>${c.charge}</p>
+            </div>
+            <div class="detail-item">
+              <label>ผู้พิพากษา:</label>
+              <p>${c.judge}</p>
+            </div>
+            <div class="detail-item">
+              <label>เลขคดีดำ:</label>
+              <p>${c.blackCaseNumber || '-'}</p>
+            </div>
+            <div class="detail-item">
+              <label>เลขคดีแดง:</label>
+              <p>${c.redCaseNumber || '-'}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3>คำพิพากษา</h3>
+          <div class="judgment-text">${c.judgment.replace(/\n/g, '<br>')}</div>
+        </div>
+      `;
+      
+      if (c.attachments && c.attachments.length > 0) {
+        detailHTML += `
+          <div class="detail-section">
+            <h3>ไฟล์แนบ (${c.attachments.length})</h3>
+            <div class="attachments">
+              ${c.attachments.map(att => `
+                <div class="attachment-item" onclick="extractText('${att.data}')">
+                  ${att.name.endsWith('.pdf') ? 
+                    '<div class="pdf-thumbnail"><i class="fas fa-file-pdf"></i><span>PDF</span></div>' : 
+                    `<img src="${att.data}" alt="${att.name}">`}
+                  <div class="attachment-name">${att.name}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('detailContent').innerHTML = detailHTML;
+      document.getElementById('detailModal').classList.add('active');
+    }
+    
+    // ฟังก์ชันปิด Modal
+    function closeDetail() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+    
+    // ฟังก์ชันถอดข้อความจากภาพ
+    function extractText(dataUrl) {
+      showToast('กำลังประมวลผลภาพ...', 'warning');
+      
+      Tesseract.recognize(
+        dataUrl,
+        'tha+eng', 
+        {
+          logger: m => console.log(m),
+          tessedit_pageseg_mode: 6 // PSM.SINGLE_BLOCK
+        }
+      ).then(({ data: { text } }) => {
+        const extractedText = text.trim();
+        if (extractedText) {
+          document.getElementById('ocrResult').value = extractedText;
+          showToast('ถอดข้อความสำเร็จ', 'success');
+        } else {
+          showToast('ไม่พบข้อความในภาพ', 'warning');
+        }
+      }).catch(err => {
+        console.error('OCR Error:', err);
+        showToast('เกิดข้อผิดพลาดในการถอดข้อความ', 'error');
+      });
+    }
+    
+    // ฟังก์ชันถอดข้อความจากไฟล์ที่อัพโหลด
+    function extractTextFromUpload() {
+      const file = document.getElementById('ocrImage').files[0];
+      if (!file) {
+        showToast('กรุณาเลือกรูปภาพก่อน', 'warning');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        extractText(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    // ฟังก์ชันแก้ไขคดี
+    function editCase(index) {
+      const pass = prompt("กรุณากรอกรหัสผ่าน:");
+      if (pass !== PASSWORD) { 
+        showToast('รหัสผ่านไม่ถูกต้อง', 'error');
+        return; 
+      }
+      
+      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      const c = cases[index];
+      
+      // เติมข้อมูลลงในฟอร์ม
+      document.getElementById('accusedName').value = c.accusedName;
+      document.getElementById('caseNumber').value = c.caseNumber;
+      document.getElementById('court').value = c.court;
+      document.getElementById('charge').value = c.charge;
+      document.getElementById('judge').value = c.judge;
+      document.getElementById('judgment').value = c.judgment;
+      document.getElementById('decisionDate').value = c.decisionDate;
+      document.getElementById('blackCaseNumber').value = c.blackCaseNumber || '';
+      document.getElementById('redCaseNumber').value = c.redCaseNumber || '';
+      
+      editingIndex = index;
+      showTab('add');
+      showToast('กำลังแก้ไขคดี... กรอกข้อมูลและกดบันทึก', 'warning');
+    }
+    
+    // ฟังก์ชันลบคดี
+    function deleteCase(index) {
+      const pass = prompt("กรุณากรอกรหัสผ่าน:");
+      if (pass !== PASSWORD) { 
+        showToast('รหัสผ่านไม่ถูกต้อง', 'error');
+        return; 
+      }
+      
+      if (!confirm('ยืนยันการลบข้อมูลคดีนี้?')) {
+        return;
+      }
+      
+      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      cases.splice(index, 1);
+      localStorage.setItem('cases', JSON.stringify(cases));
+      searchCases();
+      showToast('ลบข้อมูลคดีเรียบร้อย', 'success');
+    }
+    
+    // ฟังก์ชันส่งออก Excel
+    function exportExcel() {
+      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+      
+      if (cases.length === 0) {
+        showToast('ไม่มีข้อมูลที่จะส่งออก', 'warning');
+        return;
+      }
+      
+      // กำหนดหัวข้อคอลัมน์
+      const headers = [
+        "ลำดับ", "ชื่อผู้ต้องหา", "หมายเลขคดี", "ศาลที่ตัดสิน", 
+        "ข้อหา", "ผู้พิพากษา", "วันที่ตัดสิน", "เลขคดีดำ", 
+        "เลขคดีแดง", "วันที่บันทึก", "วันที่แก้ไข"
+      ];
+      
+      // เตรียมข้อมูล
+      const data = cases.map((c, i) => [
+        i + 1,
+        c.accusedName,
+        c.caseNumber,
+        c.court,
+        c.charge,
+        c.judge,
+        formatDate(c.decisionDate),
+        c.blackCaseNumber || '-',
+        c.redCaseNumber || '-',
+        formatDate(c.createdAt),
+        formatDate(c.updatedAt)
+      ]);
+      
+      // สร้างเวิร์กบุ๊ก
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+      
+      // ปรับความกว้างคอลัมน์
+      ws['!cols'] = [
+        { wch: 5 },  // ลำดับ
+        { wch: 25 }, // ชื่อผู้ต้องหา
+        { wch: 15 }, // หมายเลขคดี
+        { wch: 20 }, // ศาลที่ตัดสิน
+        { wch: 30 }, // ข้อหา
+        { wch: 20 }, // ผู้พิพากษา
+        { wch: 12 }, // วันที่ตัดสิน
+        { wch: 12 }, // เลขคดีดำ
+        { wch: 12 }, // เลขคดีแดง
+        { wch: 15 }, // วันที่บันทึก
+        { wch: 15 }  // วันที่แก้ไข
+      ];
+      
+      XLSX.utils.book_append_sheet(wb, ws, "ผลคดี");
+      
+      // ส่งออกไฟล์
+      const date = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `ผลคดี_${date}.xlsx`);
+      showToast('ส่งออกไฟล์ Excel เรียบร้อย', 'success');
+    }
+    
+    // ฟังก์ชันจัดรูปแบบวันที่
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+      
+      return `${day}/${month}/${year}`;
+    }
+    
+    // โหลดข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
+    document.addEventListener('DOMContentLoaded', () => {
+      searchCases();
     });
-  };
-  reader.readAsDataURL(file);
-}
-
-function editCase(index) {
-  let pass = prompt("กรุณากรอกรหัสผ่าน");
-  if (pass !== "12345678") { alert("รหัสผ่านไม่ถูกต้อง"); return; }
-  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-  let c = cases[index];
-  document.getElementById('accusedName').value = c.accusedName;
-  document.getElementById('caseNumber').value = c.caseNumber;
-  document.getElementById('court').value = c.court;
-  document.getElementById('charge').value = c.charge;
-  document.getElementById('judge').value = c.judge;
-  document.getElementById('judgment').value = c.judgment;
-  document.getElementById('decisionDate').value = c.decisionDate;
-  document.getElementById('blackCaseNumber').value = c.blackCaseNumber;
-  document.getElementById('redCaseNumber').value = c.redCaseNumber;
-  editingIndex = index;
-  showSection('add');
-}
-
-function deleteCase(index) {
-  let id = prompt("กรุณากรอก ID (42A604)");
-  let pass = prompt("กรุณากรอกรหัสผ่าน");
-  if (id !== "42A604" || pass !== "12345678") { alert("ข้อมูลไม่ถูกต้อง"); return; }
-  if (confirm('ยืนยันการลบข้อมูลนี้?')) {
-    let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-    cases.splice(index, 1);
-    localStorage.setItem('cases', JSON.stringify(cases));
-    searchCases();
-    alert('ลบข้อมูลเรียบร้อย');
-  }
-}
-
-function exportExcel() {
-  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-  let ws_data = [["ชื่อผู้ต้องหา", "หมายเลขคดี", "ศาล", "ข้อหา", "ผู้พิพากษา", "คำพิพากษา", "วันที่ตัดสิน", "เลขคดีดำ", "เลขคดีแดง"]];
-  cases.forEach(c => {
-    ws_data.push([c.accusedName, c.caseNumber, c.court, c.charge, c.judge, c.judgment, c.decisionDate, c.blackCaseNumber, c.redCaseNumber]);
-  });
-  let wb = XLSX.utils.book_new();
-  let ws = XLSX.utils.aoa_to_sheet(ws_data);
-  XLSX.utils.book_append_sheet(wb, ws, "ผลคดี");
-  XLSX.writeFile(wb, "ผลคดี.xlsx");
-}
-</script>
-
+  </script>
 </body>
 </html>
