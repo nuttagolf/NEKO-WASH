@@ -2,69 +2,322 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดเก็บผลคดี โรงพัก</title>
-  <link rel="stylesheet" href="style.css">
+  <title>ระบบจัดเก็บผลคดี</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #800000;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #800000;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #a00000;
+    }
+    .center {
+      text-align: center;
+    }
+    .case {
+      background: #eee;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .attachments img {
+      max-width: 100px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>ระบบจัดเก็บและค้นหาผลคดี สภ.หว้านใหญ่</h1>
+<div class="container">
+  <h1>ระบบจัดเก็บผลคดี สภ.หว้านใหญ่ จว.มุกดาหาร</h1>
 
-  <div id="mainMenu">
-    <button onclick="showForm()">บันทึกผลคดี</button>
-    <button onclick="showSearch()">ค้นหาผลคดี</button>
-    <button onclick="downloadExcel()">ส่งออกข้อมูล Excel</button>
+  <div class="button-group">
+    <button onclick="showSection('add')">บันทึกผลคดี</button>
+    <button onclick="showSection('search')">ค้นหาผลคดี</button>
+    <button onclick="exportExcel()">ส่งออก Excel</button>
   </div>
 
-  <section id="caseFormSection" style="display:none;">
-    <h2>บันทึก/แก้ไขผลคดี</h2>
-    <form id="caseForm">
-      <input type="text" id="caseNumber" placeholder="หมายเลขคดี" required>
-      <input type="text" id="suspectName" placeholder="ชื่อผู้ต้องหา" required>
-      <input type="text" id="blackCase" placeholder="เลขคดีดำ" required>
-      <input type="text" id="redCase" placeholder="เลขคดีแดง" required>
-      <input type="text" id="court" placeholder="ศาลที่ตัดสิน" required>
-      <input type="date" id="decisionDate" required>
-      <input type="text" id="judge" placeholder="ผู้พิพากษา" required>
-      <input type="text" id="charge" placeholder="ข้อหา" required>
-      <textarea id="verdict" placeholder="คำพิพากษา" required></textarea>
+  <div id="addSection" class="hidden">
+    <h2>บันทึกผลคดี</h2>
 
-      <div class="button-group">
-        <button type="submit">บันทึกข้อมูล</button>
-        <button type="button" onclick="backToMenu()">ยกเลิก</button>
-      </div>
-    </form>
-  </section>
+    <input type="text" id="accusedName" placeholder="ชื่อผู้ต้องหา">
+    <input type="text" id="caseNumber" placeholder="หมายเลขคดี (เช่น 1/2568)">
+    <input type="text" id="court" placeholder="ศาลที่ตัดสิน">
+    <input type="text" id="charge" placeholder="ข้อหา">
+    <input type="text" id="judge" placeholder="ผู้พิพากษา">
+    <textarea id="judgment" placeholder="คำพิพากษา"></textarea>
+    <input type="date" id="decisionDate">
+    <input type="text" id="blackCaseNumber" placeholder="เลขคดีดำ">
+    <input type="text" id="redCaseNumber" placeholder="เลขคดีแดง">
 
-  <section id="searchSection" style="display:none;">
-    <h2>ค้นหาผลคดี</h2>
-    <input type="text" id="searchInput" placeholder="ค้นหาข้อมูล..." oninput="searchCase()">
+    <h3>แนบไฟล์หลักฐาน</h3>
+    <input type="file" id="attachments" multiple accept="image/*">
 
-    <div class="button-group">
-      <button onclick="backToMenu()">ย้อนกลับ</button>
+    <h3>ถอดข้อความจากภาพ (OCR)</h3>
+    <input type="file" id="ocrImage" accept="image/*">
+    <button onclick="extractTextFromUpload()">ถอดข้อความ</button>
+    <textarea id="ocrResult" placeholder="ข้อความที่ถอดได้จากภาพ" rows="5"></textarea>
+
+    <div class="center">
+      <button onclick="saveCase()">บันทึก</button>
     </div>
+  </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>หมายเลขคดี</th>
-          <th>ชื่อผู้ต้องหา</th>
-          <th>เลขคดีดำ</th>
-          <th>เลขคดีแดง</th>
-          <th>ศาล</th>
-          <th>วันตัดสิน</th>
-          <th>ผู้พิพากษา</th>
-          <th>ข้อหา</th>
-          <th>คำพิพากษา</th>
-          <th>แก้ไข</th>
-          <th>ลบ</th>
-        </tr>
-      </thead>
-      <tbody id="caseBody"></tbody>
-    </table>
-  </section>
+  <div id="searchSection" class="hidden">
+    <h2>ค้นหาผลคดี</h2>
+    <input type="text" id="searchKeyword" placeholder="ค้นหาด้วยชื่อผู้ต้องหา, หมายเลขคดี, ข้อหา..." oninput="searchCases()">
+    <div id="caseList"></div>
+    <div class="center">
+      <button onclick="showSection('main')">ย้อนกลับ</button>
+    </div>
+  </div>
+</div>
 
-  <script src="script.js"></script>
+<!-- Modal สำหรับดูรายละเอียด -->
+<div id="detailModal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);overflow:auto;">
+  <div style="background:white;margin:5% auto;padding:20px;width:90%;max-width:800px;border-radius:10px;position:relative;">
+    <span onclick="closeDetail()" style="position:absolute;top:10px;right:20px;cursor:pointer;font-size:24px;">&times;</span>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+let editingIndex = null;
+
+function showSection(section) {
+  document.getElementById('addSection').classList.add('hidden');
+  document.getElementById('searchSection').classList.add('hidden');
+  if (section === 'add') document.getElementById('addSection').classList.remove('hidden');
+  if (section === 'search') {
+    document.getElementById('searchSection').classList.remove('hidden');
+    searchCases();
+  }
+}
+
+function saveCase() {
+  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+  const attachments = document.getElementById('attachments').files;
+  let files = [];
+  for (let file of attachments) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      files.push({ name: file.name, data: e.target.result });
+      if (files.length === attachments.length) {
+        let newCase = collectCaseData(files);
+        cases.push(newCase);
+        localStorage.setItem('cases', JSON.stringify(cases));
+        alert('บันทึกสำเร็จ');
+        resetForm();
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  if (attachments.length === 0) {
+    let newCase = collectCaseData([]);
+    cases.push(newCase);
+    localStorage.setItem('cases', JSON.stringify(cases));
+    alert('บันทึกสำเร็จ');
+    resetForm();
+  }
+}
+
+function collectCaseData(attachments) {
+  return {
+    accusedName: document.getElementById('accusedName').value,
+    caseNumber: document.getElementById('caseNumber').value,
+    court: document.getElementById('court').value,
+    charge: document.getElementById('charge').value,
+    judge: document.getElementById('judge').value,
+    judgment: document.getElementById('judgment').value,
+    decisionDate: document.getElementById('decisionDate').value,
+    blackCaseNumber: document.getElementById('blackCaseNumber').value,
+    redCaseNumber: document.getElementById('redCaseNumber').value,
+    attachments: attachments
+  };
+}
+
+function resetForm() {
+  document.getElementById('addSection').querySelectorAll('input,textarea').forEach(e => e.value = '');
+  document.getElementById('attachments').value = '';
+}
+
+function searchCases() {
+  let keyword = document.getElementById('searchKeyword').value.toLowerCase();
+  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+  let list = document.getElementById('caseList');
+  list.innerHTML = '';
+  cases.forEach((c, index) => {
+    if (c.accusedName.toLowerCase().includes(keyword) || c.caseNumber.toLowerCase().includes(keyword) || c.charge.toLowerCase().includes(keyword)) {
+      let div = document.createElement('div');
+      div.className = 'case';
+      div.innerHTML = `
+        <strong>${c.accusedName}</strong> | หมายเลขคดี: ${c.caseNumber}<br>
+        ${c.charge}<br>
+        <button onclick="viewDetail(${index})">ดูรายละเอียด</button>
+        <button onclick="editCase(${index})">แก้ไข</button>
+        <button onclick="deleteCase(${index})">ลบ</button>
+      `;
+      list.appendChild(div);
+    }
+  });
+}
+
+function viewDetail(index) {
+  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+  let c = cases[index];
+  let detail = `
+    <h2>รายละเอียดผลคดี</h2>
+    <p><strong>ชื่อผู้ต้องหา:</strong> ${c.accusedName}</p>
+    <p><strong>หมายเลขคดี:</strong> ${c.caseNumber}</p>
+    <p><strong>ศาล:</strong> ${c.court}</p>
+    <p><strong>ข้อหา:</strong> ${c.charge}</p>
+    <p><strong>ผู้พิพากษา:</strong> ${c.judge}</p>
+    <p><strong>คำพิพากษา:</strong> ${c.judgment}</p>
+    <p><strong>วันที่ตัดสิน:</strong> ${c.decisionDate}</p>
+    <p><strong>เลขคดีดำ:</strong> ${c.blackCaseNumber}</p>
+    <p><strong>เลขคดีแดง:</strong> ${c.redCaseNumber}</p>
+    <div class="attachments">
+      <h3>ไฟล์แนบ:</h3>
+      ${c.attachments.map(att => `
+        <div>
+          <img src="${att.data}" onclick="extractText('${att.data}')">
+          <p>${att.name}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('detailContent').innerHTML = detail;
+  document.getElementById('detailModal').classList.remove('hidden');
+}
+
+function closeDetail() {
+  document.getElementById('detailModal').classList.add('hidden');
+}
+
+function extractText(dataUrl) {
+  Tesseract.recognize(
+    dataUrl,
+    'tha+eng', 
+    {
+      logger: m => console.log(m),
+      tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK
+    }
+  ).then(({ data: { text } }) => {
+    alert('ข้อความจากภาพ:\n' + text.trim());
+  });
+}
+
+function extractTextFromUpload() {
+  const file = document.getElementById('ocrImage').files[0];
+  if (!file) {
+    alert('กรุณาเลือกรูปภาพก่อน');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    Tesseract.recognize(
+      e.target.result,
+      'tha+eng',
+      {
+        logger: m => console.log(m),
+        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK
+      }
+    ).then(({ data: { text } }) => {
+      document.getElementById('ocrResult').value = text.trim();
+    }).catch(err => {
+      console.error(err);
+      alert('เกิดข้อผิดพลาดในการถอดข้อความ');
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function editCase(index) {
+  let pass = prompt("กรุณากรอกรหัสผ่าน");
+  if (pass !== "12345678") { alert("รหัสผ่านไม่ถูกต้อง"); return; }
+  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+  let c = cases[index];
+  document.getElementById('accusedName').value = c.accusedName;
+  document.getElementById('caseNumber').value = c.caseNumber;
+  document.getElementById('court').value = c.court;
+  document.getElementById('charge').value = c.charge;
+  document.getElementById('judge').value = c.judge;
+  document.getElementById('judgment').value = c.judgment;
+  document.getElementById('decisionDate').value = c.decisionDate;
+  document.getElementById('blackCaseNumber').value = c.blackCaseNumber;
+  document.getElementById('redCaseNumber').value = c.redCaseNumber;
+  editingIndex = index;
+  showSection('add');
+}
+
+function deleteCase(index) {
+  let id = prompt("กรุณากรอก ID (42A604)");
+  let pass = prompt("กรุณากรอกรหัสผ่าน");
+  if (id !== "42A604" || pass !== "12345678") { alert("ข้อมูลไม่ถูกต้อง"); return; }
+  if (confirm('ยืนยันการลบข้อมูลนี้?')) {
+    let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+    cases.splice(index, 1);
+    localStorage.setItem('cases', JSON.stringify(cases));
+    searchCases();
+    alert('ลบข้อมูลเรียบร้อย');
+  }
+}
+
+function exportExcel() {
+  let cases = JSON.parse(localStorage.getItem('cases') || '[]');
+  let ws_data = [["ชื่อผู้ต้องหา", "หมายเลขคดี", "ศาล", "ข้อหา", "ผู้พิพากษา", "คำพิพากษา", "วันที่ตัดสิน", "เลขคดีดำ", "เลขคดีแดง"]];
+  cases.forEach(c => {
+    ws_data.push([c.accusedName, c.caseNumber, c.court, c.charge, c.judge, c.judgment, c.decisionDate, c.blackCaseNumber, c.redCaseNumber]);
+  });
+  let wb = XLSX.utils.book_new();
+  let ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, "ผลคดี");
+  XLSX.writeFile(wb, "ผลคดี.xlsx");
+}
+</script>
 
 </body>
 </html>
