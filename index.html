@@ -1,921 +1,1117 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจัดเก็บผลคดี | สภ.หว้านใหญ่ จว.มุกดาหาร</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-  <style>
-    :root {
-      --primary-color: #1a5f7a;
-      --secondary-color: #57c5b6;
-      --accent-color: #159895;
-      --light-color: #f9f9f9;
-      --dark-color: #333;
-      --danger-color: #dc3545;
-      --warning-color: #ffc107;
-      --success-color: #28a745;
-    }
-    
-    * {
-      box-sizing: border-box;
-      font-family: 'Sarabun', sans-serif;
-    }
-    
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 20px 0;
-      text-align: center;
-      border-radius: 0 0 10px 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-    }
-    
-    .header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-    
-    .header .subtitle {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin-top: 5px;
-    }
-    
-    .card {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 25px;
-      margin-bottom: 20px;
-    }
-    
-    .card-title {
-      color: var(--primary-color);
-      font-size: 1.4rem;
-      margin-top: 0;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--dark-color);
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 10px 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: border-color 0.3s;
-    }
-    
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 0 3px rgba(87, 197, 182, 0.2);
-    }
-    
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 20px;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: none;
-      text-decoration: none;
-    }
-    
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background-color: #124b63;
-    }
-    
-    .btn-secondary {
-      background-color: var(--secondary-color);
-      color: white;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #45b5a8;
-    }
-    
-    .btn-danger {
-      background-color: var(--danger-color);
-      color: white;
-    }
-    
-    .btn-danger:hover {
-      background-color: #c82333;
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .nav-tabs {
-      display: flex;
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 20px;
-    }
-    
-    .nav-tab {
-      padding: 10px 20px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s;
-    }
-    
-    .nav-tab.active {
-      border-bottom-color: var(--primary-color);
-      color: var(--primary-color);
-      font-weight: 500;
-    }
-    
-    .nav-tab:hover:not(.active) {
-      border-bottom-color: #ddd;
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    .case-item {
-      background: white;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      border-left: 4px solid var(--secondary-color);
-      transition: transform 0.2s;
-    }
-    
-    .case-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .case-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .case-title {
-      font-weight: 600;
-      color: var(--primary-color);
-      margin: 0;
-    }
-    
-    .case-meta {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .case-charge {
-      margin: 5px 0;
-      font-weight: 500;
-    }
-    
-    .attachments {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    
-    .attachment-item {
-      width: 100px;
-      height: 100px;
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-    }
-    
-    .attachment-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-    }
-    
-    .modal.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .modal-content {
-      background-color: white;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 25px;
-      position: relative;
-    }
-    
-    .modal-close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #666;
-    }
-    
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: var(--dark-color);
-      color: white;
-      padding: 15px 25px;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 1000;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s;
-    }
-    
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    
-    .toast.success {
-      background-color: var(--success-color);
-    }
-    
-    .toast.error {
-      background-color: var(--danger-color);
-    }
-    
-    .toast.warning {
-      background-color: var(--warning-color);
-      color: var(--dark-color);
-    }
-    
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      
-      .header h1 {
-        font-size: 1.5rem;
-      }
-      
-      .nav-tabs {
-        flex-wrap: wrap;
-      }
-      
-      .nav-tab {
-        padding: 8px 15px;
-        font-size: 0.9rem;
-      }
-      
-      .btn-group {
-        flex-direction: column;
-      }
-      
-      .btn {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบทำข้อสอบออนไลน์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base & Typography --- */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 40px;
+            transition: all 0.3s ease-in-out;
+            margin-top: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        /* --- Login Section Specific Styles --- */
+        #loginSection {
+            max-width: 550px;
+        }
+
+        #loginSection h1 {
+            color: #007bff;
+            font-size: 2.2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 1px solid #cdd5df;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        .login-button, .check-scores-button, .auth-button {
+            width: 100%;
+            padding: 15px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        .login-button {
+            background-color: #28a745;
+        }
+        .login-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .check-scores-button {
+            background-color: #6c757d;
+        }
+        .check-scores-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        .auth-button {
+            background-color: #007bff;
+        }
+        .auth-button:hover {
+            background-color: #0056b3;
+        }
+
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 15px;
+            font-size: 0.95em;
+            text-align: center;
+            display: none;
+            background-color: #ffebe5;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dc3545;
+        }
+
+        /* --- Exam Section Specific Styles --- */
+        .exam-header-info {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #fce7e7;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #f8d7da;
+        }
+
+        #timer {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: #dc3545;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* Animation for blinking red timer */
+        @keyframes blink-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fdfdfd;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            transition: box-shadow 0.2s ease;
+        }
+        .question-block:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            color: #444;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        label:hover {
+            color: #007bff;
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #007bff;
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 40px;
+            font-weight: 600;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .submit-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cheat-message {
+            background-color: #ffe6e6;
+            border: 1px solid #ff9999;
+            color: #cc0000;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.3em;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .cheat-message p {
+            margin: 0 0 15px 0;
+        }
+
+        .cheat-message p:last-child {
+            margin-bottom: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Styles for Score Display Section */
+        #scoreDisplaySection {
+            max-width: 900px;
+            padding: 40px;
+            text-align: center;
+        }
+        #scoreDisplaySection h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+            font-weight: 600;
+        }
+        #scoreDisplaySection .score-filter {
+            margin-bottom: 20px;
+            text-align: left;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #scoreDisplaySection .score-filter label {
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 0;
+        }
+        #scoreDisplaySection .score-filter select,
+        #scoreDisplaySection .score-filter input[type="text"] {
+            width: auto;
+            min-width: 120px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #scoreDisplaySection table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #scoreDisplaySection th, #scoreDisplaySection td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        #scoreDisplaySection th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+        #scoreDisplaySection tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        #scoreDisplaySection tr:hover {
+            background-color: #f1f1f1;
+        }
+        #scoreDisplaySection .no-data-message {
+            margin-top: 20px;
+            color: #888;
+            font-style: italic;
+        }
+        .back-to-login-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 30px;
+            font-weight: 600;
+        }
+        .back-to-login-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Styles for Edit/Delete buttons in table */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .action-buttons button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+        .action-buttons .edit-btn {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .action-buttons .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        .action-buttons .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .action-buttons .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .action-buttons .save-btn, .action-buttons .cancel-btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+        .action-buttons .save-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .action-buttons .save-btn:hover {
+            background-color: #218838;
+        }
+        .action-buttons .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        .action-buttons .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Styles for Teacher Auth Modal/Section */
+        #teacherAuthSection {
+            max-width: 400px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 50px;
+        }
+        #teacherAuthSection h2 {
+            color: #007bff;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        #teacherAuthSection input[type="text"],
+        #teacherAuthSection input[type="password"] {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="container">
-      <h1>ระบบจัดเก็บผลคดี สภ.หว้านใหญ่</h1>
-      <div class="subtitle">สถานีตำรวจภูธรหว้านใหญ่ จังหวัดมุกดาหาร</div>
-      <div class="subtitle">จัดทำโดย ส.ต.ท.ณัฐพงศ์ ปุเรนเต</div>
+    <div id="loginSection" class="card">
+        <h1>เข้าสู่ระบบทำข้อสอบ</h1>
+        <p style="text-align: center; margin-bottom: 30px; color: #666;">กรุณากรอกข้อมูลส่วนตัวเพื่อเริ่มทำข้อสอบ</p>
+
+        <form id="studentInfoForm">
+            <div class="form-group">
+                <label for="fullName">ชื่อ - นามสกุล:</label>
+                <input type="text" id="fullName" name="fullName" required placeholder="เช่น สมคิด ใจดี">
+            </div>
+
+            <div class="form-group">
+                <label for="studentId">รหัสนักเรียน:</label>
+                <input type="text" id="studentId" name="studentId" required placeholder="เช่น 12345">
+            </div>
+
+            <div class="form-group">
+                <label for="grade">ชั้น:</label>
+                <select id="grade" name="grade" required>
+                    <option value="">เลือกชั้น</option>
+                    <option value="ม.1">ม.1</option>
+                    <option value="ม.2">ม.2</option>
+                    <option value="ม.3">ม.3</option>
+                    <option value="ม.4">ม.4</option>
+                    <option value="ม.5">ม.5</option>
+                    <option value="ม.6">ม.6</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="room">ห้อง:</label>
+                <input type="text" id="room" name="room" required placeholder="เช่น 1, 2/1, พิเศษ">
+            </div>
+
+            <p id="errorMessage" class="error-message">กรุณากรอกข้อมูลให้ครบถ้วน</p>
+
+            <button type="submit" class="login-button">เข้าสู่หน้าทำข้อสอบ</button>
+            <button type="button" id="checkScoresBtn" class="check-scores-button">ตรวจสอบข้อมูลคะแนน</button>
+        </form>
     </div>
-  </div>
-  
-  <div class="container">
-    <div class="card">
-      <div class="nav-tabs">
-        <div class="nav-tab active" onclick="showTab('add')">
-          <i class="fas fa-plus-circle"></i> บันทึกผลคดี
-        </div>
-        <div class="nav-tab" onclick="showTab('search')">
-          <i class="fas fa-search"></i> ค้นหาผลคดี
-        </div>
-        <div class="nav-tab" onclick="exportExcel()">
-          <i class="fas fa-file-excel"></i> ส่งออก Excel
-        </div>
-      </div>
-      
-      <div id="addTab" class="tab-content active">
-        <h2 class="card-title">บันทึกผลคดีใหม่</h2>
-        
-        <div class="form-group">
-          <label class="form-label">ชื่อผู้ต้องหา</label>
-          <input type="text" id="accusedName" class="form-control" placeholder="กรอกชื่อผู้ต้องหา">
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
+
+    <div id="teacherAuthSection" class="card hidden">
+        <h2>เข้าสู่ระบบสำหรับอาจารย์</h2>
+        <form id="teacherAuthForm">
             <div class="form-group">
-              <label class="form-label">หมายเลขคดี</label>
-              <input type="text" id="caseNumber" class="form-control" placeholder="เช่น 1/2568">
+                <label for="teacherUsername">ชื่อผู้ใช้ (Username):</label>
+                <input type="text" id="teacherUsername" required>
             </div>
-          </div>
-          <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">ศาลที่ตัดสิน</label>
-              <input type="text" id="court" class="form-control" placeholder="ศาลจังหวัด...">
+                <label for="teacherPassword">รหัสผ่าน (Password):</label>
+                <input type="password" id="teacherPassword" required>
             </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">ข้อหา</label>
-          <input type="text" id="charge" class="form-control" placeholder="กรอกข้อหา">
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">ผู้พิพากษา</label>
-              <input type="text" id="judge" class="form-control" placeholder="ชื่อผู้พิพากษา">
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">วันที่ตัดสิน</label>
-              <input type="date" id="decisionDate" class="form-control">
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">เลขคดีดำ</label>
-              <input type="text" id="blackCaseNumber" class="form-control">
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label">เลขคดีแดง</label>
-              <input type="text" id="redCaseNumber" class="form-control">
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">คำพิพากษา</label>
-          <textarea id="judgment" class="form-control" rows="4" placeholder="รายละเอียดคำพิพากษา"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">แนบไฟล์หลักฐาน</label>
-          <input type="file" id="attachments" class="form-control" multiple accept="image/*, .pdf">
-          <small class="text-muted">สามารถอัพโหลดได้หลายไฟล์ (รูปภาพหรือ PDF)</small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">ถอดข้อความจากภาพ (OCR)</label>
-          <div class="input-group">
-            <input type="file" id="ocrImage" class="form-control" accept="image/*">
-            <button class="btn btn-secondary" onclick="extractTextFromUpload()">
-              <i class="fas fa-text"></i> ถอดข้อความ
-            </button>
-          </div>
-          <textarea id="ocrResult" class="form-control mt-2" rows="3" placeholder="ข้อความที่ถอดได้จากภาพ"></textarea>
-        </div>
-        
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="saveCase()">
-            <i class="fas fa-save"></i> บันทึกข้อมูล
-          </button>
-          <button class="btn btn-danger" onclick="resetForm()">
-            <i class="fas fa-undo"></i> ล้างแบบฟอร์ม
-          </button>
-        </div>
-      </div>
-      
-      <div id="searchTab" class="tab-content">
-        <h2 class="card-title">ค้นหาผลคดี</h2>
-        
-        <div class="form-group">
-          <div class="input-group">
-            <input type="text" id="searchKeyword" class="form-control" placeholder="ค้นหาด้วยชื่อผู้ต้องหา, หมายเลขคดี, ข้อหา..." oninput="searchCases()">
-            <button class="btn btn-secondary">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-        </div>
-        
-        <div id="caseList"></div>
-      </div>
+            <p id="authErrorMessage" class="error-message">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</p>
+            <button type="submit" class="auth-button">เข้าสู่ระบบ</button>
+            <button type="button" id="authBackBtn" class="check-scores-button">กลับ</button>
+        </form>
     </div>
-  </div>
-  
-  <!-- Modal แสดงรายละเอียด -->
-  <div id="detailModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeDetail()">&times;</span>
-      <div id="detailContent"></div>
+
+    <div id="examSection" class="card hidden">
+        <h1 id="examTitle">ข้อสอบวิชา: ประวัติศาสตร์</h1>
+        <p class="exam-header-info">โรงเรียน: โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</p>
+        <p class="exam-header-info">อาจารย์ผู้สอน: ครู ประอรนันท์ กองแก้ว</p>
+
+        <p class="exam-header-info">ผู้เข้าสอบ: <span id="studentInfoDisplay"></span></p>
+        <div class="timer-container">
+            <p style="margin: 0; font-size: 1.1em; color: #666;">เวลาที่เหลือ:</p>
+            <div id="timer">15:00</div>
+        </div>
+        <p class="exam-header-info" style="font-style: normal; font-weight: 600; color: #cc0000; border-bottom: none; padding-bottom: 0;">ห้ามสลับแท็บ/หน้าต่างระหว่างทำข้อสอบเด็ดขาด!</p>
+
+
+        <form id="examForm" class="exam-form">
+            <div id="questionsContainer"></div>
+            
+            <button type="submit" id="submitButton" class="submit-button">ส่งคำตอบ</button>
+        </form>
+
+        <div id="cheatDetectedMessage" class="cheat-message hidden">
+            <p><strong>⚠️ ตรวจพบการสลับแท็บ/หน้าต่าง! การทำข้อสอบของคุณถูกยกเลิกแล้ว.</strong></p>
+            <p>กรุณาติดต่อคุณครูผู้คุมสอบ</p>
+            <p>ข้อมูลผู้เข้าสอบ: <span id="cheatingStudentInfo"></span></p>
+        </div>
     </div>
-  </div>
-  
-  <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
-  
-  <script>
-    // ตัวแปร global
-    let editingIndex = null;
-    const PASSWORD = "12345678"; // ควรเก็บใน backend จริงๆ
-    
-    // ฟังก์ชันแสดง Tab
-    function showTab(tabId) {
-      document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-      });
-      
-      document.querySelector(`.nav-tab[onclick="showTab('${tabId}')"]`).classList.add('active');
-      document.getElementById(`${tabId}Tab`).classList.add('active');
-      
-      if (tabId === 'search') {
-        searchCases();
-      }
-    }
-    
-    // ฟังก์ชันแสดง Toast
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      
-      setTimeout(() => {
-        toast.className = 'toast';
-      }, 3000);
-    }
-    
-    // ฟังก์ชันบันทึกคดี
-    async function saveCase() {
-      // ตรวจสอบข้อมูลที่จำเป็น
-      if (!validateForm()) {
-        return;
-      }
-      
-      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      const attachments = document.getElementById('attachments').files;
-      let files = [];
-      
-      try {
-        if (attachments.length > 0) {
-          for (let file of attachments) {
-            const fileData = await readFileAsDataURL(file);
-            files.push({ name: file.name, data: fileData });
-          }
-        }
-        
-        let newCase = collectCaseData(files);
-        
-        if (editingIndex !== null) {
-          cases[editingIndex] = newCase;
-          showToast('แก้ไขข้อมูลคดีเรียบร้อยแล้ว', 'success');
-        } else {
-          cases.push(newCase);
-          showToast('บันทึกข้อมูลคดีใหม่เรียบร้อย', 'success');
-        }
-        
-        localStorage.setItem('cases', JSON.stringify(cases));
-        resetForm();
-        editingIndex = null;
-        
-      } catch (error) {
-        console.error('Error saving case:', error);
-        showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
-      }
-    }
-    
-    // ฟังก์ชันอ่านไฟล์เป็น Data URL
-    function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-    
-    // ฟังก์ชันตรวจสอบฟอร์ม
-    function validateForm() {
-      const requiredFields = [
-        'accusedName', 'caseNumber', 'court', 'charge', 
-        'judge', 'judgment', 'decisionDate'
-      ];
-      
-      for (let fieldId of requiredFields) {
-        const value = document.getElementById(fieldId).value.trim();
-        if (!value) {
-          showToast(`กรุณากรอกข้อมูลในช่อง ${document.querySelector(`label[for="${fieldId}"]`).textContent}`, 'warning');
-          document.getElementById(fieldId).focus();
-          return false;
-        }
-      }
-      
-      return true;
-    }
-    
-    // ฟังก์ชันรวบรวมข้อมูลคดี
-    function collectCaseData(attachments) {
-      return {
-        accusedName: document.getElementById('accusedName').value.trim(),
-        caseNumber: document.getElementById('caseNumber').value.trim(),
-        court: document.getElementById('court').value.trim(),
-        charge: document.getElementById('charge').value.trim(),
-        judge: document.getElementById('judge').value.trim(),
-        judgment: document.getElementById('judgment').value.trim(),
-        decisionDate: document.getElementById('decisionDate').value,
-        blackCaseNumber: document.getElementById('blackCaseNumber').value.trim(),
-        redCaseNumber: document.getElementById('redCaseNumber').value.trim(),
-        attachments: attachments,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-    }
-    
-    // ฟังก์ชันรีเซ็ตฟอร์ม
-    function resetForm() {
-      document.querySelectorAll('#addTab input, #addTab textarea').forEach(el => {
-        el.value = '';
-      });
-      document.getElementById('attachments').value = '';
-      document.getElementById('ocrImage').value = '';
-    }
-    
-    // ฟังก์ชันค้นหาคดี
-    function searchCases() {
-      const keyword = document.getElementById('searchKeyword').value.toLowerCase();
-      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      const list = document.getElementById('caseList');
-      
-      list.innerHTML = '';
-      
-      if (cases.length === 0) {
-        list.innerHTML = '<div class="text-center py-4">ไม่พบข้อมูลคดี</div>';
-        return;
-      }
-      
-      const filteredCases = keyword 
-        ? cases.filter(c => 
-            c.accusedName.toLowerCase().includes(keyword) || 
-            c.caseNumber.toLowerCase().includes(keyword) || 
-            c.charge.toLowerCase().includes(keyword) ||
-            c.blackCaseNumber.toLowerCase().includes(keyword) ||
-            c.redCaseNumber.toLowerCase().includes(keyword)
-          )
-        : cases;
-      
-      if (filteredCases.length === 0) {
-        list.innerHTML = '<div class="text-center py-4">ไม่พบผลลัพธ์ที่ตรงกับการค้นหา</div>';
-        return;
-      }
-      
-      filteredCases.forEach((c, index) => {
-        const caseItem = document.createElement('div');
-        caseItem.className = 'case-item';
-        
-        caseItem.innerHTML = `
-          <div class="case-header">
-            <h3 class="case-title">${c.accusedName}</h3>
-            <div class="case-meta">${formatDate(c.decisionDate)}</div>
-          </div>
-          <div class="case-charge">${c.charge}</div>
-          <div class="case-meta">หมายเลขคดี: ${c.caseNumber}</div>
-          <div class="btn-group mt-2">
-            <button class="btn btn-sm btn-primary" onclick="viewDetail(${index})">
-              <i class="fas fa-eye"></i> ดูรายละเอียด
-            </button>
-            <button class="btn btn-sm btn-secondary" onclick="editCase(${index})">
-              <i class="fas fa-edit"></i> แก้ไข
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteCase(${index})">
-              <i class="fas fa-trash"></i> ลบ
-            </button>
-          </div>
-        `;
-        
-        list.appendChild(caseItem);
-      });
-    }
-    
-    // ฟังก์ชันดูรายละเอียดคดี
-    function viewDetail(index) {
-      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      const c = cases[index];
-      
-      let detailHTML = `
-        <h2>รายละเอียดผลคดี</h2>
-        <div class="detail-section">
-          <h3>ข้อมูลพื้นฐาน</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>ชื่อผู้ต้องหา:</label>
-              <p>${c.accusedName}</p>
-            </div>
-            <div class="detail-item">
-              <label>หมายเลขคดี:</label>
-              <p>${c.caseNumber}</p>
-            </div>
-            <div class="detail-item">
-              <label>ศาลที่ตัดสิน:</label>
-              <p>${c.court}</p>
-            </div>
-            <div class="detail-item">
-              <label>วันที่ตัดสิน:</label>
-              <p>${formatDate(c.decisionDate)}</p>
-            </div>
-          </div>
+
+    <div id="scoreDisplaySection" class="card hidden">
+        <h2>ข้อมูลคะแนนสอบ</h2>
+        <div class="score-filter">
+            <label for="filterGrade">ชั้น:</label>
+            <select id="filterGrade">
+                <option value="all">ทั้งหมด</option>
+                <option value="ม.1">ม.1</option>
+                <option value="ม.2">ม.2</option>
+                <option value="ม.3">ม.3</option>
+                <option value="ม.4">ม.4</option>
+                <option value="ม.5">ม.5</option>
+                <option value="ม.6">ม.6</option>
+            </select>
+            <label for="filterRoom" style="margin-left: 20px;">ห้อง:</label>
+            <input type="text" id="filterRoom" placeholder="เช่น 1, 2/1">
         </div>
-        
-        <div class="detail-section">
-          <h3>ข้อมูลคดี</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>ข้อหา:</label>
-              <p>${c.charge}</p>
-            </div>
-            <div class="detail-item">
-              <label>ผู้พิพากษา:</label>
-              <p>${c.judge}</p>
-            </div>
-            <div class="detail-item">
-              <label>เลขคดีดำ:</label>
-              <p>${c.blackCaseNumber || '-'}</p>
-            </div>
-            <div class="detail-item">
-              <label>เลขคดีแดง:</label>
-              <p>${c.redCaseNumber || '-'}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="detail-section">
-          <h3>คำพิพากษา</h3>
-          <div class="judgment-text">${c.judgment.replace(/\n/g, '<br>')}</div>
-        </div>
-      `;
-      
-      if (c.attachments && c.attachments.length > 0) {
-        detailHTML += `
-          <div class="detail-section">
-            <h3>ไฟล์แนบ (${c.attachments.length})</h3>
-            <div class="attachments">
-              ${c.attachments.map(att => `
-                <div class="attachment-item" onclick="extractText('${att.data}')">
-                  ${att.name.endsWith('.pdf') ? 
-                    '<div class="pdf-thumbnail"><i class="fas fa-file-pdf"></i><span>PDF</span></div>' : 
-                    `<img src="${att.data}" alt="${att.name}">`}
-                  <div class="attachment-name">${att.name}</div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }
-      
-      document.getElementById('detailContent').innerHTML = detailHTML;
-      document.getElementById('detailModal').classList.add('active');
-    }
-    
-    // ฟังก์ชันปิด Modal
-    function closeDetail() {
-      document.getElementById('detailModal').classList.remove('active');
-    }
-    
-    // ฟังก์ชันถอดข้อความจากภาพ
-    function extractText(dataUrl) {
-      showToast('กำลังประมวลผลภาพ...', 'warning');
-      
-      Tesseract.recognize(
-        dataUrl,
-        'tha+eng', 
-        {
-          logger: m => console.log(m),
-          tessedit_pageseg_mode: 6 // PSM.SINGLE_BLOCK
-        }
-      ).then(({ data: { text } }) => {
-        const extractedText = text.trim();
-        if (extractedText) {
-          document.getElementById('ocrResult').value = extractedText;
-          showToast('ถอดข้อความสำเร็จ', 'success');
-        } else {
-          showToast('ไม่พบข้อความในภาพ', 'warning');
-        }
-      }).catch(err => {
-        console.error('OCR Error:', err);
-        showToast('เกิดข้อผิดพลาดในการถอดข้อความ', 'error');
-      });
-    }
-    
-    // ฟังก์ชันถอดข้อความจากไฟล์ที่อัพโหลด
-    function extractTextFromUpload() {
-      const file = document.getElementById('ocrImage').files[0];
-      if (!file) {
-        showToast('กรุณาเลือกรูปภาพก่อน', 'warning');
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        extractText(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    
-    // ฟังก์ชันแก้ไขคดี
-    function editCase(index) {
-      const pass = prompt("กรุณากรอกรหัสผ่าน:");
-      if (pass !== PASSWORD) { 
-        showToast('รหัสผ่านไม่ถูกต้อง', 'error');
-        return; 
-      }
-      
-      const cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      const c = cases[index];
-      
-      // เติมข้อมูลลงในฟอร์ม
-      document.getElementById('accusedName').value = c.accusedName;
-      document.getElementById('caseNumber').value = c.caseNumber;
-      document.getElementById('court').value = c.court;
-      document.getElementById('charge').value = c.charge;
-      document.getElementById('judge').value = c.judge;
-      document.getElementById('judgment').value = c.judgment;
-      document.getElementById('decisionDate').value = c.decisionDate;
-      document.getElementById('blackCaseNumber').value = c.blackCaseNumber || '';
-      document.getElementById('redCaseNumber').value = c.redCaseNumber || '';
-      
-      editingIndex = index;
-      showTab('add');
-      showToast('กำลังแก้ไขคดี... กรอกข้อมูลและกดบันทึก', 'warning');
-    }
-    
-    // ฟังก์ชันลบคดี
-    function deleteCase(index) {
-      const pass = prompt("กรุณากรอกรหัสผ่าน:");
-      if (pass !== PASSWORD) { 
-        showToast('รหัสผ่านไม่ถูกต้อง', 'error');
-        return; 
-      }
-      
-      if (!confirm('ยืนยันการลบข้อมูลคดีนี้?')) {
-        return;
-      }
-      
-      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      cases.splice(index, 1);
-      localStorage.setItem('cases', JSON.stringify(cases));
-      searchCases();
-      showToast('ลบข้อมูลคดีเรียบร้อย', 'success');
-    }
-    
-    // ฟังก์ชันส่งออก Excel
-    function exportExcel() {
-      let cases = JSON.parse(localStorage.getItem('cases') || '[]');
-      
-      if (cases.length === 0) {
-        showToast('ไม่มีข้อมูลที่จะส่งออก', 'warning');
-        return;
-      }
-      
-      // กำหนดหัวข้อคอลัมน์
-      const headers = [
-        "ลำดับ", "ชื่อผู้ต้องหา", "หมายเลขคดี", "ศาลที่ตัดสิน", 
-        "ข้อหา", "ผู้พิพากษา", "วันที่ตัดสิน", "เลขคดีดำ", 
-        "เลขคดีแดง", "วันที่บันทึก", "วันที่แก้ไข"
-      ];
-      
-      // เตรียมข้อมูล
-      const data = cases.map((c, i) => [
-        i + 1,
-        c.accusedName,
-        c.caseNumber,
-        c.court,
-        c.charge,
-        c.judge,
-        formatDate(c.decisionDate),
-        c.blackCaseNumber || '-',
-        c.redCaseNumber || '-',
-        formatDate(c.createdAt),
-        formatDate(c.updatedAt)
-      ]);
-      
-      // สร้างเวิร์กบุ๊ก
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
-      
-      // ปรับความกว้างคอลัมน์
-      ws['!cols'] = [
-        { wch: 5 },  // ลำดับ
-        { wch: 25 }, // ชื่อผู้ต้องหา
-        { wch: 15 }, // หมายเลขคดี
-        { wch: 20 }, // ศาลที่ตัดสิน
-        { wch: 30 }, // ข้อหา
-        { wch: 20 }, // ผู้พิพากษา
-        { wch: 12 }, // วันที่ตัดสิน
-        { wch: 12 }, // เลขคดีดำ
-        { wch: 12 }, // เลขคดีแดง
-        { wch: 15 }, // วันที่บันทึก
-        { wch: 15 }  // วันที่แก้ไข
-      ];
-      
-      XLSX.utils.book_append_sheet(wb, ws, "ผลคดี");
-      
-      // ส่งออกไฟล์
-      const date = new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(wb, `ผลคดี_${date}.xlsx`);
-      showToast('ส่งออกไฟล์ Excel เรียบร้อย', 'success');
-    }
-    
-    // ฟังก์ชันจัดรูปแบบวันที่
-    function formatDate(dateString) {
-      if (!dateString) return '-';
-      
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString;
-      
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-      
-      return `${day}/${month}/${year}`;
-    }
-    
-    // โหลดข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
-    document.addEventListener('DOMContentLoaded', () => {
-      searchCases();
-    });
-  </script>
+        <table id="scoreTable">
+            <thead>
+                <tr>
+                    <th>ชื่อ - นามสกุล</th>
+                    <th>รหัสนักเรียน</th>
+                    <th>ชั้น</th>
+                    <th>ห้อง</th>
+                    <th>คะแนน</th>
+                    <th>เวลาที่ใช้</th>
+                    <th>วันที่สอบ</th>
+                    <th>สถานะ</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+        <p id="noDataMessage" class="no-data-message hidden">ยังไม่มีข้อมูลคะแนน</p>
+        <button type="button" id="backToLoginFromScoresBtn" class="back-to-login-button">กลับหน้าเข้าสู่ระบบ</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginSection = document.getElementById('loginSection');
+            const examSection = document.getElementById('examSection');
+            const scoreDisplaySection = document.getElementById('scoreDisplaySection');
+            const teacherAuthSection = document.getElementById('teacherAuthSection');
+
+            const studentInfoForm = document.getElementById('studentInfoForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const checkScoresBtn = document.getElementById('checkScoresBtn');
+            const backToLoginFromScoresBtn = document.getElementById('backToLoginFromScoresBtn');
+
+            const teacherAuthForm = document.getElementById('teacherAuthForm');
+            const teacherUsernameInput = document.getElementById('teacherUsername');
+            const teacherPasswordInput = document.getElementById('teacherPassword');
+            const authErrorMessage = document.getElementById('authErrorMessage');
+            const authBackBtn = document.getElementById('authBackBtn');
+
+            const examForm = document.getElementById('examForm');
+            const submitButton = document.getElementById('submitButton');
+            const cheatDetectedMessage = document.getElementById('cheatDetectedMessage');
+            const studentInfoDisplay = document.getElementById('studentInfoDisplay');
+            const cheatingStudentInfo = document.getElementById('cheatingStudentInfo');
+            const timerDisplay = document.getElementById('timer');
+            const questionsContainer = document.getElementById('questionsContainer');
+
+            const filterGrade = document.getElementById('filterGrade');
+            const filterRoom = document.getElementById('filterRoom');
+            const scoreTableBody = document.querySelector('#scoreTable tbody');
+            const noDataMessage = document.getElementById('noDataMessage');
+
+            // Teacher Credentials (VERY IMPORTANT: Not secure for production!)
+            const TEACHER_USERNAME = 'Test99';
+            const TEACHER_PASSWORD = '02072568';
+
+            let studentData = {};
+            let timerInterval;
+            const EXAM_DURATION_SECONDS = 15 * 60;
+            let timeElapsed = 0;
+
+            const ALL_QUESTIONS = [
+                {
+                    text: 'พระมหากษัตริย์พระองค์ใดทรงประกาศเลิกทาสในประเทศไทย?',
+                    options: {
+                        a: 'พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช',
+                        b: 'พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว',
+                        c: 'พระบาทสมเด็จพระพุทธเลิศหล้านภาลัย',
+                        d: 'พระบาทสมเด็จพระมงกุฎเกล้าเจ้าอยู่หัว'
+                    },
+                    correct: 'b'
+                },
+                {
+                    text: 'เหตุการณ์ใดถือเป็นจุดเริ่มต้นของสงครามโลกครั้งที่ 1?',
+                    options: {
+                        a: 'การโจมตีเพิร์ลฮาร์เบอร์',
+                        b: 'การลอบสังหารอาร์ชดยุกฟรานซ์ เฟอร์ดินานด์',
+                        c: 'การรวมชาติเยอรมนี',
+                        d: 'การปฏิวัติรัสเซีย'
+                    },
+                    correct: 'b'
+                },
+                {
+                    text: 'อารยธรรมใดที่พัฒนาการเขียนอักษรลิ่ม (Cuneiform)?',
+                    options: {
+                        a: 'อียิปต์',
+                        b: 'กรีก',
+                        c: 'โรมัน',
+                        d: 'เมโสโปเตเมีย'
+                    },
+                    correct: 'd'
+                },
+                {
+                    text: 'กษัตริย์องค์ใดที่สร้างกำแพงเมืองจีน?',
+                    options: {
+                        a: 'จิ๋นซีฮ่องเต้',
+                        b: 'ฮั่นอู่ตี้',
+                        c: 'ถังไท่จง',
+                        d: 'คังซี'
+                    },
+                    correct: 'a'
+                },
+                {
+                    text: 'สงครามครูเสดเป็นการต่อสู้ระหว่างศาสนาใด?',
+                    options: {
+                        a: 'พุทธกับคริสต์',
+                        b: 'ฮินดูกับอิสลาม',
+                        c: 'คริสต์กับอิสลาม',
+                        d: 'ยูดายกับคริสต์'
+                    },
+                    correct: 'c'
+                },
+                {
+                    text: 'ใครคือผู้ค้นพบทวีปอเมริกา?',
+                    options: {
+                        a: 'เฟอร์ดินานด์ มาเจลลัน',
+                        b: 'คริสโตเฟอร์ โคลัมบัส',
+                        c: 'วาสโก ดา กามา',
+                        d: 'เจมส์ คุก'
+                    },
+                    correct: 'b'
+                },
+                {
+                    text: 'การปฏิวัติฝรั่งเศสเริ่มต้นขึ้นในปีใด?',
+                    options: {
+                        a: 'ค.ศ. 1789',
+                        b: 'ค.ศ. 1800',
+                        c: 'ค.ศ. 1776',
+                        d: 'ค.ศ. 1815'
+                    },
+                    correct: 'a'
+                },
+                {
+                    text: 'ใครคือผู้นำทางจิตวิญญาณของการเคลื่อนไหวเรียกร้องเอกราชของอินเดีย?',
+                    options: {
+                        a: 'จวาหะร์ลาล เนห์รู',
+                        b: 'อินทิรา คานธี',
+                        c: 'สุภาส จันทระ โพส',
+                        d: 'มหาตมะ คานธี'
+                    },
+                    correct: 'd'
+                },
+                {
+                    text: 'เหตุการณ์ใดที่ทำให้สหรัฐอเมริกาเข้าร่วมสงครามโลกครั้งที่ 2?',
+                    options: {
+                        a: 'การบุกโปแลนด์',
+                        b: 'การทิ้งระเบิดปรมาณูที่ฮิโรชิมา',
+                        c: 'การโจมตีเพิร์ลฮาร์เบอร์',
+                        d: 'การยกพลขึ้นบกที่นอร์มังดี'
+                    },
+                    correct: 'c'
+                },
+                {
+                    text: 'ระบบศักดินา (Feudalism) เจริญรุ่งเรืองในภูมิภาคใด?',
+                    options: {
+                        a: 'เอเชียตะวันออก',
+                        b: 'ยุโรปสมัยกลาง',
+                        c: 'อเมริกาใต้',
+                        d: 'แอฟริกาเหนือ'
+                    },
+                    correct: 'b'
+                },
+                {
+                    text: 'การค้นพบทางวิทยาศาสตร์ใดที่เกี่ยวข้องกับกาลิเลโอ กาลิเลอี?',
+                    options: {
+                        a: 'การสังเกตการณ์ผ่านกล้องโทรทรรศน์',
+                        b: 'กฎการเคลื่อนที่',
+                        c: 'ทฤษฎีสัมพัทธภาพ',
+                        d: 'การค้นพบเพนิซิลลิน'
+                    },
+                    correct: 'a'
+                },
+                {
+                    text: 'อารยธรรมใดที่สร้างพีระมิดขนาดใหญ่?',
+                    options: {
+                        a: 'โรมัน',
+                        b: 'กรีก',
+                        c: 'จีน',
+                        d: 'อียิปต์'
+                    },
+                    correct: 'd'
+                },
+                {
+                    text: 'สงครามเย็นเป็นการเผชิญหน้าระหว่างกลุ่มประเทศใด?',
+                    options: {
+                        a: 'สหรัฐอเมริกากับจีน',
+                        b: 'สหราชอาณาจักรกับฝรั่งเศส',
+                        c: 'สหรัฐอเมริกากับสหภาพโซเวียต',
+                        d: 'เยอรมนีกับญี่ปุ่น'
+                    },
+                    correct: 'c'
+                },
+                {
+                    text: 'ใครคือผู้ก่อตั้งอาณาจักรสุโขทัย?',
+                    options: {
+                        a: 'พ่อขุนรามคำแหงมหาราช',
+                        b: 'พ่อขุนศรีอินทราทิตย์',
+                        c: 'พระเจ้าอู่ทอง',
+                        d: 'สมเด็จพระนเรศวรมหาราช'
+                    },
+                    correct: 'b'
+                },
+                {
+                    text: 'การปฏิวัติอุตสาหกรรมเริ่มต้นขึ้นที่ประเทศใด?',
+                    options: {
+                        a: 'สหราชอาณาจักร',
+                        b: 'เยอรมนี',
+                        c: 'สหรัฐอเมริกา',
+                        d: 'ฝรั่งเศส'
+                    },
+                    correct: 'a'
+                }
+            ];
+
+            const TOTAL_QUESTIONS = ALL_QUESTIONS.length;
+            let currentShuffledQuestions = [];
+            // ตัวแปรสำหรับเก็บ timestamp ของการสอบครั้งปัจจุบัน
+            let currentExamTimestamp = null; 
+
+            // --- Helper function to shuffle an array ---
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            // --- Function to render questions ---
+            function renderQuestions() {
+                questionsContainer.innerHTML = '';
+                currentShuffledQuestions = shuffleArray([...ALL_QUESTIONS]);
+
+                currentShuffledQuestions.forEach((q, index) => {
+                    const questionBlock = document.createElement('div');
+                    questionBlock.className = 'question-block';
+
+                    const questionText = document.createElement('p');
+                    questionText.className = 'question-text';
+                    questionText.textContent = `${index + 1}. ${q.text}`;
+
+                    questionBlock.appendChild(questionText);
+
+                    const optionKeys = shuffleArray(Object.keys(q.options));
+                    optionKeys.forEach(key => {
+                        const label = document.createElement('label');
+                        const input = document.createElement('input');
+                        input.type = 'radio';
+                        input.name = `q${index + 1}`;
+                        input.value = key;
+                        input.required = true;
+
+                        label.appendChild(input);
+                        label.appendChild(document.createTextNode(` ${key.toUpperCase()}. ${q.options[key]}`));
+                        questionBlock.appendChild(label);
+                    });
+                    questionsContainer.appendChild(questionBlock);
+                });
+            }
+
+            // --- Navigation Functions ---
+            function showSection(sectionId) {
+                const sections = [loginSection, examSection, scoreDisplaySection, teacherAuthSection];
+                sections.forEach(section => {
+                    if (section.id === sectionId) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            }
+
+            // --- Login Page Logic ---
+            studentInfoForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const fullName = document.getElementById('fullName').value.trim();
+                const studentId = document.getElementById('studentId').value.trim();
+                const grade = document.getElementById('grade').value;
+                const room = document.getElementById('room').value.trim();
+
+                if (!fullName || !studentId || !grade || !room) {
+                    errorMessage.style.display = 'block';
+                    return;
+                } else {
+                    errorMessage.style.display = 'none';
+                }
+
+                studentData = { fullName, studentId, grade, room };
+                currentExamTimestamp = new Date().getTime(); // ตั้งค่า timestamp สำหรับการสอบครั้งนี้
+
+                studentInfoDisplay.textContent = `${studentData.fullName} (รหัส: ${studentData.studentId}, ชั้น: ${studentData.grade} ห้อง: ${studentData.room})`;
+                cheatingStudentInfo.textContent = `${studentData.fullName} (รหัส: ${studentData.studentId}, ชั้น: ${studentData.grade} ห้อง: ${studentData.room})`;
+
+                showSection('examSection');
+                renderQuestions();
+
+                timeElapsed = 0;
+                startTimer(EXAM_DURATION_SECONDS);
+
+                alert('เริ่มต้นทำข้อสอบ! \n\nข้อตกลง: ห้ามสลับแท็บ/หน้าต่าง หรือเปิดโปรแกรมอื่นโดยเด็ดขาด มิฉะนั้นการสอบจะสิ้นสุดลงทันที');
+            });
+
+            checkScoresBtn.addEventListener('click', () => {
+                showSection('teacherAuthSection');
+                authErrorMessage.style.display = 'none';
+                teacherUsernameInput.value = '';
+                teacherPasswordInput.value = '';
+                teacherUsernameInput.focus();
+            });
+
+            // --- Teacher Auth Logic ---
+            teacherAuthForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const username = teacherUsernameInput.value;
+                const password = teacherPasswordInput.value;
+
+                if (username === TEACHER_USERNAME && password === TEACHER_PASSWORD) {
+                    showSection('scoreDisplaySection');
+                    displayScores();
+                } else {
+                    authErrorMessage.style.display = 'block';
+                }
+            });
+
+            authBackBtn.addEventListener('click', () => {
+                showSection('loginSection');
+            });
+
+            backToLoginFromScoresBtn.addEventListener('click', () => {
+                showSection('loginSection');
+                filterGrade.value = 'all';
+                filterRoom.value = '';
+            });
+
+
+            // --- Timer Functions ---
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            function startTimer(duration) {
+                let timer = duration;
+                timerInterval = setInterval(() => {
+                    if (timer >= 0) {
+                        timerDisplay.textContent = formatTime(timer);
+                    }
+
+                    if (timer <= 60 && timer > 0) {
+                         timerDisplay.style.color = '#e74c3c';
+                    }
+                    if (timer <= 30 && timer > 0) {
+                         timerDisplay.style.animation = 'blink-red 1s infinite';
+                    }
+
+                    if (timer < 0) {
+                        clearInterval(timerInterval);
+                        timerDisplay.textContent = "00:00";
+                        endExamDueToTimer();
+                    }
+                    timeElapsed++;
+                    timer--;
+                }, 1000);
+            }
+
+            function endExamDueToTimer() {
+                alert("หมดเวลาทำข้อสอบแล้ว! ระบบจะทำการส่งคำตอบอัตโนมัติ.");
+                submitExam();
+            }
+
+            // --- Cheat Detection ---
+            function endExamDueToTabSwitch() {
+                clearInterval(timerInterval);
+
+                const formData = new FormData(examForm);
+                const answers = {};
+                currentShuffledQuestions.forEach((q, index) => {
+                    const questionName = `q${index + 1}`;
+                    const answered = formData.get(questionName);
+                    if (answered) {
+                        answers[questionName] = answered;
+                    }
+                });
+
+                const partialScore = calculateScore(answers);
+                const timeSpentFormatted = formatTime(timeElapsed);
+                const examDate = new Date().toLocaleDateString('th-TH');
+
+                alert(`ตรวจพบการสลับแท็บ! การทำข้อสอบของคุณถูกยกเลิก.\nคุณได้ ${partialScore} คะแนน จากข้อที่ทำได้.`);
+
+                saveScore({
+                    ...studentData,
+                    score: partialScore,
+                    totalQuestionsAnswered: Object.keys(answers).length,
+                    timeSpent: timeSpentFormatted,
+                    date: examDate,
+                    status: 'Disqualified (Partial Score)',
+                    timestamp: currentExamTimestamp // ใช้ timestamp ของการสอบครั้งนี้
+                });
+
+                if (examForm) {
+                    examForm.classList.add('hidden');
+                    examForm.querySelectorAll('input, textarea, select, button').forEach(element => {
+                        element.disabled = true;
+                    });
+                }
+                if (cheatDetectedMessage) {
+                    cheatDetectedMessage.classList.remove('hidden');
+                    cheatDetectedMessage.querySelector('p:first-of-type strong').textContent = `⚠️ ตรวจพบการสลับแท็บ/หน้าต่าง! การทำข้อสอบของคุณถูกยกเลิก.`;
+                    cheatDetectedMessage.querySelector('p:nth-of-type(2)').textContent = `คุณได้ ${partialScore} คะแนน จากข้อที่ทำได้.`;
+                }
+
+                console.log("ตรวจพบการสลับแท็บ! การสอบสิ้นสุดลงแล้ว.");
+                console.log("ข้อมูลผู้ทุจริต (คะแนนบางส่วน):", studentData);
+            }
+
+            let examStarted = false;
+            const observer = new MutationObserver((mutationsList, observer) => {
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        if (!examSection.classList.contains('hidden') && !examStarted) {
+                            examStarted = true;
+                            document.addEventListener('visibilitychange', function() {
+                                if (document.hidden) {
+                                    console.log('หน้าเว็บถูกซ่อน: ตรวจพบการสลับแท็บ/หน้าต่าง');
+                                    endExamDueToTabSwitch();
+                                }
+                            });
+                            observer.disconnect();
+                        }
+                    }
+                }
+            });
+            observer.observe(examSection, { attributes: true });
+
+
+            // --- Exam Submission & Scoring ---
+            function calculateScore(answers) {
+                let score = 0;
+                currentShuffledQuestions.forEach((q, index) => {
+                    const questionName = `q${index + 1}`;
+                    if (answers[questionName] === q.correct) {
+                        score++;
+                    }
+                });
+                return score;
+            }
+
+            // *** แก้ไข: Logic ใน saveScore เพื่ออัปเดตหรือเพิ่มข้อมูล ***
+            function saveScore(scoreData) {
+                let scores = JSON.parse(localStorage.getItem('examScores')) || [];
+                
+                // ตรวจสอบว่ามีรายการที่ตรงกับ timestamp ของการสอบครั้งปัจจุบันหรือไม่
+                const existingIndex = scores.findIndex(s => s.timestamp === scoreData.timestamp);
+
+                if (existingIndex !== -1) {
+                    // ถ้าพบรายการเดิม ให้อัปเดตข้อมูลนั้น
+                    scores[existingIndex] = scoreData;
+                } else {
+                    // ถ้าไม่พบ (เป็นรายการใหม่) ให้เพิ่มเข้าไป
+                    scores.push(scoreData);
+                }
+                
+                localStorage.setItem('examScores', JSON.stringify(scores));
+            }
+
+            function submitExam() {
+                clearInterval(timerInterval);
+                submitButton.disabled = true;
+
+                const formData = new FormData(examForm);
+                const answers = {};
+                for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                    answers[`q${i}`] = formData.get(`q${i}`) || 'unanswered';
+                }
+
+                const score = calculateScore(answers);
+                const timeSpentFormatted = formatTime(timeElapsed);
+                const examDate = new Date().toLocaleDateString('th-TH');
+
+                const finalScoreData = {
+                    ...studentData,
+                    score: score,
+                    timeSpent: timeSpentFormatted,
+                    date: examDate,
+                    status: 'completed',
+                    timestamp: currentExamTimestamp // ใช้ timestamp ของการสอบครั้งนี้
+                };
+
+                saveScore(finalScoreData);
+
+                console.log("คำตอบที่ส่ง:", answers);
+                console.log("คะแนน:", score);
+                console.log("เวลาที่ใช้:", timeSpentFormatted);
+                alert(`ส่งคำตอบเรียบร้อยแล้ว! คุณได้ ${score} คะแนน จาก ${TOTAL_QUESTIONS} ข้อ ใช้เวลา ${timeSpentFormatted}\nขอบคุณที่ทำข้อสอบ`);
+
+                examForm.querySelectorAll('input, textarea, select, button').forEach(element => {
+                    element.disabled = true;
+                });
+            }
+
+            if (examForm) {
+                examForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    submitExam();
+                });
+            }
+
+            // --- Score Display, Edit, Delete Logic ---
+            filterGrade.addEventListener('change', displayScores);
+            filterRoom.addEventListener('input', displayScores);
+
+            function displayScores() {
+                const allScores = JSON.parse(localStorage.getItem('examScores')) || [];
+                scoreTableBody.innerHTML = '';
+
+                const selectedGrade = filterGrade.value;
+                const enteredRoom = filterRoom.value.trim().toLowerCase();
+
+                const filteredScores = allScores.filter(score => {
+                    const matchesGrade = selectedGrade === 'all' || score.grade === selectedGrade;
+                    const matchesRoom = enteredRoom === '' || (score.room && score.room.toLowerCase().includes(enteredRoom));
+                    return matchesGrade && matchesRoom;
+                });
+
+                if (filteredScores.length === 0) {
+                    noDataMessage.classList.remove('hidden');
+                    scoreTable.classList.add('hidden');
+                } else {
+                    noDataMessage.classList.add('hidden');
+                    scoreTable.classList.remove('hidden');
+                    filteredScores.forEach((scoreData) => { // ไม่ต้องใช้ index เพราะเราอ้างอิงจาก timestamp
+                        const row = scoreTableBody.insertRow();
+                        row.dataset.originalTimestamp = scoreData.timestamp;
+
+                        row.insertCell().textContent = scoreData.fullName;
+                        row.insertCell().textContent = scoreData.studentId;
+                        row.insertCell().textContent = scoreData.grade;
+                        row.insertCell().textContent = scoreData.room;
+                        row.insertCell().textContent = scoreData.score;
+                        row.insertCell().textContent = scoreData.timeSpent;
+                        row.insertCell().textContent = scoreData.date;
+                        row.insertCell().textContent = scoreData.status || 'N/A';
+
+                        const actionsCell = row.insertCell();
+                        actionsCell.className = 'action-buttons';
+                        actionsCell.innerHTML = `
+                            <button class="edit-btn">แก้ไข</button>
+                            <button class="delete-btn">ลบ</button>
+                        `;
+                    });
+                }
+            }
+
+            // Event delegation for edit and delete buttons
+            scoreTableBody.addEventListener('click', function(event) {
+                const target = event.target;
+                const row = target.closest('tr');
+                if (!row) return;
+
+                const originalTimestamp = parseInt(row.dataset.originalTimestamp);
+                let scores = JSON.parse(localStorage.getItem('examScores')) || [];
+                const scoreIndex = scores.findIndex(s => s.timestamp === originalTimestamp);
+                if (scoreIndex === -1) return;
+                const scoreToEdit = { ...scores[scoreIndex] }; // Create a copy for editing
+
+                if (target.classList.contains('delete-btn')) {
+                    if (confirm(`คุณแน่ใจหรือไม่ที่จะลบข้อมูลของ ${scoreToEdit.fullName} (${scoreToEdit.studentId})?`)) {
+                        scores.splice(scoreIndex, 1);
+                        localStorage.setItem('examScores', JSON.stringify(scores));
+                        displayScores();
+                    }
+                } else if (target.classList.contains('edit-btn')) {
+                    for (let i = 0; i < row.cells.length - 1; i++) {
+                        row.cells[i].contentEditable = true;
+                        row.cells[i].style.backgroundColor = '#fffacd';
+                    }
+
+                    target.parentNode.innerHTML = `
+                        <button class="save-btn">บันทึก</button>
+                        <button class="cancel-btn">ยกเลิก</button>
+                    `;
+                } else if (target.classList.contains('save-btn')) {
+                    scoreToEdit.fullName = row.cells[0].textContent;
+                    scoreToEdit.studentId = row.cells[1].textContent;
+                    scoreToEdit.grade = row.cells[2].textContent;
+                    scoreToEdit.room = row.cells[3].textContent;
+                    scoreToEdit.score = row.cells[4].textContent;
+                    scoreToEdit.timeSpent = row.cells[5].textContent;
+                    scoreToEdit.date = row.cells[6].textContent;
+                    scoreToEdit.status = row.cells[7].textContent;
+
+                    scores[scoreIndex] = scoreToEdit; // อัปเดตข้อมูลในอาร์เรย์
+                    localStorage.setItem('examScores', JSON.stringify(scores));
+                    displayScores();
+                } else if (target.classList.contains('cancel-btn')) {
+                    displayScores();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
