@@ -154,35 +154,6 @@
             flex-grow: 1; /* ให้ข้อมูลขยายเต็มพื้นที่ที่เหลือ */
         }
 
-        .pass {
-            color: #28a745; /* Green */
-            font-weight: bold;
-            font-size: 2.2em; /* ขนาดใหญ่ขึ้น */
-            text-align: center; /* จัดให้อยู่กลาง */
-            margin-top: 20px;
-            display: block; /* ให้สถานะเป็นบล็อกของตัวเอง */
-            animation: fadeInScale 0.5s ease-out; /* เพิ่ม animation */
-        }
-
-        .fail {
-            color: #dc3545; /* Red */
-            font-weight: bold;
-            font-size: 2.2em; /* ขนาดใหญ่ขึ้น */
-            text-align: center;
-            margin-top: 20px;
-            display: block;
-            animation: fadeInScale 0.5s ease-out; /* เพิ่ม animation */
-        }
-
-        .neutral-status {
-            color: #6c757d; /* Grey/neutral color */
-            font-weight: bold;
-            font-size: 1.5em; /* ขนาดกลาง */
-            text-align: center;
-            margin-top: 20px;
-            display: block;
-        }
-
         .hidden {
             display: none;
         }
@@ -203,18 +174,6 @@
             font-size: 0.9em;
             background-color: #e9ecef;
             border-top: 1px solid #dee2e6;
-        }
-
-        /* Animation Keyframes */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
 
         /* Responsive adjustments */
@@ -251,9 +210,6 @@
                 padding-right: 0;
                 margin-bottom: 5px;
             }
-            .pass, .fail {
-                font-size: 1.8em;
-            }
         }
     </style>
 </head>
@@ -273,8 +229,7 @@
             <p><strong>รหัสนักเรียน:</strong> <span id="displayStudentId"></span></p>
             <p><strong>ชื่อ-นามสกุล:</strong> <span id="displayName"></span></p>
             <p><strong>คะแนนสอบ:</strong> <span id="scoreGeneral"></span> คะแนน</p>
-            <p><strong>สถานะ:</strong> <span id="status"></span></p>
-        </div>
+            </div>
         <div id="errorMessage" class="error-message hidden">
             ไม่พบรหัสนักเรียนที่คุณค้นหา กรุณาตรวจสอบรหัสอีกครั้ง หรือติดต่อโรงเรียน
         </div>
@@ -1878,8 +1833,6 @@
     }
 };
 
-        const passingScore = 60; // กำหนดคะแนนผ่าน (ตัวอย่าง หากคะแนนเต็ม 100)
-
         function searchScore() {
             const studentIdInput = document.getElementById('studentId').value.trim();
             const resultsDiv = document.getElementById('results');
@@ -1896,24 +1849,21 @@
                 document.getElementById('displayName').textContent = student.name;
                 document.getElementById('scoreGeneral').textContent = student.scores.general_score;
 
-                const statusSpan = document.getElementById('status');
-
-                // พยายามแปลงคะแนนเป็นตัวเลข
-                const score = parseFloat(student.scores.general_score);
-
-                if (!isNaN(score)) { // ตรวจสอบว่าเป็นตัวเลขที่ถูกต้องหรือไม่
-                    if (score >= passingScore) {
-                        statusSpan.textContent = "ผ่าน";
-                        statusSpan.className = 'pass'; // ใช้สีเขียว
-                    } else {
-                        statusSpan.textContent = "ไม่ผ่าน";
-                        statusSpan.className = 'fail'; // ใช้สีแดง
-                    }
-                } else {
-                    // หากคะแนนไม่ใช่ตัวเลข (เช่น 'ขาดสอบ', 'ลาป่วย', 'แข่งโครงงาน')
-                    statusSpan.textContent = student.scores.general_score; // แสดงข้อความเดิม
-                    statusSpan.className = 'neutral-status'; // ใช้สีกลางสำหรับกรณีเหล่านี้
-                }
+                // Removed status display and logic
+                // const statusSpan = document.getElementById('status');
+                // const score = parseFloat(student.scores.general_score);
+                // if (!isNaN(score)) {
+                //     if (score >= passingScore) {
+                //         statusSpan.textContent = "ผ่าน";
+                //         statusSpan.className = 'pass';
+                //     } else {
+                //         statusSpan.textContent = "ไม่ผ่าน";
+                //         statusSpan.className = 'fail';
+                //     }
+                // } else {
+                //     statusSpan.textContent = student.scores.general_score;
+                //     statusSpan.className = 'neutral-status';
+                // }
 
                 resultsDiv.classList.remove('hidden'); // แสดงผลลัพธ์
             } else {
