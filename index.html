@@ -3,1115 +3,1923 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบทำข้อสอบออนไลน์</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>ระบบตรวจสอบผลคะแนนนักเรียน - โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</title>
     <style>
-        /* --- Base & Typography --- */
+        /* CSS สำหรับการจัดระเบียบและดีไซน์ที่ทันสมัย */
         body {
-            font-family: 'Prompt', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* ฟอนต์ระบบที่อ่านง่าย */
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background: #f0f2f5; /* สีพื้นหลังอ่อนๆ */
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column; /* จัดวางแนวตั้ง */
+            justify-content: flex-start; /* เริ่มจากด้านบน */
+            align-items: center;
             min-height: 100vh;
             color: #333;
-        }
-
-        .card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 40px;
-            transition: all 0.3s ease-in-out;
-            margin-top: 30px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 2.5em;
-            font-weight: 600;
-        }
-
-        p {
             line-height: 1.6;
         }
 
-        /* --- Login Section Specific Styles --- */
-        #loginSection {
-            max-width: 550px;
+        header {
+            background: linear-gradient(to right, #007bff, #0056b3); /* ไล่เฉดสีน้ำเงินเข้ม */
+            color: white;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px; /* ระยะห่างจากส่วนเนื้อหาหลัก */
         }
 
-        #loginSection h1 {
-            color: #007bff;
+        header h1 {
+            margin: 0;
             font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
-        .form-group {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 1.05em;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        select {
-            width: calc(100% - 24px);
-            padding: 12px;
-            border: 1px solid #cdd5df;
-            border-radius: 8px;
-            font-size: 1em;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-            outline: none;
-        }
-
-        .login-button, .check-scores-button, .auth-button {
-            width: 100%;
-            padding: 15px;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 20px;
-            font-weight: 600;
-        }
-        .login-button {
-            background-color: #28a745;
-        }
-        .login-button:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-        .check-scores-button {
-            background-color: #6c757d;
-        }
-        .check-scores-button:hover {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-        }
-        .auth-button {
-            background-color: #007bff;
-        }
-        .auth-button:hover {
-            background-color: #0056b3;
-        }
-
-
-        .error-message {
-            color: #dc3545;
-            margin-top: 15px;
-            font-size: 0.95em;
-            text-align: center;
-            display: none;
-            background-color: #ffebe5;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #dc3545;
-        }
-
-        /* --- Exam Section Specific Styles --- */
-        .exam-header-info {
-            text-align: center;
-            color: #555;
-            margin-bottom: 20px;
+        header p {
+            margin: 5px 0 0;
             font-size: 1.1em;
+            opacity: 0.9;
         }
 
-        .timer-container {
+        .main-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); /* เงาที่ดูนุ่มนวลขึ้น */
             text-align: center;
-            margin-bottom: 30px;
-            background-color: #fce7e7;
-            padding: 15px 20px;
-            border-radius: 8px;
-            border: 1px solid #f8d7da;
+            width: 90%;
+            max-width: 650px; /* ขยายความกว้างได้อีกเล็กน้อย */
+            box-sizing: border-box;
+            border-top: 6px solid #ff7f00; /* เส้นขอบบนสีส้มสดใส */
+            margin-bottom: 40px; /* ระยะห่างจากด้านล่าง */
+            transition: transform 0.3s ease-in-out; /* เพิ่ม animation */
         }
 
-        #timer {
-            font-size: 2.5em;
-            font-weight: 600;
-            color: #dc3545;
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: 2px;
+        .main-container:hover {
+            transform: translateY(-5px); /* ยกตัวขึ้นเล็กน้อยเมื่อนำเมาส์มาวาง */
         }
 
-        /* Animation for blinking red timer */
-        @keyframes blink-red {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        h2 {
+            color: #007bff; /* สีน้ำเงินหลัก */
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 1.8em;
         }
 
-        .question-block {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #fdfdfd;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            transition: box-shadow 0.2s ease;
-        }
-        .question-block:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .question-text {
-            font-weight: 600;
-            color: #333;
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        label {
-            display: flex;
+        .search-section {
+            display: flex; /* จัดให้ input และ button อยู่ในบรรทัดเดียวกัน */
+            justify-content: center;
             align-items: center;
-            margin-bottom: 15px;
-            font-size: 1.05em;
-            color: #444;
-            cursor: pointer;
-            transition: color 0.2s ease-in-out;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* ให้ห่อลงบรรทัดใหม่ในจอเล็ก */
         }
 
-        label:hover {
-            color: #007bff;
+        input[type="text"] {
+            flex-grow: 1; /* ให้ input ขยายเต็มพื้นที่ */
+            padding: 14px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin-right: 15px; /* ระยะห่างจากปุ่ม */
+            max-width: 350px; /* จำกัดความกว้าง input */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
         }
 
-        input[type="radio"] {
-            margin-right: 12px;
-            transform: scale(1.2);
-            accent-color: #007bff;
+        input[type="text"]:focus {
+            border-color: #ff7f00; /* สีส้มเมื่อโฟกัส */
+            outline: none;
+            box-shadow: 0 0 12px rgba(255, 127, 0, 0.2); /* เงารอบ input เมื่อโฟกัส */
         }
 
-        .submit-button {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background-color: #007bff;
+        button {
+            padding: 14px 30px;
+            background-color: #007bff; /* สีน้ำเงินหลัก */
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.3em;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 40px;
+            font-size: 1.1em;
             font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            white-space: nowrap; /* ป้องกันปุ่มห่อข้อความ */
         }
 
-        .submit-button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
+        button:hover {
+            background-color: #0056b3; /* สีน้ำเงินเข้มขึ้นเมื่อ hover */
+            transform: translateY(-3px); /* ยกตัวขึ้นเล็กน้อย */
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
         }
 
-        .submit-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
+        button:active {
+            transform: translateY(0); /* กลับมาตำแหน่งเดิมเมื่อกด */
+            box-shadow: none;
         }
 
-        .cheat-message {
-            background-color: #ffe6e6;
-            border: 1px solid #ff9999;
-            color: #cc0000;
+        #results {
+            margin-top: 35px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+            border-radius: 5px;
+            background-color: #fcfcfc; /* พื้นหลังเล็กน้อยสำหรับกล่องผลลัพธ์ */
             padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 30px;
-            font-size: 1.3em;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* เงาด้านในเล็กน้อย */
         }
 
-        .cheat-message p {
-            margin: 0 0 15px 0;
+        #results p {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between; /* จัดข้อความให้ชิดซ้ายขวา */
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #eee; /* เส้นประคั่นแต่ละบรรทัด */
         }
 
-        .cheat-message p:last-child {
+        #results p:last-child {
             margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        #results strong {
+            color: #007bff; /* สีน้ำเงินหลักสำหรับหัวข้อ */
+            flex-shrink: 0; /* ป้องกันไม่ให้หัวข้อหดตัว */
+            padding-right: 15px; /* ระยะห่างจากข้อมูล */
+        }
+
+        #results span {
+            text-align: right; /* จัดข้อมูลให้ชิดขวา */
+            flex-grow: 1; /* ให้ข้อมูลขยายเต็มพื้นที่ที่เหลือ */
+        }
+
+        .pass {
+            color: #28a745; /* Green */
+            font-weight: bold;
+            font-size: 2.2em; /* ขนาดใหญ่ขึ้น */
+            text-align: center; /* จัดให้อยู่กลาง */
+            margin-top: 20px;
+            display: block; /* ให้สถานะเป็นบล็อกของตัวเอง */
+            animation: fadeInScale 0.5s ease-out; /* เพิ่ม animation */
+        }
+
+        .fail {
+            color: #dc3545; /* Red */
+            font-weight: bold;
+            font-size: 2.2em; /* ขนาดใหญ่ขึ้น */
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            animation: fadeInScale 0.5s ease-out; /* เพิ่ม animation */
+        }
+
+        .neutral-status {
+            color: #6c757d; /* Grey/neutral color */
+            font-weight: bold;
+            font-size: 1.5em; /* ขนาดกลาง */
+            text-align: center;
+            margin-top: 20px;
+            display: block;
         }
 
         .hidden {
-            display: none !important;
+            display: none;
         }
 
-        /* Styles for Score Display Section */
-        #scoreDisplaySection {
-            max-width: 900px;
-            padding: 40px;
-            text-align: center;
-        }
-        #scoreDisplaySection h2 {
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 2em;
-            font-weight: 600;
-        }
-        #scoreDisplaySection .score-filter {
-            margin-bottom: 20px;
-            text-align: left;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        #scoreDisplaySection .score-filter label {
-            display: inline-block;
-            margin-right: 5px;
-            margin-bottom: 0;
-        }
-        #scoreDisplaySection .score-filter select,
-        #scoreDisplaySection .score-filter input[type="text"] {
-            width: auto;
-            min-width: 120px;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        #scoreDisplaySection table {
-            width: 100%;
-            border-collapse: collapse;
+        .error-message {
+            color: #dc3545;
             margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        #scoreDisplaySection th, #scoreDisplaySection td {
-            border: 1px solid #e0e0e0;
-            padding: 12px 15px;
-            text-align: left;
-            vertical-align: middle;
-        }
-        #scoreDisplaySection th {
-            background-color: #007bff;
-            color: white;
-            font-weight: 600;
-        }
-        #scoreDisplaySection tr:nth-child(even) {
-            background-color: #f8f8f8;
-        }
-        #scoreDisplaySection tr:hover {
-            background-color: #f1f1f1;
-        }
-        #scoreDisplaySection .no-data-message {
-            margin-top: 20px;
-            color: #888;
-            font-style: italic;
-        }
-        .back-to-login-button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
+            font-weight: bold;
             font-size: 1.2em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 30px;
-            font-weight: 600;
-        }
-        .back-to-login-button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
         }
 
-        /* Styles for Edit/Delete buttons in table */
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-        .action-buttons button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s ease;
-            white-space: nowrap;
-        }
-        .action-buttons .edit-btn {
-            background-color: #ffc107;
-            color: #333;
-        }
-        .action-buttons .edit-btn:hover {
-            background-color: #e0a800;
-        }
-        .action-buttons .delete-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-        .action-buttons .delete-btn:hover {
-            background-color: #c82333;
-        }
-        .action-buttons .save-btn, .action-buttons .cancel-btn {
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s ease;
-            white-space: nowrap;
-        }
-        .action-buttons .save-btn {
-            background-color: #28a745;
-            color: white;
-        }
-        .action-buttons .save-btn:hover {
-            background-color: #218838;
-        }
-        .action-buttons .cancel-btn {
-            background-color: #6c757d;
-            color: white;
-        }
-        .action-buttons .cancel-btn:hover {
-            background-color: #5a6268;
-        }
-
-        /* Styles for Teacher Auth Modal/Section */
-        #teacherAuthSection {
-            max-width: 400px;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        footer {
+            margin-top: auto; /* ดัน Footer ไปอยู่ด้านล่างสุด */
+            padding: 20px;
+            width: 100%;
             text-align: center;
-            margin-top: 50px;
+            color: #6c757d;
+            font-size: 0.9em;
+            background-color: #e9ecef;
+            border-top: 1px solid #dee2e6;
         }
-        #teacherAuthSection h2 {
-            color: #007bff;
-            margin-bottom: 25px;
-            font-size: 2em;
+
+        /* Animation Keyframes */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        #teacherAuthSection input[type="text"],
-        #teacherAuthSection input[type="password"] {
-            margin-bottom: 15px;
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            .main-container {
+                padding: 25px;
+                max-width: 95%;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .search-section {
+                flex-direction: column; /* วาง input และ button ซ้อนกันในจอเล็ก */
+            }
+            input[type="text"] {
+                margin-right: 0;
+                margin-bottom: 15px; /* เพิ่มระยะห่างด้านล่าง */
+                max-width: 100%;
+            }
+            button {
+                width: 100%; /* ให้ปุ่มเต็มความกว้าง */
+            }
+            #results p {
+                flex-direction: column; /* จัดรายละเอียดเป็นคอลัมน์ในจอเล็ก */
+                align-items: flex-start;
+            }
+            #results strong {
+                padding-right: 0;
+                margin-bottom: 5px;
+            }
+            .pass, .fail {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loginSection" class="card">
-        <h1>เข้าสู่ระบบทำข้อสอบ</h1>
-        <p style="text-align: center; margin-bottom: 30px; color: #666;">กรุณากรอกข้อมูลส่วนตัวเพื่อเริ่มทำข้อสอบ</p>
+    <header>
+        <h1>ระบบตรวจสอบผลคะแนนนักเรียน</h1>
+        <p>โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</p>
+    </header>
 
-        <form id="studentInfoForm">
-            <div class="form-group">
-                <label for="fullName">ชื่อ - นามสกุล:</label>
-                <input type="text" id="fullName" name="fullName" required placeholder="เช่น สมคิด ใจดี">
-            </div>
-
-            <div class="form-group">
-                <label for="studentId">รหัสนักเรียน:</label>
-                <input type="text" id="studentId" name="studentId" required placeholder="เช่น 12345">
-            </div>
-
-            <div class="form-group">
-                <label for="grade">ชั้น:</label>
-                <select id="grade" name="grade" required>
-                    <option value="">เลือกชั้น</option>
-                    <option value="ม.1">ม.1</option>
-                    <option value="ม.2">ม.2</option>
-                    <option value="ม.3">ม.3</option>
-                    <option value="ม.4">ม.4</option>
-                    <option value="ม.5">ม.5</option>
-                    <option value="ม.6">ม.6</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="room">ห้อง:</label>
-                <input type="text" id="room" name="room" required placeholder="เช่น 1, 2/1, พิเศษ">
-            </div>
-
-            <p id="errorMessage" class="error-message">กรุณากรอกข้อมูลให้ครบถ้วน</p>
-
-            <button type="submit" class="login-button">เข้าสู่หน้าทำข้อสอบ</button>
-            <button type="button" id="checkScoresBtn" class="check-scores-button">ตรวจสอบข้อมูลคะแนน</button>
-        </form>
-    </div>
-
-    <div id="teacherAuthSection" class="card hidden">
-        <h2>เข้าสู่ระบบสำหรับอาจารย์</h2>
-        <form id="teacherAuthForm">
-            <div class="form-group">
-                <label for="teacherUsername">ชื่อผู้ใช้ (Username):</label>
-                <input type="text" id="teacherUsername" required>
-            </div>
-            <div class="form-group">
-                <label for="teacherPassword">รหัสผ่าน (Password):</label>
-                <input type="password" id="teacherPassword" required>
-            </div>
-            <p id="authErrorMessage" class="error-message">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</p>
-            <button type="submit" class="auth-button">เข้าสู่ระบบ</button>
-            <button type="button" id="authBackBtn" class="check-scores-button">กลับ</button>
-        </form>
-    </div>
-
-    <div id="examSection" class="card hidden">
-        <h1 id="examTitle">ข้อสอบวิชา: ประวัติศาสตร์</h1>
-        <p class="exam-header-info">โรงเรียน: โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</p>
-        <p class="exam-header-info">อาจารย์ผู้สอน: ครู ประอรนันท์ กองแก้ว</p>
-
-        <p class="exam-header-info">ผู้เข้าสอบ: <span id="studentInfoDisplay"></span></p>
-        <div class="timer-container">
-            <p style="margin: 0; font-size: 1.1em; color: #666;">เวลาที่เหลือ:</p>
-            <div id="timer">15:00</div>
+    <main class="main-container">
+        <h2>ค้นหาผลคะแนนของคุณ</h2>
+        <div class="search-section">
+            <input type="text" id="studentId" placeholder="กรอกรหัสนักเรียนของคุณ">
+            <button onclick="searchScore()">ค้นหา</button>
         </div>
-        <p class="exam-header-info" style="font-style: normal; font-weight: 600; color: #cc0000; border-bottom: none; padding-bottom: 0;">ห้ามสลับแท็บ/หน้าต่างระหว่างทำข้อสอบเด็ดขาด!</p>
-
-
-        <form id="examForm" class="exam-form">
-            <div id="questionsContainer"></div>
-            
-            <button type="submit" id="submitButton" class="submit-button">ส่งคำตอบ</button>
-        </form>
-
-        <div id="cheatDetectedMessage" class="cheat-message hidden">
-            <p><strong>⚠️ ตรวจพบการสลับแท็บ/หน้าต่าง! การทำข้อสอบของคุณถูกยกเลิกแล้ว.</strong></p>
-            <p>กรุณาติดต่อคุณครูผู้คุมสอบ</p>
-            <p>ข้อมูลผู้เข้าสอบ: <span id="cheatingStudentInfo"></span></p>
+        <div id="results" class="hidden">
+            <p><strong>รหัสนักเรียน:</strong> <span id="displayStudentId"></span></p>
+            <p><strong>ชื่อ-นามสกุล:</strong> <span id="displayName"></span></p>
+            <p><strong>คะแนนสอบ:</strong> <span id="scoreGeneral"></span> คะแนน</p>
+            <p><strong>สถานะ:</strong> <span id="status"></span></p>
         </div>
-    </div>
-
-    <div id="scoreDisplaySection" class="card hidden">
-        <h2>ข้อมูลคะแนนสอบ</h2>
-        <div class="score-filter">
-            <label for="filterGrade">ชั้น:</label>
-            <select id="filterGrade">
-                <option value="all">ทั้งหมด</option>
-                <option value="ม.1">ม.1</option>
-                <option value="ม.2">ม.2</option>
-                <option value="ม.3">ม.3</option>
-                <option value="ม.4">ม.4</option>
-                <option value="ม.5">ม.5</option>
-                <option value="ม.6">ม.6</option>
-            </select>
-            <label for="filterRoom" style="margin-left: 20px;">ห้อง:</label>
-            <input type="text" id="filterRoom" placeholder="เช่น 1, 2/1">
+        <div id="errorMessage" class="error-message hidden">
+            ไม่พบรหัสนักเรียนที่คุณค้นหา กรุณาตรวจสอบรหัสอีกครั้ง หรือติดต่อโรงเรียน
         </div>
-        <table id="scoreTable">
-            <thead>
-                <tr>
-                    <th>ชื่อ - นามสกุล</th>
-                    <th>รหัสนักเรียน</th>
-                    <th>ชั้น</th>
-                    <th>ห้อง</th>
-                    <th>คะแนน</th>
-                    <th>เวลาที่ใช้</th>
-                    <th>วันที่สอบ</th>
-                    <th>สถานะ</th>
-                    <th>การจัดการ</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
-        <p id="noDataMessage" class="no-data-message hidden">ยังไม่มีข้อมูลคะแนน</p>
-        <button type="button" id="backToLoginFromScoresBtn" class="back-to-login-button">กลับหน้าเข้าสู่ระบบ</button>
-    </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร. สงวนลิขสิทธิ์</p>
+    </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginSection = document.getElementById('loginSection');
-            const examSection = document.getElementById('examSection');
-            const scoreDisplaySection = document.getElementById('scoreDisplaySection');
-            const teacherAuthSection = document.getElementById('teacherAuthSection');
+        const students = {
+    "5700": {
+        "name": "กัญญาณัฐ มาตย์จันทร์",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "5703": {
+        "name": "ไกรวิชญ์ วังคะฮาต",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "5712": {
+        "name": "ชัยภัทร์ ศรีสุพรรณ",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "5729": {
+        "name": "ทิฆัมธ์พร หิมะคุณ",
+        "scores": {
+            "general_score": "ขาดสอบ"
+        }
+    },
+    "5730": {
+        "name": "แทนคุณ นวลตา",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "5774": {
+        "name": "วีรนันท์ วรวิรุฬห์ธนา",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5778": {
+        "name": "ศิริลักษณ์ สนิทนวล",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "5779": {
+        "name": "ศิวัช ศรีทับไทย",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6158": {
+        "name": "กนกพร โพธิ์แก้ว",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6162": {
+        "name": "กีรดิต ยืนยง",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6163": {
+        "name": "กีรติกา ตังสกุล",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6167": {
+        "name": "จิณห์นิภาญาดา บุตรสีผา",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6171": {
+        "name": "ชัยภัทร ทองใบ",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6177": {
+        "name": "ณัฐธิดา หินทราย",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6179": {
+        "name": "ตุลาการ ทองประสม",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6181": {
+        "name": "ทินญาดา สุทธิบาก",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6198": {
+        "name": "ปริยากร วชิรเมธิน",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6201": {
+        "name": "ปิยธิดา พวงศรี",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6205": {
+        "name": "พรรณปพร พรหมวงค์",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6210": {
+        "name": "พิชญุตม์ สุคำภา",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6213": {
+        "name": "พิมพ์ชนก นามจันดา",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6216": {
+        "name": "พีรวัฒน์ นาคสุข",
+        "scores": {
+            "general_score": 17.5
+        }
+    },
+    "6224": {
+        "name": "ริษฎา หีบแก้ว",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6231": {
+        "name": "ศศิปรียา กองเมิน",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "nan": {
+        "name": "nan nan",
+        "scores": {
+            "general_score": "nan"
+        }
+    },
+    "5695": {
+        "name": "กริชการุณย์ โคตรคำ",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "5704": {
+        "name": "จิณณ์ญาดา ปัญญา",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "5739": {
+        "name": "นันทิพร สิทธิโชติเลิศภักดี",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "5745": {
+        "name": "ปวรรณประภา โสมอินทร์",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "5746": {
+        "name": "ปวริศา พึ่งจัด",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "5753": {
+        "name": "พงศ์สวัสดิ์ โลหะ",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6166": {
+        "name": "จันทร์สุดา อินทร์ไชยา",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6173": {
+        "name": "ณฐวัฒน์ คำจร",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6175": {
+        "name": "ณัฐณิชา แพงโคตร",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6178": {
+        "name": "ณิชคุณ เตียบน้อย",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6182": {
+        "name": "ธนพร ภูน้ำเย็น",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6193": {
+        "name": "นราธิป สวัสกุล",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6195": {
+        "name": "บัณฑิตา รัจพจน์",
+        "scores": {
+            "general_score": "ลาป่วย"
+        }
+    },
+    "6208": {
+        "name": "พิชญา ราชสุวรรณ",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6219": {
+        "name": "ภักดี โพธิ์ไทรย์",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6222": {
+        "name": "มนัญญา มนัส",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6226": {
+        "name": "ฤทธิชัย แพทย์ชัยวงศ์",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "6227": {
+        "name": "วชิรญาพร ไชยขันธ์",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6232": {
+        "name": "สรรพวิทย์ เปรี่ยมนอง",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6234": {
+        "name": "สิริวิมล รุ่งจิรวัฒน์",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6236": {
+        "name": "สุทธิตา ประชากุล",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6238": {
+        "name": "สุธาสินี บุรีรัตน์",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6241": {
+        "name": "สุวิจักขณ์ เย็นใจ",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6342": {
+        "name": "ณัฐนิชา ชิณโสม",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "5698": {
+        "name": "กฤตยชญ์ ศรีคำน้อย",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "5702": {
+        "name": "กานต์กนกศ์ เดชพละ",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5710": {
+        "name": "ชลธร นครไทย",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "5732": {
+        "name": "ธนภัทร ไชยทอง",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "5736": {
+        "name": "ธีรเดช เชื้อบัณฑิต",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "5749": {
+        "name": "ปิ่นมุก พจนา",
+        "scores": {
+            "general_score": 6.0
+        }
+    },
+    "5766": {
+        "name": "แพรวา พฤกษาสิทธิ์",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6168": {
+        "name": "จิรัชประภา สิทธิ",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6169": {
+        "name": "ชัชพงศ์ รัตนวงค์",
+        "scores": {
+            "general_score": 17.0
+        }
+    },
+    "6176": {
+        "name": "ณัฐดนัย ทองไทย",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "6183": {
+        "name": "ธนภรณ์ หลวงมณี",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6184": {
+        "name": "ธนวัฒน์ ศรีสำราญ",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "6185": {
+        "name": "ธนัชพร ไชยสัจ",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6188": {
+        "name": "ธวัลรัตน์ คำแก้ว",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6189": {
+        "name": "ธาดาพงศ์ วรรณพืช",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6192": {
+        "name": "นภาพร เพ็งอารีย์",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6211": {
+        "name": "พิพัฒน์ นามแสง",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6215": {
+        "name": "พิมลพรรณ ทองสี",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6218": {
+        "name": "แพรวพรรณ จิตอามาตย์",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6225": {
+        "name": "เรวัตร เนตรคุณ",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6230": {
+        "name": "วิรัชยา นักธรรม",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6235": {
+        "name": "สุดารัตน์ แสงปาก",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6243": {
+        "name": "อภิสรา ทศบาย",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6244": {
+        "name": "อริสา ลมงาม",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "5692": {
+        "name": "กนกนก สุวรรณไตรย์",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5697": {
+        "name": "กฤตภาส หอมอ่อน",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5701": {
+        "name": "กันตินันท์ โอฬารเสถียร",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5707": {
+        "name": "จินต์จุฑา ปึ้งตะเนน",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "5718": {
+        "name": "ญาณิศา เจริญไทย",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "5722": {
+        "name": "ณภัทร ไชยสัจ",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5725": {
+        "name": "ณัฐมน มะโนขันธุ์",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5738": {
+        "name": "นัฐพฤกษ์ พรหมดี",
+        "scores": {
+            "general_score": "ขาดสอบ"
+        }
+    },
+    "5742": {
+        "name": "เบญญาภา ปลายเนตร",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5751": {
+        "name": "ปิยะพงษ์ ศุภษร",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "5762": {
+        "name": "พิชญา จันปุ่ม",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5769": {
+        "name": "ภูริต จิตปัญญา",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "5775": {
+        "name": "ศรินรัตน์ วรวิรุฬห์ธนา",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "5785": {
+        "name": "อารียา อุทัยแสน",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6180": {
+        "name": "ทัดเทพ ตลับเพชร",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6186": {
+        "name": "ธนัญญา กรรณิกา",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "6197": {
+        "name": "ประดุจเดือน สุพรรณอ่วม",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6202": {
+        "name": "ผดุงศักดิ์ คำบาง",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6220": {
+        "name": "ภัทราวดี ธรรมเสนา",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "6223": {
+        "name": "ระพีภัทร จันคำ",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6229": {
+        "name": "วรรษชล นวลอินทร์",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6233": {
+        "name": "สิริกร จงธนโชติ",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6242": {
+        "name": "อภิชญา บัวโรย",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6245": {
+        "name": "อัศม์เดช วิเวก",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6618": {
+        "name": "เกลล์ พรเลิศภักดี",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6619": {
+        "name": "ขวัญข้าว ไชยเพชร",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6624": {
+        "name": "จิตติพัฒน์ พรรณา",
+        "scores": {
+            "general_score": 7.5
+        }
+    },
+    "6631": {
+        "name": "ณปกร ยืนยง",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6634": {
+        "name": "ณวรรธณพกร แดนราษี",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "6635": {
+        "name": "ณัฏฐณิชา จารุจิตร",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6640": {
+        "name": "ณัฐเศรษฐ์ เย็นวิจิตรโสภา",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6650": {
+        "name": "ธิชาดา คนเพียร",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6652": {
+        "name": "ธีรภัทร สุวรรณปัฏนะ",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6657": {
+        "name": "นัธทพัฒน์ รัตนโสภา",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6660": {
+        "name": "นิติพน หาระสาร",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6661": {
+        "name": "นิปุณ สุขศีล",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6664": {
+        "name": "ปวรศร เลาห์ทวี",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "6676": {
+        "name": "พาขวัญ ศิริข่วง",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6678": {
+        "name": "พิชชา เชน",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6684": {
+        "name": "ภคพร คงช่วย",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6685": {
+        "name": "ภัทรพงศ์ อุณวงศ์",
+        "scores": {
+            "general_score": 7.5
+        }
+    },
+    "6687": {
+        "name": "ภูรินท์ ศรีลาชัย",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6689": {
+        "name": "มาวิน ผลาพฤกษ์",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6690": {
+        "name": "เรืองยศ วราอัศวปติ",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6694": {
+        "name": "วรปรัชญ์ วรบุตร",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6698": {
+        "name": "วริทธิ์ธร พงค์อันทไช",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "6701": {
+        "name": "วีริศา ชิณวรรณะ",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6707": {
+        "name": "อชิรญา แสนสุข",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "06614": {
+        "name": "กรีฑวัฒน์ นนท์กิตติ์วัฒนา",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6617": {
+        "name": "กุญชร เสียงล้ำ",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6627": {
+        "name": "ชัยเอกธนิน โหมขุนทด",
+        "scores": {
+            "general_score": 6.5
+        }
+    },
+    "6636": {
+        "name": "ณัฐกิตติ์ ศักดิ์ศิริโสภณ",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6642": {
+        "name": "ณิชาภัทร วัณณกุล",
+        "scores": {
+            "general_score": 19.0
+        }
+    },
+    "6644": {
+        "name": "เตชิต พลบวรเดชสกุล",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6649": {
+        "name": "ธัญกร อัครเสริญ",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6651": {
+        "name": "ธีรธร โสมรักษ์",
+        "scores": {
+            "general_score": 17.5
+        }
+    },
+    "6655": {
+        "name": "นรัตพัฒน์ ธนัชจำปารัตน์",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6656": {
+        "name": "นวภัทร กำลังฤทธิ์",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6658": {
+        "name": "นัธทวัฒน์ จันทมาส",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6659": {
+        "name": "นิตยา แสงสด",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6662": {
+        "name": "ปณิชา ศรีราตรี",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6663": {
+        "name": "ปริยากร พุทธลา",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6665": {
+        "name": "ปวีณ์ธิดา หันชะนา",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6666": {
+        "name": "ปัณณวิชญ์ จงมีการพาณิชย์",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6667": {
+        "name": "ปาณิสรา ขัณฑ์ชลา",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6672": {
+        "name": "พณา มีทองขาวอมร",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "6673": {
+        "name": "พศิน กลางประพันธ์",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6677": {
+        "name": "พิชชา แก้วดวงดี",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6688": {
+        "name": "มนัสชนัญ บูรณะกิติ",
+        "scores": {
+            "general_score": 17.0
+        }
+    },
+    "6696": {
+        "name": "วรากร กออิสรานุภาพ",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6699": {
+        "name": "วิชชากร เย็นใจ",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6704": {
+        "name": "สุรเชษฐ์ นนทมาตย์",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5694": {
+        "name": "กรวิชญ์ พรมวัง",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "5706": {
+        "name": "จิตติพัฒน์ ถึงแสง",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "5737": {
+        "name": "นัฐนนท์ ก้านสันเทียะ",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "5743": {
+        "name": "ปฏิพล เจริญผล",
+        "scores": {
+            "general_score": "แข่งโครงงาน"
+        }
+    },
+    "5757": {
+        "name": "พอเพียง ศรีพันธ์",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "5763": {
+        "name": "พิรดา ทาระวัฒน์",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "5764": {
+        "name": "พีรพัฒน์ พรมจันทร์",
+        "scores": {
+            "general_score": "แข่งโครงงาน"
+        }
+    },
+    "6159": {
+        "name": "กฤษกร หอมหวล",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6160": {
+        "name": "กวินกานต์ ยังอยู่",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6165": {
+        "name": "จตุรวิทย์ นาคประสิทธิ์",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6170": {
+        "name": "ชัญญาณัฏฐ์ กันยะกาญจน์",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6187": {
+        "name": "ธรรพ์ณธรณ์ สารีพันธุ์",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6191": {
+        "name": "นณปวิช พันโน",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6194": {
+        "name": "นัทธกมล สายสุวรรณ",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6196": {
+        "name": "บุณยกร พวงมาลา",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6199": {
+        "name": "ปัทพร สารมูล",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6200": {
+        "name": "ปิยกมล อิ่มเจริญ",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6203": {
+        "name": "พงศ์รพี ไพราชสูง",
+        "scores": {
+            "general_score": 18.5
+        }
+    },
+    "6204": {
+        "name": "พชรพรชนก ขวานอก",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6206": {
+        "name": "พัชราภา พลับบดี",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6207": {
+        "name": "พัชริดา ปากหวาน",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6209": {
+        "name": "พิชญาวดี ปราณี",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6212": {
+        "name": "พิมพ์ชนก โชติมุข",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6239": {
+        "name": "สุพิชชา ประเสริฐศรี",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "5693": {
+        "name": "กมลชนก ยังมี",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "5705": {
+        "name": "จิณณพัชร รุ่งเรืองเจริญกิจ",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "5708": {
+        "name": "จิรภัทร ชัยสุนทร",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5711": {
+        "name": "ชวนากร กับกระโทก",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "5715": {
+        "name": "ชุติญา ษิรารักษ์",
+        "scores": {
+            "general_score": 16.5
+        }
+    },
+    "5716": {
+        "name": "โชติภัทร วงศ์เทวราช",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "5724": {
+        "name": "ณัฐนิช มะโนขันธุ์",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "5740": {
+        "name": "บารมี ธนสุขสวัสดิ์",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "5747": {
+        "name": "ปวริศา ไตรยสุทธิ์",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "5754": {
+        "name": "พรรณศิริ ทองปรีชา",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "5758": {
+        "name": "พัชฎา อุ่นลุม",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "5781": {
+        "name": "สรสิษฐ์ คนหาญ",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "5786": {
+        "name": "พิรญาณ์ จันดารักษ์",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "6161": {
+        "name": "กัณตาวัฒน์ โชปัญญา",
+        "scores": {
+            "general_score": 17.0
+        }
+    },
+    "6164": {
+        "name": "กุลพัชร พรหมอารักษ์",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6172": {
+        "name": "ฐักกูร เหลืองรุ่งเรือง",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6174": {
+        "name": "ณภัสกร พูลเพิ่ม",
+        "scores": {
+            "general_score": 6.0
+        }
+    },
+    "6190": {
+        "name": "ธีระบรรจง สุโพธิณะ",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6214": {
+        "name": "พิมพ์ลภัส เสงี่ยมวิบูล",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "6217": {
+        "name": "เพชรพัชชา เคนเหลา",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6221": {
+        "name": "ภูษิตา ชาวกงจักร์",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6228": {
+        "name": "วรรณฤดี สุนธงศิริ",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6237": {
+        "name": "สุทธิภัทร ต้นคำ",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6240": {
+        "name": "สุลักษณา โพนนาดี",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "49": {
+        "name": "จิรวัฒน์ มูลสาร",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "50": {
+        "name": "ชนุดม โสวรรณี",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "51": {
+        "name": "ธนประเสริฐ กุลบุตร",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "52": {
+        "name": "ธนภัทร แซ่ลิ้ม",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "53": {
+        "name": "ธรรมปพนธ์ มณีวงษ์",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "54": {
+        "name": "ธรรศรณกร ทองเทพ",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "55": {
+        "name": "นนท์ปวิธ เยท่าพูด",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "56": {
+        "name": "นันทพันธ์ วิระศร",
+        "scores": {
+            "general_score": 15.5
+        }
+    },
+    "57": {
+        "name": "พงศพัศ ป้องคำลา",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "58": {
+        "name": "พิสิษฐ์ บุตรตะ",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "59": {
+        "name": "พันธุ์ธัช พันธุ",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "60": {
+        "name": "ภควัต ศรีเกื้อกลิ่น",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "61": {
+        "name": "ภัทรดนัย สมตน",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "62": {
+        "name": "ภัทรพงศ์ มนทอง",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "63": {
+        "name": "สิริพุฒิพงศ์ โชติดเสถียร",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "64": {
+        "name": "อาณาจักร จันทะเสน",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "65": {
+        "name": "กมลชนก แว่นระเว",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "66": {
+        "name": "กฤตชญา ไมตรี",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "67": {
+        "name": "ชัญญานุช ใจทัด",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "68": {
+        "name": "ชัญญานุช ลุสมบัติ",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "69": {
+        "name": "พาขวัญ บุญประสาร",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "70": {
+        "name": "มนัสนันท์ นิลรัตน์ศิริกุล",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "71": {
+        "name": "ลภัสรดา สายวงศ์",
+        "scores": {
+            "general_score": 7.0
+        }
+    },
+    "72": {
+        "name": "สุรีรัตน์ แสนทอง",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6622": {
+        "name": "จารวี โชคกาญจนกุล",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6623": {
+        "name": "จิณณ์ นามวงศ์ศรี",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6629": {
+        "name": "ณฉัตร สุทธิพรชัย",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6630": {
+        "name": "ณฐภัทร ชัยสุนทร",
+        "scores": {
+            "general_score": 7.5
+        }
+    },
+    "6633": {
+        "name": "ณภัทร หิรัญอร",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6638": {
+        "name": "ณัฐพงศ์ สมใสวิวิตรกุล",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6639": {
+        "name": "ณัฐภูมินทร์ สีมาพันธ์",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6653": {
+        "name": "นโม วังคะฮาต",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6654": {
+        "name": "นรภัทร ชัยสุนทร",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6668": {
+        "name": "ปิติภัทร เสียงใส",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6671": {
+        "name": "พชรพล ธงยศ",
+        "scores": {
+            "general_score": 17.0
+        }
+    },
+    "6675": {
+        "name": "พัสวีพร ยศพิทักษ์",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6681": {
+        "name": "พุฒิภัทร สุขเสน",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6682": {
+        "name": "ไพลินฎา พงศ์ธนาวรรธ",
+        "scores": {
+            "general_score": "ขาดสอบ"
+        }
+    },
+    "6683": {
+        "name": "ภคพงษ์ อินทมะโน",
+        "scores": {
+            "general_score": 16.5
+        }
+    },
+    "6686": {
+        "name": "ภาณุพงศ์ แสงสุวรรณ",
+        "scores": {
+            "general_score": 15.0
+        }
+    },
+    "6691": {
+        "name": "ลลนันท์ โชคสวัสดิิ์นุกูล",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6692": {
+        "name": "ลลิน บุญรมย์",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6693": {
+        "name": "วชิรวิทย์ สุขฉิมมา",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6697": {
+        "name": "วรางค์ศิริ ประทีปวัฒนานนท์",
+        "scores": {
+            "general_score": 11.5
+        }
+    },
+    "6700": {
+        "name": "วิชชากร คลังกลาง",
+        "scores": {
+            "general_score": 10.0
+        }
+    },
+    "6703": {
+        "name": "ศุภโชค อินไหม",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6708": {
+        "name": "อิทธิราช ลาเอ็ด",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6709": {
+        "name": "เอื้อกรกาญจน์ สุรินอาสะวะ",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "6615": {
+        "name": "กฤตวรรณ ธนะไพบูลย์กุล",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6616": {
+        "name": "กานต์พิชชา สายธนู",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6620": {
+        "name": "คีรีณกรณ์ ไชยยันบูรณ์",
+        "scores": {
+            "general_score": "ขาดสอบ"
+        }
+    },
+    "6621": {
+        "name": "จตุรภัทร วงศ์กันยา",
+        "scores": {
+            "general_score": 13.5
+        }
+    },
+    "6625": {
+        "name": "จิรพงศ์ กิจตระกูลรัตน์",
+        "scores": {
+            "general_score": 8.5
+        }
+    },
+    "6626": {
+        "name": "ชญาภรณ์ ไชยแสง",
+        "scores": {
+            "general_score": 8.0
+        }
+    },
+    "6628": {
+        "name": "ชิณณวรรธน์ คำแสนราช",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6632": {
+        "name": "ณปภัช เสียงหวาน",
+        "scores": {
+            "general_score": 10.5
+        }
+    },
+    "6637": {
+        "name": "ณัฐชนน พงษ์เสือ",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6641": {
+        "name": "ณิชากรณ์ สมอินเอก",
+        "scores": {
+            "general_score": 16.0
+        }
+    },
+    "6643": {
+        "name": "ดิศราธร แก่นสา",
+        "scores": {
+            "general_score": 12.5
+        }
+    },
+    "6645": {
+        "name": "ทอไหม จันทร์ใบ",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6646": {
+        "name": "ธนกร กั้วสิทธิ์",
+        "scores": {
+            "general_score": 14.0
+        }
+    },
+    "6647": {
+        "name": "ธนศักดิ์ ชัยวิวัฒน์ตระกูล",
+        "scores": {
+            "general_score": 12.0
+        }
+    },
+    "6648": {
+        "name": "ธนัฐพัฒน์ สิงห์ขัน",
+        "scores": {
+            "general_score": 5.5
+        }
+    },
+    "6669": {
+        "name": "พงศธร โคตวัตร์",
+        "scores": {
+            "general_score": 11.0
+        }
+    },
+    "6670": {
+        "name": "พงศ์ภัค บรรจง",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6674": {
+        "name": "พัชรกัญญ์ ขันทะวัตร์",
+        "scores": {
+            "general_score": 9.5
+        }
+    },
+    "6679": {
+        "name": "พิชญธิดา อินธิแสง",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6680": {
+        "name": "พิชญะ เสียงล้ำ",
+        "scores": {
+            "general_score": 9.0
+        }
+    },
+    "6695": {
+        "name": "วรปรัชญ์ ส่งเสริม",
+        "scores": {
+            "general_score": 13.0
+        }
+    },
+    "6702": {
+        "name": "ศิรวิทย์ สิงคิบุตร",
+        "scores": {
+            "general_score": 14.5
+        }
+    },
+    "6705": {
+        "name": "สุรัตน์ชมนต์ มุกธวัตร",
+        "scores": {
+            "general_score": "ลา-"
+        }
+    },
+    "6706": {
+        "name": "หนึ่งฤทัย หนูแย้ม",
+        "scores": {
+            "general_score": 12.5
+        }
+    }
+};
 
-            const studentInfoForm = document.getElementById('studentInfoForm');
-            const errorMessage = document.getElementById('errorMessage');
-            const checkScoresBtn = document.getElementById('checkScoresBtn');
-            const backToLoginFromScoresBtn = document.getElementById('backToLoginFromScoresBtn');
+        const passingScore = 60; // กำหนดคะแนนผ่าน (ตัวอย่าง หากคะแนนเต็ม 100)
 
-            const teacherAuthForm = document.getElementById('teacherAuthForm');
-            const teacherUsernameInput = document.getElementById('teacherUsername');
-            const teacherPasswordInput = document.getElementById('teacherPassword');
-            const authErrorMessage = document.getElementById('authErrorMessage');
-            const authBackBtn = document.getElementById('authBackBtn');
+        function searchScore() {
+            const studentIdInput = document.getElementById('studentId').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const errorMessageDiv = document.getElementById('errorMessage');
 
-            const examForm = document.getElementById('examForm');
-            const submitButton = document.getElementById('submitButton');
-            const cheatDetectedMessage = document.getElementById('cheatDetectedMessage');
-            const studentInfoDisplay = document.getElementById('studentInfoDisplay');
-            const cheatingStudentInfo = document.getElementById('cheatingStudentInfo');
-            const timerDisplay = document.getElementById('timer');
-            const questionsContainer = document.getElementById('questionsContainer');
+            // ซ่อนผลลัพธ์และข้อความผิดพลาดที่แสดงอยู่ก่อนหน้า
+            resultsDiv.classList.add('hidden');
+            errorMessageDiv.classList.add('hidden');
 
-            const filterGrade = document.getElementById('filterGrade');
-            const filterRoom = document.getElementById('filterRoom');
-            const scoreTableBody = document.querySelector('#scoreTable tbody');
-            const noDataMessage = document.getElementById('noDataMessage');
+            const student = students[studentIdInput];
 
-            // Teacher Credentials (VERY IMPORTANT: Not secure for production!)
-            const TEACHER_USERNAME = 'Test99';
-            const TEACHER_PASSWORD = '02072568';
+            if (student) {
+                document.getElementById('displayStudentId').textContent = studentIdInput;
+                document.getElementById('displayName').textContent = student.name;
+                document.getElementById('scoreGeneral').textContent = student.scores.general_score;
 
-            let studentData = {};
-            let timerInterval;
-            const EXAM_DURATION_SECONDS = 15 * 60;
-            let timeElapsed = 0;
+                const statusSpan = document.getElementById('status');
 
-            const ALL_QUESTIONS = [
-                {
-                    text: 'พระมหากษัตริย์พระองค์ใดทรงประกาศเลิกทาสในประเทศไทย?',
-                    options: {
-                        a: 'พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราช',
-                        b: 'พระบาทสมเด็จพระจุลจอมเกล้าเจ้าอยู่หัว',
-                        c: 'พระบาทสมเด็จพระพุทธเลิศหล้านภาลัย',
-                        d: 'พระบาทสมเด็จพระมงกุฎเกล้าเจ้าอยู่หัว'
-                    },
-                    correct: 'b'
-                },
-                {
-                    text: 'เหตุการณ์ใดถือเป็นจุดเริ่มต้นของสงครามโลกครั้งที่ 1?',
-                    options: {
-                        a: 'การโจมตีเพิร์ลฮาร์เบอร์',
-                        b: 'การลอบสังหารอาร์ชดยุกฟรานซ์ เฟอร์ดินานด์',
-                        c: 'การรวมชาติเยอรมนี',
-                        d: 'การปฏิวัติรัสเซีย'
-                    },
-                    correct: 'b'
-                },
-                {
-                    text: 'อารยธรรมใดที่พัฒนาการเขียนอักษรลิ่ม (Cuneiform)?',
-                    options: {
-                        a: 'อียิปต์',
-                        b: 'กรีก',
-                        c: 'โรมัน',
-                        d: 'เมโสโปเตเมีย'
-                    },
-                    correct: 'd'
-                },
-                {
-                    text: 'กษัตริย์องค์ใดที่สร้างกำแพงเมืองจีน?',
-                    options: {
-                        a: 'จิ๋นซีฮ่องเต้',
-                        b: 'ฮั่นอู่ตี้',
-                        c: 'ถังไท่จง',
-                        d: 'คังซี'
-                    },
-                    correct: 'a'
-                },
-                {
-                    text: 'สงครามครูเสดเป็นการต่อสู้ระหว่างศาสนาใด?',
-                    options: {
-                        a: 'พุทธกับคริสต์',
-                        b: 'ฮินดูกับอิสลาม',
-                        c: 'คริสต์กับอิสลาม',
-                        d: 'ยูดายกับคริสต์'
-                    },
-                    correct: 'c'
-                },
-                {
-                    text: 'ใครคือผู้ค้นพบทวีปอเมริกา?',
-                    options: {
-                        a: 'เฟอร์ดินานด์ มาเจลลัน',
-                        b: 'คริสโตเฟอร์ โคลัมบัส',
-                        c: 'วาสโก ดา กามา',
-                        d: 'เจมส์ คุก'
-                    },
-                    correct: 'b'
-                },
-                {
-                    text: 'การปฏิวัติฝรั่งเศสเริ่มต้นขึ้นในปีใด?',
-                    options: {
-                        a: 'ค.ศ. 1789',
-                        b: 'ค.ศ. 1800',
-                        c: 'ค.ศ. 1776',
-                        d: 'ค.ศ. 1815'
-                    },
-                    correct: 'a'
-                },
-                {
-                    text: 'ใครคือผู้นำทางจิตวิญญาณของการเคลื่อนไหวเรียกร้องเอกราชของอินเดีย?',
-                    options: {
-                        a: 'จวาหะร์ลาล เนห์รู',
-                        b: 'อินทิรา คานธี',
-                        c: 'สุภาส จันทระ โพส',
-                        d: 'มหาตมะ คานธี'
-                    },
-                    correct: 'd'
-                },
-                {
-                    text: 'เหตุการณ์ใดที่ทำให้สหรัฐอเมริกาเข้าร่วมสงครามโลกครั้งที่ 2?',
-                    options: {
-                        a: 'การบุกโปแลนด์',
-                        b: 'การทิ้งระเบิดปรมาณูที่ฮิโรชิมา',
-                        c: 'การโจมตีเพิร์ลฮาร์เบอร์',
-                        d: 'การยกพลขึ้นบกที่นอร์มังดี'
-                    },
-                    correct: 'c'
-                },
-                {
-                    text: 'ระบบศักดินา (Feudalism) เจริญรุ่งเรืองในภูมิภาคใด?',
-                    options: {
-                        a: 'เอเชียตะวันออก',
-                        b: 'ยุโรปสมัยกลาง',
-                        c: 'อเมริกาใต้',
-                        d: 'แอฟริกาเหนือ'
-                    },
-                    correct: 'b'
-                },
-                {
-                    text: 'การค้นพบทางวิทยาศาสตร์ใดที่เกี่ยวข้องกับกาลิเลโอ กาลิเลอี?',
-                    options: {
-                        a: 'การสังเกตการณ์ผ่านกล้องโทรทรรศน์',
-                        b: 'กฎการเคลื่อนที่',
-                        c: 'ทฤษฎีสัมพัทธภาพ',
-                        d: 'การค้นพบเพนิซิลลิน'
-                    },
-                    correct: 'a'
-                },
-                {
-                    text: 'อารยธรรมใดที่สร้างพีระมิดขนาดใหญ่?',
-                    options: {
-                        a: 'โรมัน',
-                        b: 'กรีก',
-                        c: 'จีน',
-                        d: 'อียิปต์'
-                    },
-                    correct: 'd'
-                },
-                {
-                    text: 'สงครามเย็นเป็นการเผชิญหน้าระหว่างกลุ่มประเทศใด?',
-                    options: {
-                        a: 'สหรัฐอเมริกากับจีน',
-                        b: 'สหราชอาณาจักรกับฝรั่งเศส',
-                        c: 'สหรัฐอเมริกากับสหภาพโซเวียต',
-                        d: 'เยอรมนีกับญี่ปุ่น'
-                    },
-                    correct: 'c'
-                },
-                {
-                    text: 'ใครคือผู้ก่อตั้งอาณาจักรสุโขทัย?',
-                    options: {
-                        a: 'พ่อขุนรามคำแหงมหาราช',
-                        b: 'พ่อขุนศรีอินทราทิตย์',
-                        c: 'พระเจ้าอู่ทอง',
-                        d: 'สมเด็จพระนเรศวรมหาราช'
-                    },
-                    correct: 'b'
-                },
-                {
-                    text: 'การปฏิวัติอุตสาหกรรมเริ่มต้นขึ้นที่ประเทศใด?',
-                    options: {
-                        a: 'สหราชอาณาจักร',
-                        b: 'เยอรมนี',
-                        c: 'สหรัฐอเมริกา',
-                        d: 'ฝรั่งเศส'
-                    },
-                    correct: 'a'
-                }
-            ];
+                // พยายามแปลงคะแนนเป็นตัวเลข
+                const score = parseFloat(student.scores.general_score);
 
-            const TOTAL_QUESTIONS = ALL_QUESTIONS.length;
-            let currentShuffledQuestions = [];
-            // ตัวแปรสำหรับเก็บ timestamp ของการสอบครั้งปัจจุบัน
-            let currentExamTimestamp = null; 
-
-            // --- Helper function to shuffle an array ---
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-            }
-
-            // --- Function to render questions ---
-            function renderQuestions() {
-                questionsContainer.innerHTML = '';
-                currentShuffledQuestions = shuffleArray([...ALL_QUESTIONS]);
-
-                currentShuffledQuestions.forEach((q, index) => {
-                    const questionBlock = document.createElement('div');
-                    questionBlock.className = 'question-block';
-
-                    const questionText = document.createElement('p');
-                    questionText.className = 'question-text';
-                    questionText.textContent = `${index + 1}. ${q.text}`;
-
-                    questionBlock.appendChild(questionText);
-
-                    const optionKeys = shuffleArray(Object.keys(q.options));
-                    optionKeys.forEach(key => {
-                        const label = document.createElement('label');
-                        const input = document.createElement('input');
-                        input.type = 'radio';
-                        input.name = `q${index + 1}`;
-                        input.value = key;
-                        input.required = true;
-
-                        label.appendChild(input);
-                        label.appendChild(document.createTextNode(` ${key.toUpperCase()}. ${q.options[key]}`));
-                        questionBlock.appendChild(label);
-                    });
-                    questionsContainer.appendChild(questionBlock);
-                });
-            }
-
-            // --- Navigation Functions ---
-            function showSection(sectionId) {
-                const sections = [loginSection, examSection, scoreDisplaySection, teacherAuthSection];
-                sections.forEach(section => {
-                    if (section.id === sectionId) {
-                        section.classList.remove('hidden');
+                if (!isNaN(score)) { // ตรวจสอบว่าเป็นตัวเลขที่ถูกต้องหรือไม่
+                    if (score >= passingScore) {
+                        statusSpan.textContent = "ผ่าน";
+                        statusSpan.className = 'pass'; // ใช้สีเขียว
                     } else {
-                        section.classList.add('hidden');
+                        statusSpan.textContent = "ไม่ผ่าน";
+                        statusSpan.className = 'fail'; // ใช้สีแดง
                     }
-                });
-            }
-
-            // --- Login Page Logic ---
-            studentInfoForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const fullName = document.getElementById('fullName').value.trim();
-                const studentId = document.getElementById('studentId').value.trim();
-                const grade = document.getElementById('grade').value;
-                const room = document.getElementById('room').value.trim();
-
-                if (!fullName || !studentId || !grade || !room) {
-                    errorMessage.style.display = 'block';
-                    return;
                 } else {
-                    errorMessage.style.display = 'none';
+                    // หากคะแนนไม่ใช่ตัวเลข (เช่น 'ขาดสอบ', 'ลาป่วย', 'แข่งโครงงาน')
+                    statusSpan.textContent = student.scores.general_score; // แสดงข้อความเดิม
+                    statusSpan.className = 'neutral-status'; // ใช้สีกลางสำหรับกรณีเหล่านี้
                 }
 
-                studentData = { fullName, studentId, grade, room };
-                currentExamTimestamp = new Date().getTime(); // ตั้งค่า timestamp สำหรับการสอบครั้งนี้
-
-                studentInfoDisplay.textContent = `${studentData.fullName} (รหัส: ${studentData.studentId}, ชั้น: ${studentData.grade} ห้อง: ${studentData.room})`;
-                cheatingStudentInfo.textContent = `${studentData.fullName} (รหัส: ${studentData.studentId}, ชั้น: ${studentData.grade} ห้อง: ${studentData.room})`;
-
-                showSection('examSection');
-                renderQuestions();
-
-                timeElapsed = 0;
-                startTimer(EXAM_DURATION_SECONDS);
-
-                alert('เริ่มต้นทำข้อสอบ! \n\nข้อตกลง: ห้ามสลับแท็บ/หน้าต่าง หรือเปิดโปรแกรมอื่นโดยเด็ดขาด มิฉะนั้นการสอบจะสิ้นสุดลงทันที');
-            });
-
-            checkScoresBtn.addEventListener('click', () => {
-                showSection('teacherAuthSection');
-                authErrorMessage.style.display = 'none';
-                teacherUsernameInput.value = '';
-                teacherPasswordInput.value = '';
-                teacherUsernameInput.focus();
-            });
-
-            // --- Teacher Auth Logic ---
-            teacherAuthForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const username = teacherUsernameInput.value;
-                const password = teacherPasswordInput.value;
-
-                if (username === TEACHER_USERNAME && password === TEACHER_PASSWORD) {
-                    showSection('scoreDisplaySection');
-                    displayScores();
-                } else {
-                    authErrorMessage.style.display = 'block';
-                }
-            });
-
-            authBackBtn.addEventListener('click', () => {
-                showSection('loginSection');
-            });
-
-            backToLoginFromScoresBtn.addEventListener('click', () => {
-                showSection('loginSection');
-                filterGrade.value = 'all';
-                filterRoom.value = '';
-            });
-
-
-            // --- Timer Functions ---
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                resultsDiv.classList.remove('hidden'); // แสดงผลลัพธ์
+            } else {
+                errorMessageDiv.classList.remove('hidden'); // แสดงข้อความผิดพลาด
             }
-
-            function startTimer(duration) {
-                let timer = duration;
-                timerInterval = setInterval(() => {
-                    if (timer >= 0) {
-                        timerDisplay.textContent = formatTime(timer);
-                    }
-
-                    if (timer <= 60 && timer > 0) {
-                         timerDisplay.style.color = '#e74c3c';
-                    }
-                    if (timer <= 30 && timer > 0) {
-                         timerDisplay.style.animation = 'blink-red 1s infinite';
-                    }
-
-                    if (timer < 0) {
-                        clearInterval(timerInterval);
-                        timerDisplay.textContent = "00:00";
-                        endExamDueToTimer();
-                    }
-                    timeElapsed++;
-                    timer--;
-                }, 1000);
-            }
-
-            function endExamDueToTimer() {
-                alert("หมดเวลาทำข้อสอบแล้ว! ระบบจะทำการส่งคำตอบอัตโนมัติ.");
-                submitExam();
-            }
-
-            // --- Cheat Detection ---
-            function endExamDueToTabSwitch() {
-                clearInterval(timerInterval);
-
-                const formData = new FormData(examForm);
-                const answers = {};
-                currentShuffledQuestions.forEach((q, index) => {
-                    const questionName = `q${index + 1}`;
-                    const answered = formData.get(questionName);
-                    if (answered) {
-                        answers[questionName] = answered;
-                    }
-                });
-
-                const partialScore = calculateScore(answers);
-                const timeSpentFormatted = formatTime(timeElapsed);
-                const examDate = new Date().toLocaleDateString('th-TH');
-
-                alert(`ตรวจพบการสลับแท็บ! การทำข้อสอบของคุณถูกยกเลิก.\nคุณได้ ${partialScore} คะแนน จากข้อที่ทำได้.`);
-
-                saveScore({
-                    ...studentData,
-                    score: partialScore,
-                    totalQuestionsAnswered: Object.keys(answers).length,
-                    timeSpent: timeSpentFormatted,
-                    date: examDate,
-                    status: 'Disqualified (Partial Score)',
-                    timestamp: currentExamTimestamp // ใช้ timestamp ของการสอบครั้งนี้
-                });
-
-                if (examForm) {
-                    examForm.classList.add('hidden');
-                    examForm.querySelectorAll('input, textarea, select, button').forEach(element => {
-                        element.disabled = true;
-                    });
-                }
-                if (cheatDetectedMessage) {
-                    cheatDetectedMessage.classList.remove('hidden');
-                    cheatDetectedMessage.querySelector('p:first-of-type strong').textContent = `⚠️ ตรวจพบการสลับแท็บ/หน้าต่าง! การทำข้อสอบของคุณถูกยกเลิก.`;
-                    cheatDetectedMessage.querySelector('p:nth-of-type(2)').textContent = `คุณได้ ${partialScore} คะแนน จากข้อที่ทำได้.`;
-                }
-
-                console.log("ตรวจพบการสลับแท็บ! การสอบสิ้นสุดลงแล้ว.");
-                console.log("ข้อมูลผู้ทุจริต (คะแนนบางส่วน):", studentData);
-            }
-
-            let examStarted = false;
-            const observer = new MutationObserver((mutationsList, observer) => {
-                for (const mutation of mutationsList) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        if (!examSection.classList.contains('hidden') && !examStarted) {
-                            examStarted = true;
-                            document.addEventListener('visibilitychange', function() {
-                                if (document.hidden) {
-                                    console.log('หน้าเว็บถูกซ่อน: ตรวจพบการสลับแท็บ/หน้าต่าง');
-                                    endExamDueToTabSwitch();
-                                }
-                            });
-                            observer.disconnect();
-                        }
-                    }
-                }
-            });
-            observer.observe(examSection, { attributes: true });
-
-
-            // --- Exam Submission & Scoring ---
-            function calculateScore(answers) {
-                let score = 0;
-                currentShuffledQuestions.forEach((q, index) => {
-                    const questionName = `q${index + 1}`;
-                    if (answers[questionName] === q.correct) {
-                        score++;
-                    }
-                });
-                return score;
-            }
-
-            // *** แก้ไข: Logic ใน saveScore เพื่ออัปเดตหรือเพิ่มข้อมูล ***
-            function saveScore(scoreData) {
-                let scores = JSON.parse(localStorage.getItem('examScores')) || [];
-                
-                // ตรวจสอบว่ามีรายการที่ตรงกับ timestamp ของการสอบครั้งปัจจุบันหรือไม่
-                const existingIndex = scores.findIndex(s => s.timestamp === scoreData.timestamp);
-
-                if (existingIndex !== -1) {
-                    // ถ้าพบรายการเดิม ให้อัปเดตข้อมูลนั้น
-                    scores[existingIndex] = scoreData;
-                } else {
-                    // ถ้าไม่พบ (เป็นรายการใหม่) ให้เพิ่มเข้าไป
-                    scores.push(scoreData);
-                }
-                
-                localStorage.setItem('examScores', JSON.stringify(scores));
-            }
-
-            function submitExam() {
-                clearInterval(timerInterval);
-                submitButton.disabled = true;
-
-                const formData = new FormData(examForm);
-                const answers = {};
-                for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
-                    answers[`q${i}`] = formData.get(`q${i}`) || 'unanswered';
-                }
-
-                const score = calculateScore(answers);
-                const timeSpentFormatted = formatTime(timeElapsed);
-                const examDate = new Date().toLocaleDateString('th-TH');
-
-                const finalScoreData = {
-                    ...studentData,
-                    score: score,
-                    timeSpent: timeSpentFormatted,
-                    date: examDate,
-                    status: 'completed',
-                    timestamp: currentExamTimestamp // ใช้ timestamp ของการสอบครั้งนี้
-                };
-
-                saveScore(finalScoreData);
-
-                console.log("คำตอบที่ส่ง:", answers);
-                console.log("คะแนน:", score);
-                console.log("เวลาที่ใช้:", timeSpentFormatted);
-                alert(`ส่งคำตอบเรียบร้อยแล้ว! คุณได้ ${score} คะแนน จาก ${TOTAL_QUESTIONS} ข้อ ใช้เวลา ${timeSpentFormatted}\nขอบคุณที่ทำข้อสอบ`);
-
-                examForm.querySelectorAll('input, textarea, select, button').forEach(element => {
-                    element.disabled = true;
-                });
-            }
-
-            if (examForm) {
-                examForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    submitExam();
-                });
-            }
-
-            // --- Score Display, Edit, Delete Logic ---
-            filterGrade.addEventListener('change', displayScores);
-            filterRoom.addEventListener('input', displayScores);
-
-            function displayScores() {
-                const allScores = JSON.parse(localStorage.getItem('examScores')) || [];
-                scoreTableBody.innerHTML = '';
-
-                const selectedGrade = filterGrade.value;
-                const enteredRoom = filterRoom.value.trim().toLowerCase();
-
-                const filteredScores = allScores.filter(score => {
-                    const matchesGrade = selectedGrade === 'all' || score.grade === selectedGrade;
-                    const matchesRoom = enteredRoom === '' || (score.room && score.room.toLowerCase().includes(enteredRoom));
-                    return matchesGrade && matchesRoom;
-                });
-
-                if (filteredScores.length === 0) {
-                    noDataMessage.classList.remove('hidden');
-                    scoreTable.classList.add('hidden');
-                } else {
-                    noDataMessage.classList.add('hidden');
-                    scoreTable.classList.remove('hidden');
-                    filteredScores.forEach((scoreData) => { // ไม่ต้องใช้ index เพราะเราอ้างอิงจาก timestamp
-                        const row = scoreTableBody.insertRow();
-                        row.dataset.originalTimestamp = scoreData.timestamp;
-
-                        row.insertCell().textContent = scoreData.fullName;
-                        row.insertCell().textContent = scoreData.studentId;
-                        row.insertCell().textContent = scoreData.grade;
-                        row.insertCell().textContent = scoreData.room;
-                        row.insertCell().textContent = scoreData.score;
-                        row.insertCell().textContent = scoreData.timeSpent;
-                        row.insertCell().textContent = scoreData.date;
-                        row.insertCell().textContent = scoreData.status || 'N/A';
-
-                        const actionsCell = row.insertCell();
-                        actionsCell.className = 'action-buttons';
-                        actionsCell.innerHTML = `
-                            <button class="edit-btn">แก้ไข</button>
-                            <button class="delete-btn">ลบ</button>
-                        `;
-                    });
-                }
-            }
-
-            // Event delegation for edit and delete buttons
-            scoreTableBody.addEventListener('click', function(event) {
-                const target = event.target;
-                const row = target.closest('tr');
-                if (!row) return;
-
-                const originalTimestamp = parseInt(row.dataset.originalTimestamp);
-                let scores = JSON.parse(localStorage.getItem('examScores')) || [];
-                const scoreIndex = scores.findIndex(s => s.timestamp === originalTimestamp);
-                if (scoreIndex === -1) return;
-                const scoreToEdit = { ...scores[scoreIndex] }; // Create a copy for editing
-
-                if (target.classList.contains('delete-btn')) {
-                    if (confirm(`คุณแน่ใจหรือไม่ที่จะลบข้อมูลของ ${scoreToEdit.fullName} (${scoreToEdit.studentId})?`)) {
-                        scores.splice(scoreIndex, 1);
-                        localStorage.setItem('examScores', JSON.stringify(scores));
-                        displayScores();
-                    }
-                } else if (target.classList.contains('edit-btn')) {
-                    for (let i = 0; i < row.cells.length - 1; i++) {
-                        row.cells[i].contentEditable = true;
-                        row.cells[i].style.backgroundColor = '#fffacd';
-                    }
-
-                    target.parentNode.innerHTML = `
-                        <button class="save-btn">บันทึก</button>
-                        <button class="cancel-btn">ยกเลิก</button>
-                    `;
-                } else if (target.classList.contains('save-btn')) {
-                    scoreToEdit.fullName = row.cells[0].textContent;
-                    scoreToEdit.studentId = row.cells[1].textContent;
-                    scoreToEdit.grade = row.cells[2].textContent;
-                    scoreToEdit.room = row.cells[3].textContent;
-                    scoreToEdit.score = row.cells[4].textContent;
-                    scoreToEdit.timeSpent = row.cells[5].textContent;
-                    scoreToEdit.date = row.cells[6].textContent;
-                    scoreToEdit.status = row.cells[7].textContent;
-
-                    scores[scoreIndex] = scoreToEdit; // อัปเดตข้อมูลในอาร์เรย์
-                    localStorage.setItem('examScores', JSON.stringify(scores));
-                    displayScores();
-                } else if (target.classList.contains('cancel-btn')) {
-                    displayScores();
-                }
-            });
-        });
+        }
     </script>
 </body>
 </html>
