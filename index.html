@@ -1,1875 +1,237 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจสอบผลคะแนนนักเรียน - โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</title>
-    <style>
-        /* CSS สำหรับการจัดระเบียบและดีไซน์ที่ทันสมัย */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* ฟอนต์ระบบที่อ่านง่าย */
-            margin: 0;
-            padding: 0;
-            background: #f0f2f5; /* สีพื้นหลังอ่อนๆ */
-            display: flex;
-            flex-direction: column; /* จัดวางแนวตั้ง */
-            justify-content: flex-start; /* เริ่มจากด้านบน */
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        header {
-            background: linear-gradient(to right, #007bff, #0056b3); /* ไล่เฉดสีน้ำเงินเข้ม */
-            color: white;
-            padding: 20px 0;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px; /* ระยะห่างจากส่วนเนื้อหาหลัก */
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.2em;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            margin: 5px 0 0;
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .main-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); /* เงาที่ดูนุ่มนวลขึ้น */
-            text-align: center;
-            width: 90%;
-            max-width: 650px; /* ขยายความกว้างได้อีกเล็กน้อย */
-            box-sizing: border-box;
-            border-top: 6px solid #ff7f00; /* เส้นขอบบนสีส้มสดใส */
-            margin-bottom: 40px; /* ระยะห่างจากด้านล่าง */
-            transition: transform 0.3s ease-in-out; /* เพิ่ม animation */
-        }
-
-        .main-container:hover {
-            transform: translateY(-5px); /* ยกตัวขึ้นเล็กน้อยเมื่อนำเมาส์มาวาง */
-        }
-
-        h2 {
-            color: #007bff; /* สีน้ำเงินหลัก */
-            margin-bottom: 25px;
-            font-weight: 700;
-            font-size: 1.8em;
-        }
-
-        .search-section {
-            display: flex; /* จัดให้ input และ button อยู่ในบรรทัดเดียวกัน */
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap; /* ให้ห่อลงบรรทัดใหม่ในจอเล็ก */
-        }
-
-        input[type="text"] {
-            flex-grow: 1; /* ให้ input ขยายเต็มพื้นที่ */
-            padding: 14px 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1.1em;
-            margin-right: 15px; /* ระยะห่างจากปุ่ม */
-            max-width: 350px; /* จำกัดความกว้าง input */
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        input[type="text"]:focus {
-            border-color: #ff7f00; /* สีส้มเมื่อโฟกัส */
-            outline: none;
-            box-shadow: 0 0 12px rgba(255, 127, 0, 0.2); /* เงารอบ input เมื่อโฟกัส */
-        }
-
-        button {
-            padding: 14px 30px;
-            background-color: #007bff; /* สีน้ำเงินหลัก */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            white-space: nowrap; /* ป้องกันปุ่มห่อข้อความ */
-        }
-
-        button:hover {
-            background-color: #0056b3; /* สีน้ำเงินเข้มขึ้นเมื่อ hover */
-            transform: translateY(-3px); /* ยกตัวขึ้นเล็กน้อย */
-            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0); /* กลับมาตำแหน่งเดิมเมื่อกด */
-            box-shadow: none;
-        }
-
-        #results {
-            margin-top: 35px;
-            text-align: left;
-            border-top: 1px solid #eee;
-            padding-top: 25px;
-            border-radius: 5px;
-            background-color: #fcfcfc; /* พื้นหลังเล็กน้อยสำหรับกล่องผลลัพธ์ */
-            padding: 25px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* เงาด้านในเล็กน้อย */
-        }
-
-        #results p {
-            font-size: 1.1em;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between; /* จัดข้อความให้ชิดซ้ายขวา */
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #eee; /* เส้นประคั่นแต่ละบรรทัด */
-        }
-
-        #results p:last-child {
-            margin-bottom: 0;
-            border-bottom: none;
-        }
-
-        #results strong {
-            color: #007bff; /* สีน้ำเงินหลักสำหรับหัวข้อ */
-            flex-shrink: 0; /* ป้องกันไม่ให้หัวข้อหดตัว */
-            padding-right: 15px; /* ระยะห่างจากข้อมูล */
-        }
-
-        #results span {
-            text-align: right; /* จัดข้อมูลให้ชิดขวา */
-            flex-grow: 1; /* ให้ข้อมูลขยายเต็มพื้นที่ที่เหลือ */
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .error-message {
-            color: #dc3545;
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        footer {
-            margin-top: auto; /* ดัน Footer ไปอยู่ด้านล่างสุด */
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9em;
-            background-color: #e9ecef;
-            border-top: 1px solid #dee2e6;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
-            }
-            header p {
-                font-size: 1em;
-            }
-            .main-container {
-                padding: 25px;
-                max-width: 95%;
-            }
-            h2 {
-                font-size: 1.5em;
-            }
-            .search-section {
-                flex-direction: column; /* วาง input และ button ซ้อนกันในจอเล็ก */
-            }
-            input[type="text"] {
-                margin-right: 0;
-                margin-bottom: 15px; /* เพิ่มระยะห่างด้านล่าง */
-                max-width: 100%;
-            }
-            button {
-                width: 100%; /* ให้ปุ่มเต็มความกว้าง */
-            }
-            #results p {
-                flex-direction: column; /* จัดรายละเอียดเป็นคอลัมน์ในจอเล็ก */
-                align-items: flex-start;
-            }
-            #results strong {
-                padding-right: 0;
-                margin-bottom: 5px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEKO WASH</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React + ReactDOM + Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
-    <header>
-        <h1>ระบบตรวจสอบผลคะแนนนักเรียน</h1>
-        <p>โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร</p>
-    </header>
+<body class="bg-[#c3edfe] min-h-screen">
+  <div id="root"></div>
 
-    <main class="main-container">
-        <h2>ค้นหาผลคะแนนของคุณ</h2>
-        <div class="search-section">
-            <input type="text" id="studentId" placeholder="กรอกรหัสนักเรียนของคุณ">
-            <button onclick="searchScore()">ค้นหา</button>
-        </div>
-        <div id="results" class="hidden">
-            <p><strong>รหัสนักเรียน:</strong> <span id="displayStudentId"></span></p>
-            <p><strong>ชื่อ-นามสกุล:</strong> <span id="displayName"></span></p>
-            <p><strong>คะแนนสอบ:</strong> <span id="scoreGeneral"></span> คะแนน</p>
+  <script type="text/babel">
+    const COLORS = { primary: "#213f9a", accent: "#c3edfe" };
+
+    const SERVICES = [
+      {
+        id: "wash16",
+        title: "บริการซัก - ถังขนาด 16 กก.",
+        options: [
+          { id: "w16_hot", name: "ซักผ้า น้ำร้อน", price: 70 },
+          { id: "w16_warm", name: "ซักผ้า น้ำอุ่น", price: 60 },
+          { id: "w16_cold", name: "ซักผ้า น้ำเย็น", price: 50 },
+        ],
+      },
+      {
+        id: "wash21",
+        title: "บริการซัก - ถังขนาด 21 กก.",
+        options: [
+          { id: "w21_hot", name: "ซักผ้า น้ำร้อน", price: 80 },
+          { id: "w21_warm", name: "ซักผ้า น้ำอุ่น", price: 70 },
+          { id: "w21_cold", name: "ซักผ้า น้ำเย็น", price: 60 },
+        ],
+      },
+      {
+        id: "dry10",
+        title: "บริการอบ - ขนาด 10 กก.",
+        options: [
+          { id: "d10_high", name: "อบ อุณหภูมิสูง", price: 60 },
+          { id: "d10_med", name: "อบ อุณหภูมิปานกลาง", price: 50 },
+          { id: "d10_low", name: "อบ อุณหภูมิต่ำ", price: 40 },
+        ],
+      },
+      {
+        id: "dry16",
+        title: "บริการอบ - ขนาด 16 กก.",
+        options: [
+          { id: "d16_high", name: "อบ อุณหภูมิสูง", price: 70 },
+          { id: "d16_med", name: "อบ อุณหภูมิปานกลาง", price: 60 },
+          { id: "d16_low", name: "อบ อุณหภูมิต่ำ", price: 50 },
+        ],
+      },
+    ];
+
+    const DELIVERY = { id: "pickup_drop", name: "บริการรับส่งผ้า (บังคับ)", price: 100 };
+
+    function App() {
+      const [step, setStep] = React.useState("select");
+      const [selected, setSelected] = React.useState({});
+
+      const chosenItems = React.useMemo(() => {
+        const items = [];
+        SERVICES.forEach(group => {
+          const selId = selected[group.id];
+          const opt = group.options.find(o => o.id === selId);
+          if(opt) items.push({ id: opt.id, name: `${opt.name} (${group.title.replace("บริการ","")})`, price: opt.price });
+        });
+        items.push({ id: DELIVERY.id, name: DELIVERY.name, price: DELIVERY.price });
+        return items;
+      }, [selected]);
+
+      const total = React.useMemo(() => chosenItems.reduce((s,i)=>s+i.price,0), [chosenItems]);
+
+      const handleSelect = (groupId, optionId) => setSelected(prev => ({...prev, [groupId]: optionId}));
+
+      return (
+        <div className="min-h-screen">
+          <Header />
+          <div className="max-w-3xl mx-auto p-4 sm:p-6">
+            <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
+              {step==="select" && <SelectServices selected={selected} onSelect={handleSelect} total={total} onConfirm={()=>setStep("review")} />}
+              {step==="review" && <Review items={chosenItems} total={total} onBack={()=>setStep("select")} onConfirm={()=>setStep("pay")} />}
+              {step==="pay" && <Payment items={chosenItems} total={total} onBack={()=>setStep("review")} onPaid={()=>setStep("success")} />}
+              {step==="success" && <Success total={total} onNewOrder={()=>{setSelected({}); setStep("select");}} />}
             </div>
-        <div id="errorMessage" class="error-message hidden">
-            ไม่พบรหัสนักเรียนที่คุณค้นหา กรุณาตรวจสอบรหัสอีกครั้ง หรือติดต่อโรงเรียน
+          </div>
         </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย มุกดาหาร. สงวนลิขสิทธิ์</p>
-    </footer>
-
-    <script>
-        const students = {
-    "5700": {
-        "name": "กัญญาณัฐ มาตย์จันทร์",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "5703": {
-        "name": "ไกรวิชญ์ วังคะฮาต",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "5712": {
-        "name": "ชัยภัทร์ ศรีสุพรรณ",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "5729": {
-        "name": "ทิฆัมธ์พร หิมะคุณ",
-        "scores": {
-            "general_score": "ขาดสอบ"
-        }
-    },
-    "5730": {
-        "name": "แทนคุณ นวลตา",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "5774": {
-        "name": "วีรนันท์ วรวิรุฬห์ธนา",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5778": {
-        "name": "ศิริลักษณ์ สนิทนวล",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "5779": {
-        "name": "ศิวัช ศรีทับไทย",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6158": {
-        "name": "กนกพร โพธิ์แก้ว",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6162": {
-        "name": "กีรดิต ยืนยง",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6163": {
-        "name": "กีรติกา ตังสกุล",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6167": {
-        "name": "จิณห์นิภาญาดา บุตรสีผา",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6171": {
-        "name": "ชัยภัทร ทองใบ",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6177": {
-        "name": "ณัฐธิดา หินทราย",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6179": {
-        "name": "ตุลาการ ทองประสม",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6181": {
-        "name": "ทินญาดา สุทธิบาก",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6198": {
-        "name": "ปริยากร วชิรเมธิน",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6201": {
-        "name": "ปิยธิดา พวงศรี",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6205": {
-        "name": "พรรณปพร พรหมวงค์",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6210": {
-        "name": "พิชญุตม์ สุคำภา",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6213": {
-        "name": "พิมพ์ชนก นามจันดา",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6216": {
-        "name": "พีรวัฒน์ นาคสุข",
-        "scores": {
-            "general_score": 17.5
-        }
-    },
-    "6224": {
-        "name": "ริษฎา หีบแก้ว",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6231": {
-        "name": "ศศิปรียา กองเมิน",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "nan": {
-        "name": "nan nan",
-        "scores": {
-            "general_score": "nan"
-        }
-    },
-    "5695": {
-        "name": "กริชการุณย์ โคตรคำ",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "5704": {
-        "name": "จิณณ์ญาดา ปัญญา",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "5739": {
-        "name": "นันทิพร สิทธิโชติเลิศภักดี",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "5745": {
-        "name": "ปวรรณประภา โสมอินทร์",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "5746": {
-        "name": "ปวริศา พึ่งจัด",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "5753": {
-        "name": "พงศ์สวัสดิ์ โลหะ",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6166": {
-        "name": "จันทร์สุดา อินทร์ไชยา",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6173": {
-        "name": "ณฐวัฒน์ คำจร",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6175": {
-        "name": "ณัฐณิชา แพงโคตร",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6178": {
-        "name": "ณิชคุณ เตียบน้อย",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6182": {
-        "name": "ธนพร ภูน้ำเย็น",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6193": {
-        "name": "นราธิป สวัสกุล",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6195": {
-        "name": "บัณฑิตา รัจพจน์",
-        "scores": {
-            "general_score": "ลาป่วย"
-        }
-    },
-    "6208": {
-        "name": "พิชญา ราชสุวรรณ",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6219": {
-        "name": "ภักดี โพธิ์ไทรย์",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6222": {
-        "name": "มนัญญา มนัส",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6226": {
-        "name": "ฤทธิชัย แพทย์ชัยวงศ์",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "6227": {
-        "name": "วชิรญาพร ไชยขันธ์",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6232": {
-        "name": "สรรพวิทย์ เปรี่ยมนอง",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6234": {
-        "name": "สิริวิมล รุ่งจิรวัฒน์",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6236": {
-        "name": "สุทธิตา ประชากุล",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6238": {
-        "name": "สุธาสินี บุรีรัตน์",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6241": {
-        "name": "สุวิจักขณ์ เย็นใจ",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6342": {
-        "name": "ณัฐนิชา ชิณโสม",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "5698": {
-        "name": "กฤตยชญ์ ศรีคำน้อย",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "5702": {
-        "name": "กานต์กนกศ์ เดชพละ",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5710": {
-        "name": "ชลธร นครไทย",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "5732": {
-        "name": "ธนภัทร ไชยทอง",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "5736": {
-        "name": "ธีรเดช เชื้อบัณฑิต",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "5749": {
-        "name": "ปิ่นมุก พจนา",
-        "scores": {
-            "general_score": 6.0
-        }
-    },
-    "5766": {
-        "name": "แพรวา พฤกษาสิทธิ์",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6168": {
-        "name": "จิรัชประภา สิทธิ",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6169": {
-        "name": "ชัชพงศ์ รัตนวงค์",
-        "scores": {
-            "general_score": 17.0
-        }
-    },
-    "6176": {
-        "name": "ณัฐดนัย ทองไทย",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "6183": {
-        "name": "ธนภรณ์ หลวงมณี",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6184": {
-        "name": "ธนวัฒน์ ศรีสำราญ",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "6185": {
-        "name": "ธนัชพร ไชยสัจ",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6188": {
-        "name": "ธวัลรัตน์ คำแก้ว",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6189": {
-        "name": "ธาดาพงศ์ วรรณพืช",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6192": {
-        "name": "นภาพร เพ็งอารีย์",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6211": {
-        "name": "พิพัฒน์ นามแสง",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6215": {
-        "name": "พิมลพรรณ ทองสี",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6218": {
-        "name": "แพรวพรรณ จิตอามาตย์",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6225": {
-        "name": "เรวัตร เนตรคุณ",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6230": {
-        "name": "วิรัชยา นักธรรม",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6235": {
-        "name": "สุดารัตน์ แสงปาก",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6243": {
-        "name": "อภิสรา ทศบาย",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6244": {
-        "name": "อริสา ลมงาม",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "5692": {
-        "name": "กนกนก สุวรรณไตรย์",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5697": {
-        "name": "กฤตภาส หอมอ่อน",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5701": {
-        "name": "กันตินันท์ โอฬารเสถียร",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5707": {
-        "name": "จินต์จุฑา ปึ้งตะเนน",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "5718": {
-        "name": "ญาณิศา เจริญไทย",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "5722": {
-        "name": "ณภัทร ไชยสัจ",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5725": {
-        "name": "ณัฐมน มะโนขันธุ์",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5738": {
-        "name": "นัฐพฤกษ์ พรหมดี",
-        "scores": {
-            "general_score": "ขาดสอบ"
-        }
-    },
-    "5742": {
-        "name": "เบญญาภา ปลายเนตร",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5751": {
-        "name": "ปิยะพงษ์ ศุภษร",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "5762": {
-        "name": "พิชญา จันปุ่ม",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5769": {
-        "name": "ภูริต จิตปัญญา",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "5775": {
-        "name": "ศรินรัตน์ วรวิรุฬห์ธนา",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "5785": {
-        "name": "อารียา อุทัยแสน",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6180": {
-        "name": "ทัดเทพ ตลับเพชร",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6186": {
-        "name": "ธนัญญา กรรณิกา",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "6197": {
-        "name": "ประดุจเดือน สุพรรณอ่วม",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6202": {
-        "name": "ผดุงศักดิ์ คำบาง",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6220": {
-        "name": "ภัทราวดี ธรรมเสนา",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "6223": {
-        "name": "ระพีภัทร จันคำ",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6229": {
-        "name": "วรรษชล นวลอินทร์",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6233": {
-        "name": "สิริกร จงธนโชติ",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6242": {
-        "name": "อภิชญา บัวโรย",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6245": {
-        "name": "อัศม์เดช วิเวก",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6618": {
-        "name": "เกลล์ พรเลิศภักดี",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6619": {
-        "name": "ขวัญข้าว ไชยเพชร",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6624": {
-        "name": "จิตติพัฒน์ พรรณา",
-        "scores": {
-            "general_score": 7.5
-        }
-    },
-    "6631": {
-        "name": "ณปกร ยืนยง",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6634": {
-        "name": "ณวรรธณพกร แดนราษี",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "6635": {
-        "name": "ณัฏฐณิชา จารุจิตร",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6640": {
-        "name": "ณัฐเศรษฐ์ เย็นวิจิตรโสภา",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6650": {
-        "name": "ธิชาดา คนเพียร",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6652": {
-        "name": "ธีรภัทร สุวรรณปัฏนะ",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6657": {
-        "name": "นัธทพัฒน์ รัตนโสภา",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6660": {
-        "name": "นิติพน หาระสาร",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6661": {
-        "name": "นิปุณ สุขศีล",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6664": {
-        "name": "ปวรศร เลาห์ทวี",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "6676": {
-        "name": "พาขวัญ ศิริข่วง",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6678": {
-        "name": "พิชชา เชน",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6684": {
-        "name": "ภคพร คงช่วย",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6685": {
-        "name": "ภัทรพงศ์ อุณวงศ์",
-        "scores": {
-            "general_score": 7.5
-        }
-    },
-    "6687": {
-        "name": "ภูรินท์ ศรีลาชัย",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6689": {
-        "name": "มาวิน ผลาพฤกษ์",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6690": {
-        "name": "เรืองยศ วราอัศวปติ",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6694": {
-        "name": "วรปรัชญ์ วรบุตร",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6698": {
-        "name": "วริทธิ์ธร พงค์อันทไช",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "6701": {
-        "name": "วีริศา ชิณวรรณะ",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6707": {
-        "name": "อชิรญา แสนสุข",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "06614": {
-        "name": "กรีฑวัฒน์ นนท์กิตติ์วัฒนา",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6617": {
-        "name": "กุญชร เสียงล้ำ",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6627": {
-        "name": "ชัยเอกธนิน โหมขุนทด",
-        "scores": {
-            "general_score": 6.5
-        }
-    },
-    "6636": {
-        "name": "ณัฐกิตติ์ ศักดิ์ศิริโสภณ",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6642": {
-        "name": "ณิชาภัทร วัณณกุล",
-        "scores": {
-            "general_score": 19.0
-        }
-    },
-    "6644": {
-        "name": "เตชิต พลบวรเดชสกุล",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6649": {
-        "name": "ธัญกร อัครเสริญ",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6651": {
-        "name": "ธีรธร โสมรักษ์",
-        "scores": {
-            "general_score": 17.5
-        }
-    },
-    "6655": {
-        "name": "นรัตพัฒน์ ธนัชจำปารัตน์",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6656": {
-        "name": "นวภัทร กำลังฤทธิ์",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6658": {
-        "name": "นัธทวัฒน์ จันทมาส",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6659": {
-        "name": "นิตยา แสงสด",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6662": {
-        "name": "ปณิชา ศรีราตรี",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6663": {
-        "name": "ปริยากร พุทธลา",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6665": {
-        "name": "ปวีณ์ธิดา หันชะนา",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6666": {
-        "name": "ปัณณวิชญ์ จงมีการพาณิชย์",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6667": {
-        "name": "ปาณิสรา ขัณฑ์ชลา",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6672": {
-        "name": "พณา มีทองขาวอมร",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "6673": {
-        "name": "พศิน กลางประพันธ์",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6677": {
-        "name": "พิชชา แก้วดวงดี",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6688": {
-        "name": "มนัสชนัญ บูรณะกิติ",
-        "scores": {
-            "general_score": 17.0
-        }
-    },
-    "6696": {
-        "name": "วรากร กออิสรานุภาพ",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6699": {
-        "name": "วิชชากร เย็นใจ",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6704": {
-        "name": "สุรเชษฐ์ นนทมาตย์",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5694": {
-        "name": "กรวิชญ์ พรมวัง",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "5706": {
-        "name": "จิตติพัฒน์ ถึงแสง",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "5737": {
-        "name": "นัฐนนท์ ก้านสันเทียะ",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "5743": {
-        "name": "ปฏิพล เจริญผล",
-        "scores": {
-            "general_score": "แข่งโครงงาน"
-        }
-    },
-    "5757": {
-        "name": "พอเพียง ศรีพันธ์",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "5763": {
-        "name": "พิรดา ทาระวัฒน์",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "5764": {
-        "name": "พีรพัฒน์ พรมจันทร์",
-        "scores": {
-            "general_score": "แข่งโครงงาน"
-        }
-    },
-    "6159": {
-        "name": "กฤษกร หอมหวล",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6160": {
-        "name": "กวินกานต์ ยังอยู่",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6165": {
-        "name": "จตุรวิทย์ นาคประสิทธิ์",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6170": {
-        "name": "ชัญญาณัฏฐ์ กันยะกาญจน์",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6187": {
-        "name": "ธรรพ์ณธรณ์ สารีพันธุ์",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6191": {
-        "name": "นณปวิช พันโน",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6194": {
-        "name": "นัทธกมล สายสุวรรณ",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6196": {
-        "name": "บุณยกร พวงมาลา",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6199": {
-        "name": "ปัทพร สารมูล",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6200": {
-        "name": "ปิยกมล อิ่มเจริญ",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6203": {
-        "name": "พงศ์รพี ไพราชสูง",
-        "scores": {
-            "general_score": 18.5
-        }
-    },
-    "6204": {
-        "name": "พชรพรชนก ขวานอก",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6206": {
-        "name": "พัชราภา พลับบดี",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6207": {
-        "name": "พัชริดา ปากหวาน",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6209": {
-        "name": "พิชญาวดี ปราณี",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6212": {
-        "name": "พิมพ์ชนก โชติมุข",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6239": {
-        "name": "สุพิชชา ประเสริฐศรี",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "5693": {
-        "name": "กมลชนก ยังมี",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "5705": {
-        "name": "จิณณพัชร รุ่งเรืองเจริญกิจ",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "5708": {
-        "name": "จิรภัทร ชัยสุนทร",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5711": {
-        "name": "ชวนากร กับกระโทก",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "5715": {
-        "name": "ชุติญา ษิรารักษ์",
-        "scores": {
-            "general_score": 16.5
-        }
-    },
-    "5716": {
-        "name": "โชติภัทร วงศ์เทวราช",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "5724": {
-        "name": "ณัฐนิช มะโนขันธุ์",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "5740": {
-        "name": "บารมี ธนสุขสวัสดิ์",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "5747": {
-        "name": "ปวริศา ไตรยสุทธิ์",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "5754": {
-        "name": "พรรณศิริ ทองปรีชา",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "5758": {
-        "name": "พัชฎา อุ่นลุม",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "5781": {
-        "name": "สรสิษฐ์ คนหาญ",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "5786": {
-        "name": "พิรญาณ์ จันดารักษ์",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "6161": {
-        "name": "กัณตาวัฒน์ โชปัญญา",
-        "scores": {
-            "general_score": 17.0
-        }
-    },
-    "6164": {
-        "name": "กุลพัชร พรหมอารักษ์",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6172": {
-        "name": "ฐักกูร เหลืองรุ่งเรือง",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6174": {
-        "name": "ณภัสกร พูลเพิ่ม",
-        "scores": {
-            "general_score": 6.0
-        }
-    },
-    "6190": {
-        "name": "ธีระบรรจง สุโพธิณะ",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6214": {
-        "name": "พิมพ์ลภัส เสงี่ยมวิบูล",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "6217": {
-        "name": "เพชรพัชชา เคนเหลา",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6221": {
-        "name": "ภูษิตา ชาวกงจักร์",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6228": {
-        "name": "วรรณฤดี สุนธงศิริ",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6237": {
-        "name": "สุทธิภัทร ต้นคำ",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6240": {
-        "name": "สุลักษณา โพนนาดี",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "49": {
-        "name": "จิรวัฒน์ มูลสาร",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "50": {
-        "name": "ชนุดม โสวรรณี",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "51": {
-        "name": "ธนประเสริฐ กุลบุตร",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "52": {
-        "name": "ธนภัทร แซ่ลิ้ม",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "53": {
-        "name": "ธรรมปพนธ์ มณีวงษ์",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "54": {
-        "name": "ธรรศรณกร ทองเทพ",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "55": {
-        "name": "นนท์ปวิธ เยท่าพูด",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "56": {
-        "name": "นันทพันธ์ วิระศร",
-        "scores": {
-            "general_score": 15.5
-        }
-    },
-    "57": {
-        "name": "พงศพัศ ป้องคำลา",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "58": {
-        "name": "พิสิษฐ์ บุตรตะ",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "59": {
-        "name": "พันธุ์ธัช พันธุ",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "60": {
-        "name": "ภควัต ศรีเกื้อกลิ่น",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "61": {
-        "name": "ภัทรดนัย สมตน",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "62": {
-        "name": "ภัทรพงศ์ มนทอง",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "63": {
-        "name": "สิริพุฒิพงศ์ โชติดเสถียร",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "64": {
-        "name": "อาณาจักร จันทะเสน",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "65": {
-        "name": "กมลชนก แว่นระเว",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "66": {
-        "name": "กฤตชญา ไมตรี",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "67": {
-        "name": "ชัญญานุช ใจทัด",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "68": {
-        "name": "ชัญญานุช ลุสมบัติ",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "69": {
-        "name": "พาขวัญ บุญประสาร",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "70": {
-        "name": "มนัสนันท์ นิลรัตน์ศิริกุล",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "71": {
-        "name": "ลภัสรดา สายวงศ์",
-        "scores": {
-            "general_score": 7.0
-        }
-    },
-    "72": {
-        "name": "สุรีรัตน์ แสนทอง",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6622": {
-        "name": "จารวี โชคกาญจนกุล",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6623": {
-        "name": "จิณณ์ นามวงศ์ศรี",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6629": {
-        "name": "ณฉัตร สุทธิพรชัย",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6630": {
-        "name": "ณฐภัทร ชัยสุนทร",
-        "scores": {
-            "general_score": 7.5
-        }
-    },
-    "6633": {
-        "name": "ณภัทร หิรัญอร",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6638": {
-        "name": "ณัฐพงศ์ สมใสวิวิตรกุล",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6639": {
-        "name": "ณัฐภูมินทร์ สีมาพันธ์",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6653": {
-        "name": "นโม วังคะฮาต",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6654": {
-        "name": "นรภัทร ชัยสุนทร",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6668": {
-        "name": "ปิติภัทร เสียงใส",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6671": {
-        "name": "พชรพล ธงยศ",
-        "scores": {
-            "general_score": 17.0
-        }
-    },
-    "6675": {
-        "name": "พัสวีพร ยศพิทักษ์",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6681": {
-        "name": "พุฒิภัทร สุขเสน",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6682": {
-        "name": "ไพลินฎา พงศ์ธนาวรรธ",
-        "scores": {
-            "general_score": "ขาดสอบ"
-        }
-    },
-    "6683": {
-        "name": "ภคพงษ์ อินทมะโน",
-        "scores": {
-            "general_score": 16.5
-        }
-    },
-    "6686": {
-        "name": "ภาณุพงศ์ แสงสุวรรณ",
-        "scores": {
-            "general_score": 15.0
-        }
-    },
-    "6691": {
-        "name": "ลลนันท์ โชคสวัสดิิ์นุกูล",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6692": {
-        "name": "ลลิน บุญรมย์",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6693": {
-        "name": "วชิรวิทย์ สุขฉิมมา",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6697": {
-        "name": "วรางค์ศิริ ประทีปวัฒนานนท์",
-        "scores": {
-            "general_score": 11.5
-        }
-    },
-    "6700": {
-        "name": "วิชชากร คลังกลาง",
-        "scores": {
-            "general_score": 10.0
-        }
-    },
-    "6703": {
-        "name": "ศุภโชค อินไหม",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6708": {
-        "name": "อิทธิราช ลาเอ็ด",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6709": {
-        "name": "เอื้อกรกาญจน์ สุรินอาสะวะ",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "6615": {
-        "name": "กฤตวรรณ ธนะไพบูลย์กุล",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6616": {
-        "name": "กานต์พิชชา สายธนู",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6620": {
-        "name": "คีรีณกรณ์ ไชยยันบูรณ์",
-        "scores": {
-            "general_score": "ขาดสอบ"
-        }
-    },
-    "6621": {
-        "name": "จตุรภัทร วงศ์กันยา",
-        "scores": {
-            "general_score": 13.5
-        }
-    },
-    "6625": {
-        "name": "จิรพงศ์ กิจตระกูลรัตน์",
-        "scores": {
-            "general_score": 8.5
-        }
-    },
-    "6626": {
-        "name": "ชญาภรณ์ ไชยแสง",
-        "scores": {
-            "general_score": 8.0
-        }
-    },
-    "6628": {
-        "name": "ชิณณวรรธน์ คำแสนราช",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6632": {
-        "name": "ณปภัช เสียงหวาน",
-        "scores": {
-            "general_score": 10.5
-        }
-    },
-    "6637": {
-        "name": "ณัฐชนน พงษ์เสือ",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6641": {
-        "name": "ณิชากรณ์ สมอินเอก",
-        "scores": {
-            "general_score": 16.0
-        }
-    },
-    "6643": {
-        "name": "ดิศราธร แก่นสา",
-        "scores": {
-            "general_score": 12.5
-        }
-    },
-    "6645": {
-        "name": "ทอไหม จันทร์ใบ",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6646": {
-        "name": "ธนกร กั้วสิทธิ์",
-        "scores": {
-            "general_score": 14.0
-        }
-    },
-    "6647": {
-        "name": "ธนศักดิ์ ชัยวิวัฒน์ตระกูล",
-        "scores": {
-            "general_score": 12.0
-        }
-    },
-    "6648": {
-        "name": "ธนัฐพัฒน์ สิงห์ขัน",
-        "scores": {
-            "general_score": 5.5
-        }
-    },
-    "6669": {
-        "name": "พงศธร โคตวัตร์",
-        "scores": {
-            "general_score": 11.0
-        }
-    },
-    "6670": {
-        "name": "พงศ์ภัค บรรจง",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6674": {
-        "name": "พัชรกัญญ์ ขันทะวัตร์",
-        "scores": {
-            "general_score": 9.5
-        }
-    },
-    "6679": {
-        "name": "พิชญธิดา อินธิแสง",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6680": {
-        "name": "พิชญะ เสียงล้ำ",
-        "scores": {
-            "general_score": 9.0
-        }
-    },
-    "6695": {
-        "name": "วรปรัชญ์ ส่งเสริม",
-        "scores": {
-            "general_score": 13.0
-        }
-    },
-    "6702": {
-        "name": "ศิรวิทย์ สิงคิบุตร",
-        "scores": {
-            "general_score": 14.5
-        }
-    },
-    "6705": {
-        "name": "สุรัตน์ชมนต์ มุกธวัตร",
-        "scores": {
-            "general_score": "ลา-"
-        }
-    },
-    "6706": {
-        "name": "หนึ่งฤทัย หนูแย้ม",
-        "scores": {
-            "general_score": 12.5
-        }
+      );
     }
-};
 
-        function searchScore() {
-            const studentIdInput = document.getElementById('studentId').value.trim();
-            const resultsDiv = document.getElementById('results');
-            const errorMessageDiv = document.getElementById('errorMessage');
+    function Header() {
+      return (
+        <header className="w-full py-6" style={{background: COLORS.primary}}>
+          <div className="max-w-3xl mx-auto px-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">NEKO WASH - บริการฝากซักอบผ้า</h1>
+            <p className="text-white/90 mt-1">เมนูการให้บริการ - NEKO WASH MUKDAHAN</p>
+          </div>
+        </header>
+      );
+    }
 
-            // ซ่อนผลลัพธ์และข้อความผิดพลาดที่แสดงอยู่ก่อนหน้า
-            resultsDiv.classList.add('hidden');
-            errorMessageDiv.classList.add('hidden');
+    function SelectServices({ selected, onSelect, onConfirm, total }) {
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ตัวเลือกการบริการ</h2>
+          <div className="space-y-4">
+            {SERVICES.map(group=>(
+              <div key={group.id} className="rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                <h3 className="font-semibold text-gray-800 mb-3">{group.title}</h3>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {group.options.map(opt=>(
+                    <label key={opt.id} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 cursor-pointer transition-shadow ${selected[group.id]===opt.id?"border-transparent shadow-md":"border-gray-200 hover:shadow-sm"}`} style={{background: selected[group.id]===opt.id?COLORS.accent:"#fff"}}>
+                      <div className="flex items-center gap-3">
+                        <input type="radio" name={group.id} className="h-5 w-5 rounded-md border-gray-300" checked={selected[group.id]===opt.id} onChange={()=>onSelect(group.id,opt.id)} />
+                        <span className="text-gray-800">{opt.name}</span>
+                      </div>
+                      <span className="font-semibold text-gray-900">{opt.price} บาท</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+              <div className="flex items-center justify-between">
+                <div className="text-gray-700 font-medium">{DELIVERY.name}</div>
+                <div className="font-semibold text-gray-900">{DELIVERY.price} บาท</div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">* บริการนี้ถูกเพิ่มอัตโนมัติและไม่สามารถยกเลิกได้</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-6">
+            <div className="text-lg font-semibold">รวมทั้งหมด: <span className="text-gray-900">{total}</span> บาท</div>
+            <Button onClick={onConfirm}>ยืนยันการเลือก</Button>
+          </div>
+        </div>
+      );
+    }
 
-            const student = students[studentIdInput];
+    function Review({ items, total, onBack, onConfirm }) {
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">สรุปรายการบริการที่เลือก</h2>
+          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden">
+            {items.map(it=>(
+              <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
+                <span className="text-gray-800">{it.name}</span>
+                <span className="font-semibold text-gray-900">{it.price} บาท</span>
+              </li>
+            ))}
+            <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
+              <span>รวม</span>
+              <span className="text-gray-900">{total} บาท</span>
+            </li>
+          </ul>
+          <div className="flex gap-3 mt-6">
+            <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
+            <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
+          </div>
+        </div>
+      );
+    }
 
-            if (student) {
-                document.getElementById('displayStudentId').textContent = studentIdInput;
-                document.getElementById('displayName').textContent = student.name;
-                document.getElementById('scoreGeneral').textContent = student.scores.general_score;
+    function Payment({ items, total, onBack, onPaid }) {
+  // !!! นำไฟล์ PNG ของคุณไปวางในโฟลเดอร์เดียวกับ HTML เช่น my-qr.png !!!
+  const qrFile = "my-qr.png";
 
-                // Removed status display and logic
-                // const statusSpan = document.getElementById('status');
-                // const score = parseFloat(student.scores.general_score);
-                // if (!isNaN(score)) {
-                //     if (score >= passingScore) {
-                //         statusSpan.textContent = "ผ่าน";
-                //         statusSpan.className = 'pass';
-                //     } else {
-                //         statusSpan.textContent = "ไม่ผ่าน";
-                //         statusSpan.className = 'fail';
-                //     }
-                // } else {
-                //     statusSpan.textContent = student.scores.general_score;
-                //     statusSpan.className = 'neutral-status';
-                // }
+  return (
+    <div>
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ชำระเงิน</h2>
 
-                resultsDiv.classList.remove('hidden'); // แสดงผลลัพธ์
-            } else {
-                errorMessageDiv.classList.remove('hidden'); // แสดงข้อความผิดพลาด
-            }
-        }
-    </script>
+      <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden mb-6">
+        {items.map(it => (
+          <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
+            <span className="text-gray-800">{it.name}</span>
+            <span className="font-semibold text-gray-900">{it.price} บาท</span>
+          </li>
+        ))}
+        <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
+          <span>รวม</span>
+          <span className="text-gray-900">{total} บาท</span>
+        </li>
+      </ul>
+
+      <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
+        <img 
+          src={qrFile} 
+          alt="QR Code" 
+          className="mx-auto rounded-2xl border-4" 
+          style={{ borderColor: COLORS.accent }} 
+        />
+        <p className="mt-4 text-gray-700">สแกนเพื่อชำระเงิน</p>
+        <p className="mt-1 font-medium text-gray-800">
+          เมื่อโอนเสร็จเรียบร้อยแล้ว รบกวนแจ้งหลักฐานการโอนผ่านแชทไลน์
+        </p>
+      </div>
+
+      <div className="flex gap-3 mt-6">
+        <Button variant="ghost" onClick={onBack}>ย้อนกลับ</Button>
+        <Button onClick={onPaid}>ฉันได้ชำระเงินแล้ว</Button>
+      </div>
+    </div>
+  );
+}
+
+    function Success({ total, onNewOrder }) {
+      return (
+        <div className="text-center">
+          <div className="bg-white rounded-3xl border border-gray-100 p-8">
+            <div className="mx-auto mb-4 h-14 w-14 rounded-full flex items-center justify-center" style={{background: COLORS.accent}}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={COLORS.primary} className="h-8 w-8">
+                <path fillRule="evenodd" d="M2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75 2.25 17.385 2.25 12zm13.36-2.56a.75.75 0 10-1.22-.88l-3.6 5a.75.75 0 01-1.13.1l-1.7-1.7a.75.75 0 10-1.06 1.06l2.1 2.1a1.75 1.75 0 002.64-.23l3.97-5.45z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-1">ชำระเงินสำเร็จ</h3>
+            <p className="text-gray-700">ขอบคุณที่ใช้บริการ NEKO WASH</p>
+            <p className="text-gray-700 mt-2">ยอดรวม {total} บาท</p>
+          </div>
+          <Button className="mt-6" onClick={onNewOrder}>สั่งบริการใหม่อีกครั้ง</Button>
+        </div>
+      );
+    }
+
+    function Button({children,onClick,variant="primary",className=""}){
+      if(variant==="ghost"){
+        return <button onClick={onClick} className={`rounded-full px-6 py-3 border transition shadow-sm hover:shadow ${className}`} style={{borderColor: COLORS.primary,color: COLORS.primary,background:"#fff"}}>{children}</button>;
+      }
+      return <button onClick={onClick} className={`rounded-full px-6 py-3 font-medium transition shadow hover:shadow-md ${className}`} style={{background: COLORS.primary,color:"#fff"}}>{children}</button>;
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
