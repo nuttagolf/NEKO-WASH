@@ -18,7 +18,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("my-logo.png"); /* 👈 ใส่ชื่อไฟล์โลโก้ร้าน */
+    background-image: url("my-logo.png"); /* 👈 โลโก้ร้านแบบ watermark */
     background-repeat: repeat;
     background-size: 200px; /* 👈 ปรับขนาดโลโก้ตามชอบ */
     opacity: 0.05; /* 👈 ทำให้จางๆ */
@@ -110,11 +110,20 @@
     function Header() {
       return (
         <header className="w-full py-6" style={{background: COLORS.primary}}>
-          <div className="max-w-3xl mx-auto px-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">NEKO WASH - บริการฝากซักอบผ้า</h1>
-            <p className="text-white/90 mt-1">เมนูการให้บริการ - NEKO WASH MUKDAHAN</p>
-          </div>
-        </header>
+  <div className="max-w-3xl mx-auto px-6 flex items-center gap-4">
+    {/* โลโก้ร้าน */}
+    <img src="my-logo.png" alt="โลโก้ร้าน NEKO WASH" className="w-16 sm:w-20" />
+    
+    <div>
+      <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">
+        NEKO WASH - บริการฝากซักอบผ้า
+      </h1>
+      <p className="text-white/90 mt-1">
+        เมนูการให้บริการ - NEKO WASH MUKDAHAN
+      </p>
+    </div>
+  </div>
+</header>
       );
     }
 
@@ -180,46 +189,45 @@
     }
 
     function Payment({ items, total, onBack, onPaid }) {
-  // !!! นำไฟล์ PNG ของคุณไปวางในโฟลเดอร์เดียวกับ HTML เช่น my-qr.png !!!
-  const qrFile = "my-qr.png";
+      const qrFile = "my-qr.png"; // 👈 ไฟล์ QR
 
-  return (
-    <div>
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ชำระเงิน</h2>
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ชำระเงิน</h2>
 
-      <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden mb-6">
-        {items.map(it => (
-          <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
-            <span className="text-gray-800">{it.name}</span>
-            <span className="font-semibold text-gray-900">{it.price} บาท</span>
-          </li>
-        ))}
-        <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
-          <span>รวม</span>
-          <span className="text-gray-900">{total} บาท</span>
-        </li>
-      </ul>
+          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden mb-6">
+            {items.map(it => (
+              <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
+                <span className="text-gray-800">{it.name}</span>
+                <span className="font-semibold text-gray-900">{it.price} บาท</span>
+              </li>
+            ))}
+            <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
+              <span>รวม</span>
+              <span className="text-gray-900">{total} บาท</span>
+            </li>
+          </ul>
 
-      <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
-        <img 
-          src={qrFile} 
-          alt="QR Code" 
-          className="mx-auto rounded-2xl border-4" 
-          style={{ borderColor: COLORS.accent }} 
-        />
-        <p className="mt-4 text-gray-700">สแกนเพื่อชำระเงิน</p>
-        <p className="mt-1 font-medium text-gray-800">
-          เมื่อโอนเสร็จเรียบร้อยแล้ว รบกวนแจ้งหลักฐานการโอนผ่านแชทไลน์
-        </p>
-      </div>
+          <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
+            <img 
+              src={qrFile} 
+              alt="QR Code" 
+              className="mx-auto rounded-2xl border-4" 
+              style={{ borderColor: COLORS.accent }} 
+            />
+            <p className="mt-4 text-gray-700">สแกนเพื่อชำระเงิน</p>
+            <p className="mt-1 font-medium text-gray-800">
+              เมื่อโอนเสร็จเรียบร้อยแล้ว รบกวนแจ้งหลักฐานการโอนผ่านแชทไลน์
+            </p>
+          </div>
 
-      <div className="flex gap-3 mt-6">
-        <Button variant="ghost" onClick={onBack}>ย้อนกลับ</Button>
-        <Button onClick={onPaid}>ฉันได้ชำระเงินแล้ว</Button>
-      </div>
-    </div>
-  );
-}
+          <div className="flex gap-3 mt-6">
+            <Button variant="ghost" onClick={onBack}>ย้อนกลับ</Button>
+            <Button onClick={onPaid}>ฉันได้ชำระเงินแล้ว</Button>
+          </div>
+        </div>
+      );
+    }
 
     function Success({ total, onNewOrder }) {
       return (
