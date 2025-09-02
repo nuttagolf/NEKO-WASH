@@ -10,23 +10,23 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- html2canvas -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- html2canvas CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("my-logo.png");
-    background-repeat: repeat;
-    background-size: 200px;
-    opacity: 0.05;
-    z-index: -1;
-  }
-</style>
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("my-logo.png"); /* โลโก้ร้านแบบ watermark */
+      background-repeat: repeat;
+      background-size: 200px;
+      opacity: 0.05;
+      z-index: -1;
+    }
+  </style>
 </head>
 <body class="bg-[#c3edfe] min-h-screen">
   <div id="root"></div>
@@ -35,42 +35,10 @@
     const COLORS = { primary: "#213f9a", accent: "#c3edfe" };
 
     const SERVICES = [
-      {
-        id: "wash16",
-        title: "บริการซัก - ถังขนาด 16 กก.",
-        options: [
-          { id: "w16_hot", name: "ซักผ้า น้ำร้อน", price: 70 },
-          { id: "w16_warm", name: "ซักผ้า น้ำอุ่น", price: 60 },
-          { id: "w16_cold", name: "ซักผ้า น้ำเย็น", price: 50 },
-        ],
-      },
-      {
-        id: "wash21",
-        title: "บริการซัก - ถังขนาด 21 กก.",
-        options: [
-          { id: "w21_hot", name: "ซักผ้า น้ำร้อน", price: 80 },
-          { id: "w21_warm", name: "ซักผ้า น้ำอุ่น", price: 70 },
-          { id: "w21_cold", name: "ซักผ้า น้ำเย็น", price: 60 },
-        ],
-      },
-      {
-        id: "dry10",
-        title: "บริการอบ - ขนาด 10 กก.",
-        options: [
-          { id: "d10_high", name: "อบ อุณหภูมิสูง", price: 60 },
-          { id: "d10_med", name: "อบ อุณหภูมิปานกลาง", price: 50 },
-          { id: "d10_low", name: "อบ อุณหภูมิต่ำ", price: 40 },
-        ],
-      },
-      {
-        id: "dry16",
-        title: "บริการอบ - ขนาด 16 กก.",
-        options: [
-          { id: "d16_high", name: "อบ อุณหภูมิสูง", price: 70 },
-          { id: "d16_med", name: "อบ อุณหภูมิปานกลาง", price: 60 },
-          { id: "d16_low", name: "อบ อุณหภูมิต่ำ", price: 50 },
-        ],
-      },
+      { id: "wash16", title: "บริการซัก - ถังขนาด 16 กก.", options: [{id:"w16_hot",name:"ซักผ้า น้ำร้อน",price:70},{id:"w16_warm",name:"ซักผ้า น้ำอุ่น",price:60},{id:"w16_cold",name:"ซักผ้า น้ำเย็น",price:50}]},
+      { id: "wash21", title: "บริการซัก - ถังขนาด 21 กก.", options: [{id:"w21_hot",name:"ซักผ้า น้ำร้อน",price:80},{id:"w21_warm",name:"ซักผ้า น้ำอุ่น",price:70},{id:"w21_cold",name:"ซักผ้า น้ำเย็น",price:60}]},
+      { id: "dry10", title: "บริการอบ - ขนาด 10 กก.", options: [{id:"d10_high",name:"อบ อุณหภูมิสูง",price:60},{id:"d10_med",name:"อบ อุณหภูมิปานกลาง",price:50},{id:"d10_low",name:"อบ อุณหภูมิต่ำ",price:40}]},
+      { id: "dry16", title: "บริการอบ - ขนาด 16 กก.", options: [{id:"d16_high",name:"อบ อุณหภูมิสูง",price:70},{id:"d16_med",name:"อบ อุณหภูมิปานกลาง",price:60},{id:"d16_low",name:"อบ อุณหภูมิต่ำ",price:50}]},
     ];
 
     const DELIVERY = { id: "pickup_drop", name: "บริการรับส่งผ้า", price: 70 };
@@ -102,7 +70,7 @@
               {step==="select" && <SelectServices selected={selected} onSelect={handleSelect} total={total} onConfirm={()=>setStep("review")} />}
               {step==="review" && <Review items={chosenItems} total={total} onBack={()=>setStep("select")} onConfirm={()=>setStep("pay")} />}
               {step==="pay" && <Payment items={chosenItems} total={total} onBack={()=>setStep("review")} onPaid={()=>setStep("success")} />}
-              {step==="success" && <Success items={chosenItems} total={total} onNewOrder={()=>{setSelected({}); setStep("select");}} />}
+              {step==="success" && <Success total={total} onNewOrder={()=>{setSelected({}); setStep("select");}} />}
             </div>
           </div>
         </div>
@@ -113,7 +81,7 @@
       return (
         <header className="w-full py-6" style={{background: COLORS.primary}}>
           <div className="max-w-3xl mx-auto px-6 flex items-center gap-4">
-            <img src="my-logo.png" alt="โลโก้ร้าน" className="w-16 sm:w-20"/>
+            <img src="my-logo.png" alt="โลโก้ร้าน NEKO WASH" className="w-20 sm:w-24"/>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">NEKO WASH - บริการฝากซักอบผ้า</h1>
               <p className="text-white/90 mt-1">เมนูการให้บริการ - NEKO WASH MUKDAHAN</p>
@@ -128,20 +96,22 @@
         <div>
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ตัวเลือกการบริการ</h2>
           <div className="space-y-4">
-            {SERVICES.map(group=>(<div key={group.id} className="rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-              <h3 className="font-semibold text-gray-800 mb-3">{group.title}</h3>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {group.options.map(opt=>(
-                  <label key={opt.id} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 cursor-pointer transition-shadow ${selected[group.id]===opt.id?"border-transparent shadow-md":"border-gray-200 hover:shadow-sm"}`} style={{background: selected[group.id]===opt.id?COLORS.accent:"#fff"}}>
-                    <div className="flex items-center gap-3">
-                      <input type="radio" name={group.id} className="h-5 w-5 rounded-md border-gray-300" checked={selected[group.id]===opt.id} onChange={()=>onSelect(group.id,opt.id)} />
-                      <span className="text-gray-800">{opt.name}</span>
-                    </div>
-                    <span className="font-semibold text-gray-900">{opt.price} บาท</span>
-                  </label>
-                ))}
+            {SERVICES.map(group=>(
+              <div key={group.id} className="rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+                <h3 className="font-semibold text-gray-800 mb-3">{group.title}</h3>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {group.options.map(opt=>(
+                    <label key={opt.id} className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 cursor-pointer transition-shadow ${selected[group.id]===opt.id?"border-transparent shadow-md":"border-gray-200 hover:shadow-sm"}`} style={{background: selected[group.id]===opt.id?COLORS.accent:"#fff"}}>
+                      <div className="flex items-center gap-3">
+                        <input type="radio" name={group.id} className="h-5 w-5 rounded-md border-gray-300" checked={selected[group.id]===opt.id} onChange={()=>onSelect(group.id,opt.id)} />
+                        <span className="text-gray-800">{opt.name}</span>
+                      </div>
+                      <span className="font-semibold text-gray-900">{opt.price} บาท</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>))}
+            ))}
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
               <div className="flex items-center justify-between">
                 <div className="text-gray-700 font-medium">{DELIVERY.name}</div>
@@ -159,146 +129,119 @@
     }
 
     function Review({ items, total, onBack, onConfirm }) {
-  const downloadReceipt = () => {
-    html2canvas(document.getElementById("receipt")).then(canvas => {
-      const link = document.createElement("a");
-      link.download = `receipt_${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  };
-
-  return (
-    <div>
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">สรุปรายการบริการที่เลือก</h2>
-
-      {/* ใส่ id="receipt" เพื่อให้ html2canvas ดึงไปทำรูป */}
-      <div id="receipt">
-        <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden">
-          {items.map(it => (
-            <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
-              <span className="text-gray-800">{it.name}</span>
-              <span className="font-semibold text-gray-900">{it.price} บาท</span>
-            </li>
-          ))}
-          <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
-            <span>รวม</span>
-            <span className="text-gray-900">{total} บาท</span>
-          </li>
-        </ul>
-      </div>
-
-      {/* ปุ่มดาวน์โหลดบิล */}
-      <div className="flex gap-3 mt-4">
-        <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
-        <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
-        <button
-          onClick={downloadReceipt}
-          className="rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
-        >
-          ดาวน์โหลดบิล
-        </button>
-      </div>
-    </div>
-  );
-}
-    
-    function Payment({ items, total, onBack, onPaid }) {
-      const qrFile = "my-qr.jpg";
-      const [timeLeft, setTimeLeft] = React.useState(15*60);
-      const [expired, setExpired] = React.useState(false);
-
-      React.useEffect(()=>{
-        if(expired) return;
-        const timer = setInterval(()=>{
-          setTimeLeft(prev=>{
-            if(prev<=1){
-              clearInterval(timer);
-              setExpired(true);
-              return 0;
-            }
-            return prev-1;
-          })
-        },1000);
-        return ()=>clearInterval(timer);
-      },[expired]);
-
-      const formatTime = sec => {
-        const m = Math.floor(sec/60).toString().padStart(2,"0");
-        const s = (sec%60).toString().padStart(2,"0");
-        return `${m}:${s}`;
-      }
+      const downloadReceipt = () => {
+        html2canvas(document.getElementById("receipt")).then(canvas => {
+          const link = document.createElement("a");
+          link.download = `receipt_${Date.now()}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      };
 
       return (
         <div>
-          {!expired ? (
-            <div id="receipt" className="text-center bg-white rounded-3xl border border-gray-100 p-6">
-              <img src={qrFile} alt="QR Code" className="mx-auto rounded-2xl border-4 mb-4" style={{borderColor: COLORS.accent}} />
-              <p className="mt-2 text-gray-700 font-medium">สแกนเพื่อชำระเงิน</p>
-              <p className="mt-1 text-gray-700">เมื่อโอนเสร็จเรียบร้อยแล้ว รบกวนแจ้งหลักฐานการโอนผ่านแชทไลน์</p>
-              <p className="mt-2 text-gray-900 font-semibold">ยอดรวม {total} บาท</p>
-              <p className="mt-2 text-red-600 font-semibold">เวลาที่เหลือ: {formatTime(timeLeft)}</p>
-              <button
-                onClick={()=>{
-                  html2canvas(document.getElementById("receipt")).then(canvas=>{
-                    const link=document.createElement("a");
-                    link.download=`receipt_${Date.now()}.png`;
-                    link.href=canvas.toDataURL("image/png");
-                    link.click();
-                  })
-                }}
-                className="mt-4 rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
-              >
-                ดาวน์โหลดบิล
-              </button>
-            </div>
-          ) : (
-            <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
-              <p className="text-red-600 font-bold text-xl">ชำระไม่สำเร็จ</p>
-              <Button className="mt-4" onClick={onBack}>ทำรายการใหม่</Button>
-            </div>
-          )}
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">สรุปรายการบริการที่เลือก</h2>
 
-          {!expired && (
-            <div className="flex gap-3 mt-6">
-              <Button variant="ghost" onClick={onBack}>ย้อนกลับ</Button>
-              <Button onClick={onPaid}>ฉันได้ชำระเงินแล้ว</Button>
-            </div>
-          )}
+          <div id="receipt">
+            <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden">
+              {items.map(it => (
+                <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
+                  <span className="text-gray-800">{it.name}</span>
+                  <span className="font-semibold text-gray-900">{it.price} บาท</span>
+                </li>
+              ))}
+              <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
+                <span>รวม</span>
+                <span className="text-gray-900">{total} บาท</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
+            <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
+            <button
+              onClick={downloadReceipt}
+              className="rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
+            >
+              ดาวน์โหลดบิล
+            </button>
+          </div>
         </div>
       );
     }
 
-    function Success({ items, total, onNewOrder }) {
+    function Payment({ items, total, onBack, onPaid }) {
+      const qrFile = "my-qr.jpg";
+      const [secondsLeft, setSecondsLeft] = React.useState(15 * 60);
+      const [expired, setExpired] = React.useState(false);
+
+      React.useEffect(() => {
+        if (expired) return;
+        const interval = setInterval(() => {
+          setSecondsLeft(prev => {
+            if(prev <= 1){
+              clearInterval(interval);
+              setExpired(true);
+              return 0;
+            }
+            return prev -1;
+          });
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [expired]);
+
+      const formatTime = sec => {
+        const m = Math.floor(sec/60).toString().padStart(2,'0');
+        const s = (sec%60).toString().padStart(2,'0');
+        return `${m}:${s}`;
+      };
+
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">ชำระเงิน</h2>
+
+          { !expired ? (
+            <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
+              <p className="text-gray-700 mb-2">เวลาที่เหลือ: {formatTime(secondsLeft)}</p>
+              <img 
+                src={qrFile} 
+                alt="QR Code" 
+                className="mx-auto rounded-2xl border-4 mb-4" 
+                style={{ borderColor: COLORS.accent }} 
+              />
+              <p className="mt-2 text-gray-700">สแกนเพื่อชำระเงิน</p>
+              <p className="mt-1 font-medium text-gray-800">
+                เมื่อโอนเสร็จเรียบร้อยแล้ว รบกวนแจ้งหลักฐานการโอนผ่านแชทไลน์
+              </p>
+            </div>
+          ) : (
+            <div className="text-center bg-white rounded-3xl border border-gray-100 p-6">
+              <p className="text-red-600 font-semibold text-lg">ชำระไม่สำเร็จ</p>
+              <Button onClick={onBack}>ทำรายการใหม่</Button>
+            </div>
+          )}
+
+          {!expired && <div className="flex gap-3 mt-6">
+            <Button variant="ghost" onClick={onBack}>ย้อนกลับ</Button>
+            <Button onClick={onPaid}>ฉันได้ชำระเงินแล้ว</Button>
+          </div>}
+        </div>
+      );
+    }
+
+    function Success({ total, onNewOrder }) {
       return (
         <div className="text-center">
-          <div id="receipt" className="bg-white rounded-3xl border border-gray-100 p-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">ชำระเงินสำเร็จ</h3>
-            <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden mb-4">
-              {items.map(it=>(
-                <li key={it.id} className="flex justify-between px-4 py-2">
-                  <span>{it.name}</span>
-                  <span>{it.price} บาท</span>
-                </li>
-              ))}
-              <li className="flex justify-between px-4 py-2 font-semibold bg-gray-50">
-                <span>รวม</span>
-                <span>{total} บาท</span>
-              </li>
-            </ul>
-            <button
-              onClick={()=>{
-                html2canvas(document.getElementById("receipt")).then(canvas=>{
-                  const link=document.createElement("a");
-                  link.download=`receipt_${Date.now()}.png`;
-                  link.href=canvas.toDataURL("image/png");
-                  link.click();
-                })
-              }}
-              className="mt-2 rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
-            >
-              ดาวน์โหลดบิล
-            </button>
+          <div className="bg-white rounded-3xl border border-gray-100 p-8">
+            <div className="mx-auto mb-4 h-14 w-14 rounded-full flex items-center justify-center" style={{background: COLORS.accent}}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={COLORS.primary} className="h-8 w-8">
+                <path fillRule="evenodd" d="M2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75 2.25 17.385 2.25 12zm13.36-2.56a.75.75 0 10-1.22-.88l-3.6 5a.75.75 0 01-1.13.1l-1.7-1.7a.75.75 0 10-1.06 1.06l2.1 2.1a1.75 1.75 0 002.64-.23l3.97-5.45z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-1">ชำระเงินสำเร็จ</h3>
+            <p className="text-gray-700">ขอบคุณที่ใช้บริการ NEKO WASH</p>
+            <p className="text-gray-700 mt-2">ยอดรวม {total} บาท</p>
           </div>
           <Button className="mt-6" onClick={onNewOrder}>สั่งบริการใหม่อีกครั้ง</Button>
         </div>
@@ -316,5 +259,3 @@
   </script>
 </body>
 </html>
-
-
