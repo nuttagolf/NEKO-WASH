@@ -159,27 +159,50 @@
     }
 
     function Review({ items, total, onBack, onConfirm }) {
-      return (
-        <div>
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">สรุปรายการบริการที่เลือก</h2>
-          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden">
-            {items.map(it=>(<li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
+  const downloadReceipt = () => {
+    html2canvas(document.getElementById("receipt")).then(canvas => {
+      const link = document.createElement("a");
+      link.download = `receipt_${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+
+  return (
+    <div>
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">สรุปรายการบริการที่เลือก</h2>
+
+      {/* ใส่ id="receipt" เพื่อให้ html2canvas ดึงไปทำรูป */}
+      <div id="receipt">
+        <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden">
+          {items.map(it => (
+            <li key={it.id} className="flex items-center justify-between px-4 py-3 bg-white">
               <span className="text-gray-800">{it.name}</span>
               <span className="font-semibold text-gray-900">{it.price} บาท</span>
-            </li>))}
-            <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
-              <span>รวม</span>
-              <span className="text-gray-900">{total} บาท</span>
             </li>
-          </ul>
-          <div className="flex gap-3 mt-6">
-            <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
-            <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
-          </div>
-        </div>
-      );
-    }
+          ))}
+          <li className="flex items-center justify-between px-4 py-4 bg-gray-50 font-semibold">
+            <span>รวม</span>
+            <span className="text-gray-900">{total} บาท</span>
+          </li>
+        </ul>
+      </div>
 
+      {/* ปุ่มดาวน์โหลดบิล */}
+      <div className="flex gap-3 mt-4">
+        <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
+        <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
+        <button
+          onClick={downloadReceipt}
+          className="rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
+        >
+          ดาวน์โหลดบิล
+        </button>
+      </div>
+    </div>
+  );
+}
+    
     function Payment({ items, total, onBack, onPaid }) {
       const qrFile = "my-qr.jpg";
       const [timeLeft, setTimeLeft] = React.useState(15*60);
@@ -293,4 +316,5 @@
   </script>
 </body>
 </html>
+
 
