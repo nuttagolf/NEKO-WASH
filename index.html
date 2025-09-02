@@ -168,16 +168,26 @@
         </ul>
       </div>
 
-      <div className="flex gap-3 mt-4">
-        <Button variant="ghost" onClick={onBack}>ย้อนกลับไปแก้ไข</Button>
-        <Button onClick={onConfirm}>ยืนยันและไปชำระเงิน</Button>
-        <button
-          onClick={downloadReceipt}
-          className="rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md"
-        >
-          ดาวน์โหลดบิล
-        </button>
-      </div>
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-3 mt-4">
+  {/* ปุ่มย้อนกลับไปแก้ไข */}
+  <Button variant="ghost" onClick={onBack} className="flex-1 md:flex-auto">
+    ย้อนกลับไปแก้ไข
+  </Button>
+
+  {/* ปุ่มยืนยันและไปชำระเงิน */}
+  <Button onClick={onConfirm} className="flex-1 md:flex-auto">
+    ยืนยันและไปชำระเงิน
+  </Button>
+
+  {/* ปุ่มดาวน์โหลดบิล */}
+  <button
+    onClick={downloadReceipt}
+    className="rounded-full px-6 py-3 bg-green-600 text-white font-medium shadow hover:shadow-md flex-1 md:flex-auto"
+  >
+    ดาวน์โหลดบิล
+  </button>
+</div>
+
     </div>
   );
 }
