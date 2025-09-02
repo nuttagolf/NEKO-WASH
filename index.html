@@ -130,13 +130,16 @@
 
     function Review({ items, total, onBack, onConfirm }) {
       const downloadReceipt = () => {
-        html2canvas(document.getElementById("receipt")).then(canvas => {
-          const link = document.createElement("a");
-          link.download = `receipt_${Date.now()}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        });
-      };
+  const receiptEl = document.getElementById("receipt");
+  if (!receiptEl) return;
+
+  html2canvas(receiptEl, { backgroundColor: "#ffffff", scale: 2 }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = `receipt_${Date.now()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+};
 
       return (
         <div>
@@ -259,3 +262,4 @@
   </script>
 </body>
 </html>
+
